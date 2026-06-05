@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School360 - Dashboard</title>
+    
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            background: #f4f7f6; 
+            color: #333; 
+        }
+        .container { 
+            display: flex; 
+            height: 100vh; 
+        }
+        
+        /* Sidebar Styling */
+        .sidebar { 
+            width: 250px; 
+            background: #2c3e50; 
+            color: white; 
+            padding: 20px; 
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        .sidebar h2 { 
+            margin-top: 0; 
+            color: #3498db; 
+            border-bottom: 2px solid #3498db; 
+            padding-bottom: 10px;
+            text-align: center;
+        }
+        .menu { 
+            list-style: none; 
+            padding: 0; 
+        }
+        .menu li { 
+            padding: 15px 10px; 
+            border-bottom: 1px solid #34495e; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            border-radius: 4px;
+        }
+        .menu li:hover { 
+            background: #3498db; 
+            padding-left: 15px;
+        }
+
+        /* Main Content Styling */
+        .main { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        .header { 
+            background: white; 
+            padding: 15px 30px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .header h3 {
+            margin: 0;
+            color: #2c3e50;
+        }
+        select { 
+            padding: 8px 15px; 
+            border-radius: 5px; 
+            border: 1px solid #ccc; 
+            font-size: 15px; 
+            cursor: pointer;
+            outline: none;
+            background: #fdfdfd;
+        }
+
+        /* Dashboard Area Styling */
+        .content { 
+            padding: 30px; 
+            overflow-y: auto; 
+        }
+        .cards { 
+            display: flex; 
+            gap: 20px; 
+            margin-top: 30px; 
+        }
+        .card { 
+            background: white; 
+            flex: 1; 
+            padding: 25px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+            text-align: center;
+            border-top: 4px solid #3498db;
+            transition: 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1); 
+        }
+        .card h3 { 
+            margin: 0; 
+            color: #7f8c8d; 
+            font-size: 14px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+        }
+        .card p { 
+            font-size: 32px; 
+            font-weight: bold; 
+            margin: 10px 0 0; 
+            color: #2c3e50; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="sidebar">
+            <h2>School360</h2>
+            <ul class="menu" id="menu-items">
+                </ul>
+        </div>
+
+        <div class="main">
+            <div class="header">
+                <h3 id="dashboard-title">Dashboard</h3>
+                <div>
+                    <label for="role-selector" style="font-weight: bold; margin-right: 10px;">Login As: </label>
+                                        <select id="role-selector" onchange="changeRole()">
+                        <option value="school">School Admin</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="student">Student</option>
+                    </select>
+                    <button onclick="window.location.href='main-website.html'" style="margin-left: 15px; padding: 8px 15px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">Logout</button>
+                </div>
+            </div>
+
+
+            <div class="content">
+                <h2 id="welcome-message" style="margin-top: 0;">Welcome to School360</h2>
+                <p id="role-description" style="color: #7f8c8d;">Manage your school operations seamlessly.</p>
+                
+                <div class="cards" id="dashboard-cards">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data for different Roles (Yeh data aage chalkar Database se aayega)
+        const roleData = {
+            school: {
+                title: "School Admin Control Unit",
+                welcome: "Welcome, Super Admin!",
+                desc: "Yahan se aap apne school ke teachers aur students ko manage kar sakte hain.",
+                menu: ["Dashboard", "Add Teacher", "Add Student", "Classes & Sections", "Global Settings"],
+                cards: [
+                    { title: "Total Teachers", value: "45" },
+                    { title: "Total Students", value: "1,200" },
+                    { title: "Total Revenue", value: "₹5.5L" }
+                ]
+            },
+            teacher: {
+                title: "Teacher Portal",
+                welcome: "Welcome, Teacher!",
+                desc: "Apni classes dekhein, attendance mark karein aur assignments upload karein.",
+                menu: ["My Classes", "Upload Homework", "Mark Attendance", "View Timetable"],
+                cards: [
+                    { title: "Assigned Classes", value: "4" },
+                    { title: "Pending Assignments", value: "12" },
+                    { title: "New Notices", value: "2" }
+                ]
+            },
+            student: {
+                title: "Student Portal",
+                welcome: "Welcome, Student!",
+                desc: "Apna homework check karein, report card dekhein aur updates lein.",
+                menu: ["My Profile", "Download Homework", "My Attendance", "Exam Results"],
+                cards: [
+                    { title: "Attendance %", value: "92%" },
+                    { title: "New Homework", value: "3" },
+                    { title: "Upcoming Exams", value: "1" }
+                ]
+            }
+        };
+
+        // Function jo Role change hone par design badalta hai
+        function changeRole() {
+            const role = document.getElementById("role-selector").value;
+            const data = roleData[role];
+
+            // 1. Text Update karna
+            document.getElementById("dashboard-title").innerText = data.title;
+            document.getElementById("welcome-message").innerText = data.welcome;
+            document.getElementById("role-description").innerText = data.desc;
+
+            // 2. Sidebar Menu Update karna
+            const menuItems = document.getElementById("menu-items");
+            menuItems.innerHTML = ""; // Pehle ka data saaf karein
+            data.menu.forEach(item => {
+                let li = document.createElement("li");
+                li.innerText = item;
+                menuItems.appendChild(li);
+            });
+
+            // 3. Dashboard Cards Update karna
+            const cardsContainer = document.getElementById("dashboard-cards");
+            cardsContainer.innerHTML = ""; // Pehle ka data saaf karein
+            data.cards.forEach(card => {
+                let div = document.createElement("div");
+                div.className = "card";
+                div.innerHTML = `<h3>${card.title}</h3><p>${card.value}</p>`;
+                cardsContainer.appendChild(div);
+            });
+        }
+
+        // Jab website pehli baar khule toh default view set karna
+        changeRole();
+    </script>
+</body>
+</html>
