@@ -27,7 +27,7 @@
         .close-btn { position: absolute; top: 15px; right: 15px; font-size: 20px; cursor: pointer; color: #888; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
-        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
         .submit-btn { width: 100%; background: #3498db; color: white; border: none; padding: 12px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
@@ -62,14 +62,23 @@
         </div>
     </div>
 
+    <!-- Naya Multi-Role Login Modal -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-box">
             <span class="close-btn" onclick="closeLoginModal()">&times;</span>
-            <h3 style="text-align:center; margin-top:0;">Admin Login</h3>
-            <form id="schoolLoginForm" onsubmit="loginSchool(event)">
-                <div class="form-group"><label>Email</label><input type="email" id="loginEmail" required></div>
+            <h3 style="text-align:center; margin-top:0;">Secure Login</h3>
+            <form id="schoolLoginForm" onsubmit="loginUser(event)">
+                <div class="form-group">
+                    <label>Login As (Role)</label>
+                    <select id="loginRole" required>
+                        <option value="schools">School Admin / Principal</option>
+                        <option value="teachers">Teacher</option>
+                        <option value="students">Student</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Email ID</label><input type="email" id="loginEmail" required></div>
                 <div class="form-group"><label>Password</label><input type="password" id="loginPassword" required></div>
-                <button type="submit" class="submit-btn" id="logBtn">Secure Login</button>
+                <button type="submit" class="submit-btn" id="logBtn">Login to Dashboard</button>
             </form>
         </div>
     </div>
@@ -78,9 +87,9 @@
         <a href="super-admin.html" style="color: #ccc; text-decoration: none; font-size: 12px;">Super Admin</a>
     </div>
 
+    <!-- Nayi Firebase Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        // getDocs, query, where add kiye gaye hain check karne ke liye
         import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -95,20 +104,50 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Register Modal Functions
+        // Modals Open/Close Logic
         window.openModal = () => document.getElementById('registerModal').style.display = 'flex';
         window.closeModal = () => document.getElementById('registerModal').style.display = 'none';
-
-        // Login Modal Functions
         window.openLoginModal = () => document.getElementById('loginModal').style.display = 'flex';
         window.closeLoginModal = () => document.getElementById('loginModal').style.display = 'none';
 
-        // Register Logic (Pehle wala)
+        // NAYA MULTI-ROLE LOGIN LOGIC
+        window.loginUser = async function(event) {
+            event.preventDefault();
+            const roleCollection = document.getElementById('loginRole').value;
+            const email = document.getElementById('loginEmail').value.toLowerCase();
+            const pass = document.getElementById('loginPassword').value;
+            const logBtn = document.getElementById('logBtn');
+            logBtn.innerText = "Checking Credentials...";
+
+            try {
+                // System check karega ki selected role wali list mein email/pass hai ya nahi
+                const q = query(collection(db, roleCollection), where("email", "==", email), where("password", "==", pass));
+                const querySnapshot = await getDocs(q);
+
+                if (!querySnapshot.empty) {
+                    alert("Login Successful! Redirecting...");
+                    
+                    // Role ke hisaab se alag dashboard par bhejna
+                    if(roleCollection === "schools") window.location.href = "index.html";
+                    else if(roleCollection === "teachers") window.location.href = "teacher-dashboard.html";
+                    else if(roleCollection === "students") window.location.href = "student-dashboard.html";
+                    
+                } else {
+                    alert("Galat Email ya Password! Ya phir aapne galat Role select kiya hai.");
+                    logBtn.innerText = "Login to Dashboard";
+                }
+            } catch (error) {
+                alert("Error: " + error.message);
+                logBtn.innerText = "Login to Dashboard";
+            }
+        }
+        
+        // Register Admin Logic
         window.registerSchool = async function(event) {
             event.preventDefault(); 
             const school = document.getElementById('schoolName').value;
             const admin = document.getElementById('adminName').value;
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.toLowerCase();
             const password = document.getElementById('password').value; 
             const submitBtn = document.getElementById('regBtn');
             submitBtn.innerText = "Please Wait...";
@@ -122,34 +161,6 @@
             } catch (error) {
                 alert("Error: " + error.message);
                 submitBtn.innerText = "Create School Account";
-            }
-        }
-
-        // NAYA LOGIN LOGIC (Checking credentials)
-        window.loginSchool = async function(event) {
-            event.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const pass = document.getElementById('loginPassword').value;
-            const logBtn = document.getElementById('logBtn');
-            logBtn.innerText = "Checking...";
-
-            try {
-                // Firebase se poochega: Kya is email aur password ka koi data hai?
-                const q = query(collection(db, "schools"), where("email", "==", email), where("password", "==", pass));
-                const querySnapshot = await getDocs(q);
-
-                if (!querySnapshot.empty) {
-                    // Agar details match ho gayi
-                    alert("Login Successful! Dashboard khul raha hai...");
-                    window.location.href = "index.html"; // Dashboard par bhej dega
-                } else {
-                    // Agar details galat hain
-                    alert("Galat Email ya Password! Kripya dobara check karein.");
-                    logBtn.innerText = "Secure Login";
-                }
-            } catch (error) {
-                alert("Error: " + error.message);
-                logBtn.innerText = "Secure Login";
             }
         }
     </script>
