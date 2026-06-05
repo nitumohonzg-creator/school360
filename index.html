@@ -16,16 +16,22 @@
         .logout-btn { background-color: #e74c3c; color: white; text-align: center; margin: 20px; padding: 10px; border-radius: 5px; cursor: pointer; display: block; text-decoration: none; }
 
         /* Main Content Styling */
-        .main-content { margin-left: 250px; padding: 30px; width: 100%; }
+        .main-content { margin-left: 250px; padding: 30px; width: 100%; box-sizing: border-box; }
         .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 30px; }
         .header h1 { margin: 0; color: #333; font-size: 24px; }
 
         /* Action Buttons */
-        .action-cards { display: flex; gap: 20px; }
-        .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex: 1; text-align: center; border-top: 5px solid #3498db; }
-        .card h3 { color: #2c3e50; font-size: 22px; }
+        .action-cards { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; }
+        .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex: 1; text-align: center; border-top: 5px solid #3498db; min-width: 250px; }
+        .card h3 { color: #2c3e50; font-size: 22px; margin-top: 0; }
         .btn { background-color: #3498db; color: white; padding: 12px 25px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 15px; }
-        .btn:hover { background-color: #2980b9; }
+
+        /* Data Table Styling */
+        .table-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow-x: auto; }
+        .table-container h3 { margin-top: 0; color: #2c3e50; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background-color: #f4f7f6; padding: 12px; border-bottom: 2px solid #ccc; color: #333; }
+        td { padding: 12px; border-bottom: 1px solid #eee; color: #555; }
 
         /* Modals (Popups) */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
@@ -56,15 +62,28 @@
         <div class="action-cards">
             <div class="card">
                 <h3>👨‍🏫 Teachers</h3>
-                <p>Naye teachers ko system mein add karein</p>
                 <button class="btn" onclick="openTeacherModal()">+ Add New Teacher</button>
             </div>
-
             <div class="card" style="border-top-color: #2ecc71;">
                 <h3>🎓 Students</h3>
-                <p>Naye students ka admission record banayein</p>
                 <button class="btn" style="background-color: #2ecc71;" onclick="openStudentModal()">+ Add New Student</button>
             </div>
+        </div>
+
+        <div class="table-container">
+            <h3>🎓 Registered Students List</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Roll Number</th>
+                        <th>Student Name</th>
+                        <th>Class</th>
+                    </tr>
+                </thead>
+                <tbody id="studentTableBody">
+                    <tr><td colspan="3" style="text-align: center;">Loading students from Firebase...</td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -96,9 +115,9 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        // getDocs ko import list mein add kiya gaya hai
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // Aapki Firebase Keys
         const firebaseConfig = {
             apiKey: "AIzaSyDg4HlG4M9lgqYSjV-fdqKacN94QNgfvOY",
             authDomain: "school360-9c832.firebaseapp.com",
@@ -114,66 +133,87 @@
         // Modals ko Open/Close karne ke functions
         window.openTeacherModal = () => document.getElementById('teacherModal').style.display = 'flex';
         window.closeTeacherModal = () => document.getElementById('teacherModal').style.display = 'none';
-        
         window.openStudentModal = () => document.getElementById('studentModal').style.display = 'flex';
         window.closeStudentModal = () => document.getElementById('studentModal').style.display = 'none';
 
         // ==========================================
-        // 1. ADD TEACHER LOGIC
+        // Firebase se Data laane ka NAYA function
         // ==========================================
-        window.addTeacher = async function(event) {
-            event.preventDefault();
-            const name = document.getElementById('tName').value;
-            const subject = document.getElementById('tSubject').value;
-            const phone = document.getElementById('tPhone').value;
-            const btn = document.getElementById('tBtn');
-            btn.innerText = "Saving...";
-
+        window.loadStudents = async function() {
+            const tableBody = document.getElementById('studentTableBody');
+            
             try {
-                // Firebase mein "teachers" naam ki nayi list banegi
-                await addDoc(collection(db, "teachers"), {
-                    name: name,
-                    subject: subject,
-                    phone: phone,
-                    dateAdded: new Date()
+                const querySnapshot = await getDocs(collection(db, "students"));
+                
+                if (querySnapshot.empty) {
+                    tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center;">Abhi tak koi student add nahi hua hai.</td></tr>';
+                    return;
+                }
+
+                // Table ko khali karein taaki naya data dikhe
+                tableBody.innerHTML = ''; 
+
+                // Har ek student ke liye naya table row (tr) banayein
+                querySnapshot.forEach((doc) => {
+                    const student = doc.data();
+                    const row = `<tr>
+                        <td>${student.rollNumber}</td>
+                        <td>${student.name}</td>
+                        <td>${student.className}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
                 });
-                alert(`Success! Teacher "${name}" add ho gaye hain.`);
-                document.getElementById('teacherForm').reset();
-                window.closeTeacherModal();
             } catch (error) {
-                alert("Error: " + error.message);
-            } finally {
-                btn.innerText = "Save Teacher";
+                console.error("Error fetching data: ", error);
+                tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: red;">Data load hone mein error aaya!</td></tr>';
             }
         }
 
-        // ==========================================
-        // 2. ADD STUDENT LOGIC
-        // ==========================================
-        window.addStudent = async function(event) {
-            event.preventDefault();
-            const name = document.getElementById('sName').value;
-            const studentClass = document.getElementById('sClass').value;
-            const roll = document.getElementById('sRoll').value;
-            const btn = document.getElementById('sBtn');
-            btn.innerText = "Saving...";
+        // Jaise hi page khulega, loadStudents() automatically chal jayega
+        window.onload = function() {
+            loadStudents();
+        }
 
+        // Add Teacher Logic
+        window.addTeacher = async function(event) {
+            event.preventDefault();
+            const btn = document.getElementById('tBtn');
+            btn.innerText = "Saving...";
             try {
-                // Firebase mein "students" naam ki nayi list banegi
-                await addDoc(collection(db, "students"), {
-                    name: name,
-                    className: studentClass,
-                    rollNumber: roll,
+                await addDoc(collection(db, "teachers"), {
+                    name: document.getElementById('tName').value,
+                    subject: document.getElementById('tSubject').value,
+                    phone: document.getElementById('tPhone').value,
                     dateAdded: new Date()
                 });
-                alert(`Success! Student "${name}" add ho gaya hai.`);
+                alert("Teacher add ho gaye hain.");
+                document.getElementById('teacherForm').reset();
+                window.closeTeacherModal();
+            } catch (error) { alert("Error: " + error.message); } 
+            finally { btn.innerText = "Save Teacher"; }
+        }
+
+        // Add Student Logic
+        window.addStudent = async function(event) {
+            event.preventDefault();
+            const btn = document.getElementById('sBtn');
+            btn.innerText = "Saving...";
+            try {
+                await addDoc(collection(db, "students"), {
+                    name: document.getElementById('sName').value,
+                    className: document.getElementById('sClass').value,
+                    rollNumber: document.getElementById('sRoll').value,
+                    dateAdded: new Date()
+                });
+                alert("Student add ho gaya hai!");
                 document.getElementById('studentForm').reset();
                 window.closeStudentModal();
-            } catch (error) {
-                alert("Error: " + error.message);
-            } finally {
-                btn.innerText = "Save Student";
-            }
+                
+                // Jaise hi naya student add ho, table ko refresh kar do
+                loadStudents(); 
+                
+            } catch (error) { alert("Error: " + error.message); } 
+            finally { btn.innerText = "Save Student"; }
         }
     </script>
 </body>
