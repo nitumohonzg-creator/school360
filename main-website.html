@@ -247,41 +247,28 @@
         </div>
     </div>
 
-    <script>
-        // Modal ko open karne ka function
-        function openModal() {
-            document.getElementById('registerModal').style.display = 'flex';
-        }
+        <!-- Naya Firebase JavaScript Logic -->
+    // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-        // Modal ko close karne ka function
-        function closeModal() {
-            document.getElementById('registerModal').style.display = 'none';
-        }
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDg4HlG4M9lgqYSjV-fdqKacN94QNgfvOY",
+  authDomain: "school360-9c832.firebaseapp.com",
+  projectId: "school360-9c832",
+  storageBucket: "school360-9c832.firebasestorage.app",
+  messagingSenderId: "923777949473",
+  appId: "1:923777949473:web:f90a784d9d5609a1616860",
+  measurementId: "G-SK11K5JF4Z"
+};
 
-        // Form Submit hone par kya hoga (Temporary logic)
-        function registerSchool(event) {
-            event.preventDefault(); // Page refresh hone se rokne ke liye
-            
-            // Values get karna
-            const school = document.getElementById('schoolName').value;
-            const admin = document.getElementById('adminName').value;
-            
-            // Success Message dikhana
-            alert(`Badhai ho ${admin}! Aapka school "${school}" School360 par successfully register ho gaya hai. Ab aap apne dashboard me login kar sakte hain.`);
-            
-            // Form clear aur modal close karna
-            document.getElementById('schoolRegistrationForm').reset();
-            closeModal();
-        }
-
-        // Agar user popup ke bahar click kare toh popup band ho jaye
-        window.onclick = function(event) {
-            let modal = document.getElementById('registerModal');
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
-        </script>
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
     <div style="text-align: center; padding: 20px;">
         <a href="super-admin.html" style="color: #ccc; text-decoration: none; font-size: 12px;">Admin Login</a>
