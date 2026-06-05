@@ -6,183 +6,29 @@
     <title>School360 - Central Website</title>
     <style>
         /* CSS Styling */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9fbfe;
-            color: #333;
-        }
-
-        /* Navbar */
-        .navbar {
-            background-color: white;
-            padding: 15px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .navbar h1 {
-            margin: 0;
-            color: #2c3e50;
-            font-size: 24px;
-        }
-        .navbar h1 span {
-            color: #3498db;
-        }
-        .nav-links {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-        .nav-links a {
-            text-decoration: none;
-            color: #2c3e50;
-            font-weight: 500;
-        }
-        .btn-login {
-            border: 2px solid #3498db;
-            padding: 8px 20px;
-            border-radius: 5px;
-            color: #3498db !important;
-            font-weight: bold;
-        }
-        .btn-register {
-            background-color: #3498db;
-            color: white !important;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-        }
-
-        /* Hero Section */
-        .hero {
-            text-align: center;
-            padding: 100px 20px;
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-            color: white;
-        }
-        .hero h2 {
-            font-size: 48px;
-            margin-bottom: 10px;
-        }
-        .hero p {
-            font-size: 20px;
-            margin-bottom: 30px;
-            opacity: 0.9;
-        }
-        .hero-btn {
-            background-color: white;
-            color: #2c3e50;
-            padding: 15px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 30px;
-            text-decoration: none;
-            display: inline-block;
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: 0.3s;
-        }
-        .hero-btn:hover {
-            transform: translateY(-3px);
-        }
-
-        /* Features Section */
-        .features {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            padding: 60px 50px;
-            max-width: 1200px;
-            margin: auto;
-        }
-        .feature-box {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            text-align: center;
-            flex: 1;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            border-bottom: 4px solid #3498db;
-        }
-        .feature-box h3 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        .feature-box p {
-            color: #7f8c8d;
-            line-height: 1.5;
-        }
-
-        /* Modal (Popup Form) Styling */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-box {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            width: 400px;
-            position: relative;
-        }
-        .close-btn {
-            position: absolute;
-            top: 15px; right: 15px;
-            font-size: 20px;
-            cursor: pointer;
-            color: #888;
-        }
-        .modal-box h3 {
-            margin-top: 0;
-            color: #2c3e50;
-            text-align: center;
-            font-size: 24px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #333;
-            font-weight: 500;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-        .submit-btn {
-            width: 100%;
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 12px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        .submit-btn:hover {
-            background: #2980b9;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f9fbfe; color: #333; }
+        .navbar { background-color: white; padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .navbar h1 { margin: 0; color: #2c3e50; font-size: 24px; }
+        .navbar h1 span { color: #3498db; }
+        .nav-links { display: flex; gap: 20px; align-items: center; }
+        .nav-links a { text-decoration: none; color: #2c3e50; font-weight: 500; }
+        .btn-login { border: 2px solid #3498db; padding: 8px 20px; border-radius: 5px; color: #3498db; font-weight: bold; background: white; cursor: pointer; }
+        .btn-register { background-color: #3498db; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; }
+        .hero { text-align: center; padding: 100px 20px; background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); color: white; }
+        .hero h2 { font-size: 48px; margin-bottom: 10px; }
+        .hero p { font-size: 20px; margin-bottom: 30px; opacity: 0.9; }
+        .hero-btn { background-color: white; color: #2c3e50; padding: 15px 30px; font-size: 18px; font-weight: bold; border-radius: 30px; text-decoration: none; display: inline-block; cursor: pointer; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: 0.3s; }
+        .features { display: flex; justify-content: center; gap: 30px; padding: 60px 50px; max-width: 1200px; margin: auto; }
+        .feature-box { background: white; padding: 30px; border-radius: 10px; text-align: center; flex: 1; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-bottom: 4px solid #3498db; }
+        
+        /* Modal Styling */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-box { background: white; padding: 40px; border-radius: 10px; width: 400px; position: relative; }
+        .close-btn { position: absolute; top: 15px; right: 15px; font-size: 20px; cursor: pointer; color: #888; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .submit-btn { width: 100%; background: #3498db; color: white; border: none; padding: 12px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -191,9 +37,7 @@
         <h1>School<span>360</span></h1>
         <div class="nav-links">
             <a href="#">Home</a>
-            <a href="#">Features</a>
-            <a href="#">Pricing</a>
-            <a href="index.html" class="btn-login">Login</a>
+            <button class="btn-login" onclick="openLoginModal()">Login</button>
             <button class="btn-register" onclick="openModal()">Register School</button>
         </div>
     </nav>
@@ -204,60 +48,41 @@
         <button class="hero-btn" onclick="openModal()">Start Your Free Trial</button>
     </header>
 
-    <section class="features">
-        <div class="feature-box">
-            <h3>🏫 School Admin</h3>
-            <p>School ka complete dashboard. Teachers add karein, students ka data manage karein aur attendance track karein.</p>
-        </div>
-        <div class="feature-box">
-            <h3>👨‍🏫 Teacher Portal</h3>
-            <p>Teachers ke liye dedicated space jahan wo homework upload kar sakte hain aur marks update kar sakte hain.</p>
-        </div>
-        <div class="feature-box">
-            <h3>🎓 Student Access</h3>
-            <p>Students apni profile, results aur school ke updates easily apne mobile ya computer se dekh sakte hain.</p>
-        </div>
-    </section>
-
-    <!-- Naya Popup Modal -->
     <div class="modal-overlay" id="registerModal">
         <div class="modal-box">
             <span class="close-btn" onclick="closeModal()">&times;</span>
-            <h3>Register Your School</h3>
-            
+            <h3 style="text-align:center; margin-top:0;">Register Your School</h3>
             <form id="schoolRegistrationForm" onsubmit="registerSchool(event)">
-                <div class="form-group">
-                    <label for="schoolName">School Name</label>
-                    <input type="text" id="schoolName" placeholder="Enter school name" required>
-                </div>
-                <div class="form-group">
-                    <label for="adminName">Admin Name</label>
-                    <input type="text" id="adminName" placeholder="Enter your name" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Admin Email</label>
-                    <input type="email" id="email" placeholder="school@example.com" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Create Password</label>
-                    <input type="password" id="password" placeholder="Create a strong password" required>
-                </div>
-                <button type="submit" class="submit-btn">Create School Account</button>
+                <div class="form-group"><label>School Name</label><input type="text" id="schoolName" required></div>
+                <div class="form-group"><label>Admin Name</label><input type="text" id="adminName" required></div>
+                <div class="form-group"><label>Admin Email</label><input type="email" id="email" required></div>
+                <div class="form-group"><label>Create Password</label><input type="password" id="password" required></div>
+                <button type="submit" class="submit-btn" id="regBtn">Create School Account</button>
             </form>
         </div>
     </div>
 
-    <!-- Admin Link -->
-    <div style="text-align: center; padding: 20px;">
-        <a href="super-admin.html" style="color: #ccc; text-decoration: none; font-size: 12px;">Admin Login</a>
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-box">
+            <span class="close-btn" onclick="closeLoginModal()">&times;</span>
+            <h3 style="text-align:center; margin-top:0;">Admin Login</h3>
+            <form id="schoolLoginForm" onsubmit="loginSchool(event)">
+                <div class="form-group"><label>Email</label><input type="email" id="loginEmail" required></div>
+                <div class="form-group"><label>Password</label><input type="password" id="loginPassword" required></div>
+                <button type="submit" class="submit-btn" id="logBtn">Secure Login</button>
+            </form>
+        </div>
     </div>
 
-    <!-- Firebase Connection aur JavaScript -->
+    <div style="text-align: center; padding: 20px;">
+        <a href="super-admin.html" style="color: #ccc; text-decoration: none; font-size: 12px;">Super Admin</a>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        // getDocs, query, where add kiye gaye hain check karne ke liye
+        import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // Aapki details yahan hain
         const firebaseConfig = {
             apiKey: "AIzaSyDg4HlG4M9lgqYSjV-fdqKacN94QNgfvOY",
             authDomain: "school360-9c832.firebaseapp.com",
@@ -270,55 +95,63 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Form kholne ka button kaam karega
-        window.openModal = function() {
-            document.getElementById('registerModal').style.display = 'flex';
-        }
-        window.closeModal = function() {
-            document.getElementById('registerModal').style.display = 'none';
-        }
+        // Register Modal Functions
+        window.openModal = () => document.getElementById('registerModal').style.display = 'flex';
+        window.closeModal = () => document.getElementById('registerModal').style.display = 'none';
 
-        // Form submit hone par data Firebase bhejna
+        // Login Modal Functions
+        window.openLoginModal = () => document.getElementById('loginModal').style.display = 'flex';
+        window.closeLoginModal = () => document.getElementById('loginModal').style.display = 'none';
+
+        // Register Logic (Pehle wala)
         window.registerSchool = async function(event) {
             event.preventDefault(); 
-            
             const school = document.getElementById('schoolName').value;
             const admin = document.getElementById('adminName').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value; 
-
-            const submitBtn = document.querySelector('.submit-btn');
+            const submitBtn = document.getElementById('regBtn');
             submitBtn.innerText = "Please Wait...";
 
             try {
-                await addDoc(collection(db, "schools"), {
-                    schoolName: school,
-                    adminName: admin,
-                    email: email,
-                    password: password,
-                    dateRegistered: new Date()
-                });
-                
-                alert(`Success! ${admin}, aapka school "${school}" register ho gaya hai. Aapka data Firebase mein save ho gaya!`);
-                
+                await addDoc(collection(db, "schools"), { schoolName: school, adminName: admin, email: email, password: password, dateRegistered: new Date() });
+                alert(`Success! Aapka data Firebase mein save ho gaya!`);
                 document.getElementById('schoolRegistrationForm').reset();
                 window.closeModal();
                 submitBtn.innerText = "Create School Account";
-
             } catch (error) {
-                console.error("Error adding document: ", error);
-                alert("Koi dikkat aayi: " + error.message);
+                alert("Error: " + error.message);
                 submitBtn.innerText = "Create School Account";
             }
         }
 
-        window.onclick = function(event) {
-            let modal = document.getElementById('registerModal');
-            if (event.target == modal) {
-                window.closeModal();
+        // NAYA LOGIN LOGIC (Checking credentials)
+        window.loginSchool = async function(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPassword').value;
+            const logBtn = document.getElementById('logBtn');
+            logBtn.innerText = "Checking...";
+
+            try {
+                // Firebase se poochega: Kya is email aur password ka koi data hai?
+                const q = query(collection(db, "schools"), where("email", "==", email), where("password", "==", pass));
+                const querySnapshot = await getDocs(q);
+
+                if (!querySnapshot.empty) {
+                    // Agar details match ho gayi
+                    alert("Login Successful! Dashboard khul raha hai...");
+                    window.location.href = "index.html"; // Dashboard par bhej dega
+                } else {
+                    // Agar details galat hain
+                    alert("Galat Email ya Password! Kripya dobara check karein.");
+                    logBtn.innerText = "Secure Login";
+                }
+            } catch (error) {
+                alert("Error: " + error.message);
+                logBtn.innerText = "Secure Login";
             }
         }
     </script>
-
 </body>
 </html>
