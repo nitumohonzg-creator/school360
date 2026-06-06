@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Public Profile - School360</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f9fbfe; color: #333; }
+        
+        /* Public Navbar */
+        .navbar { background-color: white; padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
+        .navbar h1 { margin: 0; color: #2c3e50; font-size: 24px; }
+        .navbar h1 span { color: #3498db; }
+        .nav-links a { text-decoration: none; color: #2c3e50; font-weight: 500; margin-right: 20px;}
+        .btn-portal { background-color: #3498db; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; border: none; cursor: pointer; text-decoration: none;}
+
+        /* Hero Banner */
+        .hero { text-align: center; padding: 80px 20px; background: linear-gradient(135deg, #1abc9c 0%, #2c3e50 100%); color: white; }
+        .hero h2 { font-size: 42px; margin: 0 0 10px 0; }
+        .hero p { font-size: 18px; opacity: 0.9; margin: 0; }
+
+        /* Main Section Grid */
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+        
+        .box { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 25px; }
+        .box h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #f4f7f6; padding-bottom: 10px; }
+
+        /* Activity Board */
+        .activity-item { background: #f8fbf9; padding: 15px; border-left: 4px solid #1abc9c; margin-bottom: 15px; border-radius: 4px; }
+        .activity-item h4 { margin: 0 0 5px 0; color: #16a085; }
+        .activity-item p { margin: 0; font-size: 14px; color: #555; }
+
+        /* Admission Form Styling */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px;}
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .submit-btn { width: 100%; background: #e67e22; color: white; border: none; padding: 12px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .submit-btn:hover { background: #d35400; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <h1 id="schoolLogo">School<span>Loading...</span></h1>
+        <div class="nav-links">
+            <a href="#aboutSec">About Us</a>
+            <a href="#activitySec">Activities</a>
+            <a href="#admissionSec">Admissions</a>
+            <a href="main-website.html" class="btn-portal">🔐 Portal Login</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h2 id="schoolBannerName">Welcome to Our School</h2>
+        <p>Shaping Futures, Building Leaders. An Institution of Excellence.</p>
+    </header>
+
+    <div class="container">
+        
+        <div>
+            <div class="box" id="aboutSec">
+                <h3>🏫 About Our Institution</h3>
+                <p style="line-height: 1.6; color: #555;">Humare school mein bacchon ki padhai ke sath-sath unki overall personality development par dhyan diya jata hai. Modern classrooms, digital labs, aur experienced teachers ke sath hum bacchon ko kal ke liye tayar karte hain. Humara maqsad har student ko ek kamyab aur zimmedar nagrik banana hai.</p>
+                <p style="line-height: 1.6; color: #555;">Admission se judi kisi bhi jaankari ke liye aap diye gaye form ko bhar sakte hain, humari team aapko jald hi contact karegi.</p>
+            </div>
+
+            <div class="box" id="activitySec">
+                <h3>📢 School Activities & Public Notices</h3>
+                <div id="publicActivityDiv">
+                    <p style="text-align: center; color: #888;">Loading latest school updates...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="box" id="admissionSec" style="border-top: 5px solid #e67e22; height: fit-content;">
+            <h3>🎯 Online Admission Inquiry</h3>
+            <p style="font-size: 13px; color: #666; margin-top: 0;">Naye admission ke liye apni details bharein. School admin aap se jald hi sampark karenge.</p>
+            
+            <form id="publicAdmissionForm" onsubmit="submitInquiry(event)">
+                <div class="form-group">
+                    <label>Parent Name</label>
+                    <input type="text" id="pName" placeholder="Enter full name" required>
+                </div>
+                <div class="form-group">
+                    <label>Student Name</label>
+                    <input type="text" id="sName" placeholder="Enter student name" required>
+                </div>
+                <div class="form-group">
+                    <label>Seeking Admission For Class</label>
+                    <select id="sClass" required>
+                        <option value="Class 8">Class 8</option>
+                        <option value="Class 9">Class 9</option>
+                        <option value="Class 10">Class 10</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Contact Mobile Number</label>
+                    <input type="number" id="pPhone" placeholder="Enter 10 digit number" required>
+                </div>
+                <button type="submit" class="submit-btn" id="subBtn">Submit Admission Form</button>
+            </form>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDg4HlG4M9lgqYSjV-fdqKacN94QNgfvOY",
+            authDomain: "school360-9c832.firebaseapp.com",
+            projectId: "school360-9c832",
+            storageBucket: "school360-9c832.firebasestorage.app",
+            messagingSenderId: "923777949473",
+            appId: "1:923777949473:web:f90a784d9d5609a1616860"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.onload = function() {
+            // Default/Static display for branding
+            document.getElementById("schoolLogo").innerHTML = "School<span>360</span>";
+            document.getElementById("schoolBannerName").innerText = "Welcome to School360 Academic Campus";
+            
+            loadPublicActivities();
+        }
+
+        // 1. PUBLIC BOARD MEIN DATA FETCH KARNA (BINA LOGIN KE)
+        window.loadPublicActivities = async function() {
+            const displayDiv = document.getElementById('publicActivityDiv');
+            try {
+                // Admin dashboard se dalee hui notices ko hi hum public activity ke roop mein dikha rahe hain
+                const querySnapshot = await getDocs(collection(db, "notices"));
+                displayDiv.innerHTML = '';
+                
+                if (querySnapshot.empty) {
+                    displayDiv.innerHTML = '<p style="text-align:center; color:#888;">No recent activities posted by school.</p>';
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const notice = doc.data();
+                    displayDiv.innerHTML += `
+                        <div class="activity-item">
+                            <h4>✨ ${notice.title}</h4>
+                            <p>${notice.message}</p>
+                        </div>
+                    `;
+                });
+            } catch(error) {
+                displayDiv.innerHTML = '<p style="color:red;">Failed to load updates.</p>';
+            }
+        }
+
+        // 2. NEW ADMISSION FORM SUBMISSION Logic
+        window.submitInquiry = async function(event) {
+            event.preventDefault();
+            const btn = document.getElementById('subBtn');
+            btn.innerText = "Submitting... Please Wait";
+
+            try {
+                // Naya data Firebase mein 'admission_inquiries' naam se save hoga
+                await addDoc(collection(db, "admission_inquiries"), {
+                    parentName: document.getElementById('pName').value,
+                    studentName: document.getElementById('sName').value,
+                    className: document.getElementById('sClass').value,
+                    phoneNumber: document.getElementById('pPhone').value,
+                    status: "Pending Review",
+                    dateSubmitted: new Date()
+                });
+
+                alert("Success! Aapka Admission Form school admin ko bhej diya gaya hai. Woh aapse jald hi contact karenge.");
+                document.getElementById('publicAdmissionForm').reset();
+            } catch(error) {
+                alert("Submission failed: " + error.message);
+            } finally {
+                btn.innerText = "Submit Admission Form";
+            }
+        }
+    </script>
+</body>
+</html>
