@@ -7,211 +7,418 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f4f7f6; display: flex; }
         
-        .sidebar { width: 250px; background-color: #2c3e50; color: white; height: 100vh; padding-top: 20px; position: fixed; overflow-y: auto; }
+        /* Mobile Header */
+        .mobile-header { display: none; background: #2c3e50; color: white; padding: 15px 20px; position: fixed; top: 0; left: 0; width: 100%; z-index: 998; box-sizing: border-box; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .mobile-header h2 { margin: 0; font-size: 20px; color: #3498db; }
+        .mobile-header h2 span { color: white; }
+        .menu-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+
+        /* Sidebar Overlay for Mobile */
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 998; }
+        .sidebar-overlay.active { display: block; }
+
+        /* Sidebar */
+        .sidebar { width: 250px; background-color: #2c3e50; color: white; height: 100vh; padding-top: 20px; position: fixed; top: 0; left: 0; overflow-y: auto; z-index: 999; transition: transform 0.3s ease; }
         .sidebar h2 { text-align: center; color: #3498db; margin-bottom: 30px; }
         .sidebar h2 span { color: white; }
-        .sidebar a { display: block; color: white; padding: 15px 25px; text-decoration: none; font-size: 16px; border-bottom: 1px solid #34495e; }
-        .sidebar a:hover { background-color: #34495e; }
-        .logout-btn { background-color: #e74c3c; color: white; text-align: center; margin: 20px; padding: 10px; border-radius: 5px; cursor: pointer; display: block; text-decoration: none; }
+        .sidebar a { display: block; color: white; padding: 15px 25px; text-decoration: none; font-size: 16px; border-bottom: 1px solid #34495e; transition: 0.2s; }
+        .sidebar a:hover, .sidebar a.active-link { background-color: #3498db; color: white; }
+        .logout-btn { background-color: #e74c3c !important; color: white; text-align: center; margin: 20px; padding: 10px; border-radius: 5px; cursor: pointer; display: block; text-decoration: none; }
 
-        .main-content { margin-left: 250px; padding: 30px; width: 100%; box-sizing: border-box; }
-        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        /* Main Content */
+        .main-content { margin-left: 250px; padding: 30px; width: 100%; box-sizing: border-box; transition: margin-left 0.3s ease; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 30px; flex-wrap: wrap; gap: 10px; }
         .header h1 { margin: 0; color: #333; font-size: 24px; }
+        .header p { margin: 0; color: #666; }
+
+        /* TAB SECTIONS LOGIC */
+        .content-section { display: none; animation: fadeIn 0.4s ease; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .action-cards { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; }
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex: 1; text-align: center; border-top: 5px solid #3498db; min-width: 200px; }
-        .btn { background-color: #3498db; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 14px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%;}
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex: 1; text-align: center; border-top: 5px solid #3498db; min-width: 200px; box-sizing: border-box; transition: 0.2s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+        .btn { background-color: #3498db; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 14px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; box-sizing: border-box;}
         
         .box-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow-x: auto; margin-bottom: 30px;}
-        .box-container h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;}
+        .box-container h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;}
         
-        table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 15px; font-size: 14px;}
+        table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 15px; font-size: 14px; min-width: 600px;}
         th { background-color: #f4f7f6; padding: 12px; border-bottom: 2px solid #ccc; color: #333; }
         td { padding: 12px; border-bottom: 1px solid #eee; color: #555; }
         
-        .badge-unpaid { background: #e74c3c; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; border:none;}
-        .badge-paid { background: #2ecc71; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; border:none;}
-        .badge-leave { background: #f39c12; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;}
+        .badge-unpaid { background: #e74c3c; color: white; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; border:none; white-space: nowrap; width: 100%;}
+        .badge-paid { background: #2ecc71; color: white; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; border:none; white-space: nowrap; width: 100%;}
+        .badge-leave { background: #f39c12; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; white-space: nowrap;}
         .action-icon { cursor: pointer; font-size: 16px; margin-right: 8px; background: none; border: none; padding: 2px; }
         .att-select, .date-input { padding: 8px; border-radius: 4px; border: 1px solid #ccc; outline: none; font-family: inherit;}
 
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-box { background: white; padding: 30px; border-radius: 10px; width: 350px; position: relative; max-height: 85vh; overflow-y: auto; }
-        .close-btn { position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #888; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;}
+        .modal-box { background: white; padding: 30px; border-radius: 10px; width: 100%; max-width: 400px; position: relative; max-height: 90vh; overflow-y: auto; box-sizing: border-box; }
+        .modal-box.large { max-width: 800px; }
+        .close-btn { position: absolute; top: 10px; right: 15px; font-size: 28px; cursor: pointer; color: #555; background: #eee; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;}
+        
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: 500; color: #333; font-size: 14px;}
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: inherit;}
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        
+        fieldset { border: 1px solid #ddd; border-radius: 5px; padding: 15px; margin-bottom: 15px; background: #fafafa; }
+        legend { font-weight: bold; color: #3498db; background: white; padding: 0 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px;}
+        
+        .checkbox-container { display: flex; align-items: center; margin-bottom: 10px; gap: 8px; font-size: 14px; font-weight: bold; color: #d35400;}
+        .checkbox-container input { width: auto; }
+
         .submit-btn { width: 100%; background: #2ecc71; color: white; border: none; padding: 12px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+
+        .filter-panel { background: #eaf2f8; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; border: 1px solid #d4e6f1;}
+        .filter-panel .form-group { margin-bottom: 0; flex: 1; min-width: 130px;}
+
+        /* --- RESPONSIVE MEDIA QUERIES --- */
+        @media (max-width: 850px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 20px; padding-top: 80px; }
+            .mobile-header { display: flex; }
+            .sidebar h2 { display: none; }
+        }
+
+        @media (max-width: 600px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 10px;}
+            .header h1 { font-size: 20px; }
+            .action-cards { flex-direction: column; }
+            .report-filters { flex-direction: column; align-items: stretch; }
+            .modal-box { padding: 20px; }
+        }
     </style>
 </head>
 <body>
 
+    <!-- Mobile Header Navigation -->
+    <div class="mobile-header">
+        <h2>School<span>360</span></h2>
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
     <div class="sidebar">
         <h2>School<span>360</span></h2>
-        <a href="#">📊 Master Dashboard</a>
-        <a href="#teachersSec">👨‍🏫 HR & Attendance</a>
-        <a href="#reportSec">📅 Leave Report</a>
-        <a href="#studentsSec">🎓 Students & Fees</a>
+        <a href="#" id="nav-dashboardSec" class="active-link" onclick="switchTab('dashboardSec')">📊 Master Dashboard</a>
+        <a href="#" id="nav-noticeSec" onclick="switchTab('noticeSec')">📢 Public Notice</a>
+        <a href="#" id="nav-teachersSec" onclick="switchTab('teachersSec')">👨‍🏫 HR & Attendance</a>
+        <a href="#" id="nav-studentAttSec" onclick="switchTab('studentAttSec')">📝 Student Attendance</a>
+        <a href="#" id="nav-reportSec" onclick="switchTab('reportSec')">📅 Leave Report</a>
+        <a href="#" id="nav-studentsSec" onclick="switchTab('studentsSec')">🎓 Students & Fees</a>
         <a href="main-website.html" class="logout-btn">Logout</a>
     </div>
 
     <div class="main-content">
+        <!-- Permanent Header -->
         <div class="header">
-            <h1>Admin Control Panel</h1>
-            <p>Finance, HR & Management System</p>
-        </div>
-
-        <div class="action-cards">
-            <div class="card">
-                <h3 style="margin:0;">👨‍🏫 Staff Admission</h3>
-                <button class="btn" onclick="openTeacherModal()">+ Add New Teacher</button>
-            </div>
-            <div class="card" style="border-top-color: #2ecc71;">
-                <h3 style="margin:0;">🎓 Student Admission</h3>
-                <button class="btn" style="background-color: #2ecc7 green;" onclick="openStudentModal()">+ Add New Student</button>
+            <div>
+                <h1 id="pageTitle">Admin Control Panel</h1>
+                <p>Finance, HR & Management System</p>
             </div>
         </div>
 
-        <div class="box-container" id="teachersSec">
-            <h3>👨‍🏫 Teacher Management (Salary & Attendance)
-                <div style="font-size: 14px; font-weight: normal;">
-                    <label>Date: </label><input type="date" id="attDate" class="date-input" onchange="loadTeachers()">
+        <!-- DASHBOARD SECTION -->
+        <div id="dashboardSec" class="content-section active">
+            
+            <!-- STATS CARDS -->
+            <div class="action-cards">
+                <div class="card" style="border-top-color: #3498db;">
+                    <h2 id="dashTeachersCount" style="margin: 0; font-size: 32px; color: #2c3e50;">0</h2>
+                    <p style="margin: 5px 0 0; color: #7f8c8d; font-weight: bold;">👨‍🏫 Total Teachers</p>
                 </div>
-            </h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Teacher Info</th>
-                        <th>Subject</th>
-                        <th>Attendance</th>
-                        <th>Salary</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="teacherTableBody">
-                    <tr><td colspan="5" style="text-align: center;">Loading teachers...</td></tr>
-                </tbody>
-            </table>
+                <div class="card" style="border-top-color: #2ecc71;">
+                    <h2 id="dashStudentsCount" style="margin: 0; font-size: 32px; color: #2c3e50;">0</h2>
+                    <p style="margin: 5px 0 0; color: #7f8c8d; font-weight: bold;">🎓 Total Students</p>
+                </div>
+                
+                <!-- Staff Absent Card -->
+                <div class="card" style="border-top-color: #e74c3c; cursor: pointer; background-color: #fff0f0;" onclick="openAbsentListModal('staff')">
+                    <h2 id="dashAbsentCount" style="margin: 0; font-size: 32px; color: #c0392b;">0</h2>
+                    <p style="margin: 5px 0 0; color: #c0392b; font-weight: bold;">⚠️ Staff Absent Today <br><small>(Click to view list)</small></p>
+                </div>
+
+                <!-- Student Absent Card -->
+                <div class="card" style="border-top-color: #e67e22; cursor: pointer; background-color: #fdf2e9;" onclick="openAbsentListModal('student')">
+                    <h2 id="dashStudentAbsentCount" style="margin: 0; font-size: 32px; color: #d35400;">0</h2>
+                    <p style="margin: 5px 0 0; color: #d35400; font-weight: bold;">⚠️ Student Absent Today <br><small>(Click to view list)</small></p>
+                </div>
+            </div>
+
+            <div class="action-cards">
+                <div class="card">
+                    <h3 style="margin:0;">👨‍🏫 Staff Admission</h3>
+                    <button class="btn" onclick="openTeacherModal()">+ Add New Teacher</button>
+                </div>
+                <div class="card" style="border-top-color: #2ecc71;">
+                    <h3 style="margin:0;">🎓 Student Admission</h3>
+                    <button class="btn" style="background-color: #2ecc71;" onclick="openStudentModal()">+ Add New Student</button>
+                </div>
+            </div>
         </div>
 
-        <div class="box-container" id="reportSec" style="border-top: 4px solid #f39c12;">
+        <!-- PUBLIC NOTICE SECTION -->
+        <div id="noticeSec" class="content-section box-container" style="border-top: 4px solid #9b59b6;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="margin:0; border:none;">📢 Notice Board & Updates</h3>
+                <button class="btn" style="width: auto; margin:0; background-color: #9b59b6;" onclick="openNoticeModal()">+ Post New Notice</button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead><tr><th>Date</th><th>Category</th><th>Notice Info</th><th>Action</th></tr></thead>
+                    <tbody id="noticeTableBody"><tr><td colspan="4" style="text-align: center;">Loading notices...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- HR & ATTENDANCE SECTION -->
+        <div id="teachersSec" class="content-section box-container">
+            <h3 style="border:none; margin-bottom:0;">👨‍🏫 Teacher Management (Salary & Attendance)</h3>
+            
+            <div class="filter-panel" style="margin-top:10px;">
+                <div class="form-group">
+                    <label>📅 Select Date</label>
+                    <input type="date" id="attDate" class="date-input" onchange="loadTeachers()" style="width:100%; box-sizing:border-box;">
+                </div>
+                <div class="form-group" style="display:flex; gap:10px; align-items:flex-end; flex:2;">
+                    <!-- SAVE BUTTON FOR TEACHERS -->
+                    <button class="btn" id="saveTeacherAttBtn" style="margin:0; background-color:#2ecc71;" onclick="saveBulkTeacherAttendance()">💾 Save Attendance</button>
+                    <!-- GLOBAL HOLIDAY BUTTON -->
+                    <button class="btn" style="margin:0; background-color:#e74c3c;" onclick="declareFullSchoolHoliday('attDate')">🌴 Declare School Holiday</button>
+                </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead><tr><th>Teacher Info</th><th>Subject</th><th>Attendance</th><th>Salary</th><th>Actions</th></tr></thead>
+                    <tbody id="teacherTableBody"><tr><td colspan="5" style="text-align: center;">Loading teachers...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- STUDENT ATTENDANCE SECTION -->
+        <div id="studentAttSec" class="content-section box-container" style="border-top: 4px solid #e67e22;">
+            <h3 style="border:none; margin-bottom:0;">📝 Daily Student Attendance</h3>
+            
+            <!-- ATTENDANCE FILTERS & SAVE BUTTONS -->
+            <div class="filter-panel" style="margin-top:10px;">
+                <div class="form-group">
+                    <label>📅 Select Date</label>
+                    <input type="date" id="sAttDate" class="date-input" onchange="loadStudentAttendance()" style="width:100%; box-sizing:border-box;">
+                </div>
+                <div class="form-group">
+                    <label>🏫 Class Filter</label>
+                    <select id="attClassFilter" onchange="loadStudentAttendance()">
+                        <option value="All">All Classes</option>
+                        <option value="Class 8">Class 8</option>
+                        <option value="Class 9">Class 9</option>
+                        <option value="Class 10">Class 10</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>🏷️ Section Filter</label>
+                    <select id="attSectionFilter" onchange="loadStudentAttendance()">
+                        <option value="All">All Sections</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="N/A">N/A</option>
+                    </select>
+                </div>
+                <div class="form-group" style="display:flex; gap:10px; align-items:flex-end; flex:2;">
+                    <!-- SAVE BUTTON FOR STUDENTS -->
+                    <button class="btn" id="saveStudentAttBtn" style="margin:0; background-color:#2ecc71;" onclick="saveBulkStudentAttendance()">💾 Save Attendance</button>
+                    <!-- GLOBAL HOLIDAY BUTTON -->
+                    <button class="btn" style="margin:0; background-color:#e74c3c;" onclick="declareFullSchoolHoliday('sAttDate')">🌴 Declare School Holiday</button>
+                </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead><tr><th>Roll No</th><th>Student Name</th><th>Class & Sec</th><th>Attendance Status</th></tr></thead>
+                    <tbody id="studentAttTableBody"><tr><td colspan="4" style="text-align: center;">Loading student attendance...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- LEAVE REPORT SECTION -->
+        <div id="reportSec" class="content-section box-container" style="border-top: 4px solid #f39c12;">
             <h3>📅 Teacher Absence & Leave Report</h3>
-            <div style="display: flex; gap: 15px; margin-bottom: 15px; align-items: flex-end;">
-                <div><label style="font-size:12px;">Start Date</label><input type="date" id="reportStartDate" class="date-input"></div>
-                <div><label style="font-size:12px;">End Date</label><input type="date" id="reportEndDate" class="date-input"></div>
-                <button class="btn" onclick="generateReport()" style="margin-top:0; width:auto; background-color:#f39c12;">Generate Report</button>
+            <div class="report-filters" style="display: flex; gap: 15px; margin-bottom: 15px; align-items: flex-end; flex-wrap: wrap;">
+                <div style="flex: 1;"><label style="font-size:12px; display:block;">Start Date</label><input type="date" id="reportStartDate" class="date-input" style="width:100%; box-sizing:border-box;"></div>
+                <div style="flex: 1;"><label style="font-size:12px; display:block;">End Date</label><input type="date" id="reportEndDate" class="date-input" style="width:100%; box-sizing:border-box;"></div>
+                <button class="btn" onclick="generateReport()" style="margin-top:0; width:auto; background-color:#f39c12; flex:1;">Generate Report</button>
             </div>
-            <table>
-                <thead><tr><th>Date</th><th>Teacher Name</th><th>Status</th></tr></thead>
-                <tbody id="reportTableBody"><tr><td colspan="3" style="text-align: center; color:#888;">Select dates and click Generate.</td></tr></tbody>
-            </table>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead><tr><th>Date</th><th>Teacher Name</th><th>Status</th></tr></thead>
+                    <tbody id="reportTableBody"><tr><td colspan="3" style="text-align: center; color:#888;">Select dates and click Generate.</td></tr></tbody>
+                </table>
+            </div>
         </div>
 
-        <div class="box-container" id="studentsSec">
-            <h3>🎓 Student Management (Full Details & Fees)</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Roll No</th>
-                        <th>Student Info</th>
-                        <th>Class & Sec</th>
-                        <th>Fee Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="studentTableBody">
-                    <tr><td colspan="5" style="text-align: center;">Loading students...</td></tr>
-                </tbody>
-            </table>
+        <!-- STUDENTS SECTION (FEES, SEARCH & FILTERS) -->
+        <div id="studentsSec" class="content-section box-container">
+            <h3>🎓 Student Management & Fees Tracker</h3>
+            
+            <div class="filter-panel">
+                <div class="form-group" style="flex: 2; min-width: 220px;">
+                    <label>🔍 Search Student</label>
+                    <input type="text" id="searchStudentInput" placeholder="Name or Roll No..." onkeyup="renderStudents()" style="background:#fff; border:1px solid #bdc3c7;">
+                </div>
+                
+                <div class="form-group">
+                    <label>🏫 Class</label>
+                    <select id="classFilter" onchange="renderStudents()">
+                        <option value="All">All</option>
+                        <option value="Class 8">Class 8</option>
+                        <option value="Class 9">Class 9</option>
+                        <option value="Class 10">Class 10</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>🏷️ Section</label>
+                    <select id="sectionFilter" onchange="renderStudents()">
+                        <option value="All">All</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="N/A">N/A</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>📅 Fee Month</label>
+                    <select id="feeMonthFilter" onchange="renderStudents()">
+                        <option value="January">January</option><option value="February">February</option>
+                        <option value="March">March</option><option value="April">April</option>
+                        <option value="May">May</option><option value="June">June</option>
+                        <option value="July">July</option><option value="August">August</option>
+                        <option value="September">September</option><option value="October">October</option>
+                        <option value="November">November</option><option value="December">December</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>🎯 Status</label>
+                    <select id="feeStatusFilter" onchange="renderStudents()">
+                        <option value="All">Show All</option>
+                        <option value="Paid">✅ Paid</option>
+                        <option value="Unpaid">❌ Unpaid</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Roll No</th>
+                            <th>Student Info</th>
+                            <th>Parents & Contact</th>
+                            <th>Class & Sec</th>
+                            <th>Fee Status (<span id="tableMonthLabel"></span>)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                        <tr><td colspan="6" style="text-align: center;">Loading students...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="teacherModal">
+    <!-- DYNAMIC ABSENT LIST MODAL -->
+    <div class="modal-overlay" id="absentListModal">
+        <div class="modal-box" id="absentModalBox">
+            <span class="close-btn" onclick="closeAbsentListModal()">&times;</span>
+            <h3 id="absentModalTitle" style="margin-top: 0; text-align:center; border-bottom: 2px solid #eee; padding-bottom:10px;">⚠️ Today's Absentees</h3>
+            <ul id="absentNamesUl" style="list-style-type: none; padding: 0; line-height: 2; font-size: 16px; color:#333;">
+                <!-- Content injected dynamically via JS -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- FEE PAYMENT MODAL -->
+    <div class="modal-overlay" id="feeModal">
         <div class="modal-box">
-            <span class="close-btn" onclick="closeTeacherModal()">&times;</span>
-            <h3 style="margin-top: 0; text-align:center;">Register Teacher</h3>
-            <form id="teacherForm" onsubmit="addTeacher(event)">
-                <div class="form-group"><label>Teacher Name</label><input type="text" id="tName" required></div>
-                <div class="form-group"><label>Subject</label><input type="text" id="tSubject" required></div>
-                <div class="form-group"><label>Login Email</label><input type="email" id="tEmail" required></div>
-                <div class="form-group"><label>Password</label><input type="password" id="tPassword" required></div>
-                <button type="submit" class="submit-btn" id="tBtn">Save Teacher</button>
+            <span class="close-btn" onclick="closeFeeModal()">&times;</span>
+            <h3 style="margin-top: 0; text-align:center; color:#2c3e50;">💰 Record Fee Payment</h3>
+            <form id="feeForm" onsubmit="saveFeePayment(event)">
+                <input type="hidden" id="feeStudentId">
+                <div class="form-group"><label>Student Name</label><input type="text" id="feeStudentName" disabled style="background:#eee;"></div>
+                <div class="form-group"><label>Paying for Month</label><input type="text" id="feeMonthLabel" disabled style="background:#eee; font-weight:bold;"></div>
+                <div class="form-group"><label>Date of Payment</label><input type="date" id="feeDate" required></div>
+                <button type="submit" class="submit-btn" id="fBtn" style="background-color: #3498db;">Mark as Paid ✅</button>
             </form>
         </div>
     </div>
 
+    <!-- NOTICE MODAL -->
+    <div class="modal-overlay" id="noticeModal">
+        <div class="modal-box">
+            <span class="close-btn" onclick="closeNoticeModal()">&times;</span>
+            <h3 style="margin-top: 0; text-align:center; color:#9b59b6;">📢 Publish Notice</h3>
+            <form id="noticeForm" onsubmit="addNotice(event)">
+                <div class="form-group"><label>Notice Title / Subject</label><input type="text" id="nTitle" required placeholder="e.g. Summer Vacation"></div>
+                <div class="form-group"><label>Category</label>
+                    <select id="nCategory" required>
+                        <option value="Holiday">Holiday 🌴</option><option value="Exam">Exam 📝</option><option value="Sports">Sports Activities ⚽</option><option value="Meeting">Parents Meeting 👥</option><option value="Other">Other 📌</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Date for Notice</label><input type="date" id="nDate" required></div>
+                <div class="form-group"><label>Description</label><textarea id="nDesc" rows="3" required placeholder="Enter details..."></textarea></div>
+                <button type="submit" class="submit-btn" id="nBtn" style="background-color: #9b59b6;">Publish Notice</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- STUDENT MODAL -->
     <div class="modal-overlay" id="studentModal">
-        <div class="modal-box">
+        <div class="modal-box large">
             <span class="close-btn" onclick="closeStudentModal()">&times;</span>
-            <h3 style="margin-top: 0; text-align:center;">Register Student</h3>
+            <h3 style="margin-top: 0; text-align:center; color:#2ecc71;">🎓 Register New Student</h3>
             <form id="studentForm" onsubmit="addStudent(event)">
-                <div class="form-group"><label>Student Name</label><input type="text" id="sName" required></div>
-                <div style="display: flex; gap: 10px;">
-                    <div class="form-group" style="flex: 1;"><label>Class</label>
-                        <select id="sClass" required>
-                            <option value="Class 8">Class 8</option>
-                            <option value="Class 9">Class 9</option>
-                            <option value="Class 10">Class 10</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="flex: 1;"><label>Section</label>
-                        <select id="sSection">
-                            <option value="A">A</option><option value="B">B</option><option value="N/A">N/A</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group"><label>Roll Number</label><input type="number" id="sRoll" required></div>
-                <div class="form-group"><label>Login Email</label><input type="email" id="sEmail" required></div>
-                <div class="form-group"><label>Password</label><input type="password" id="sPassword" required></div>
-                <button type="submit" class="submit-btn" id="sBtn" style="background-color: #2ecc71;">Save Student</button>
+                <fieldset><legend>Personal & Academic Info</legend>
+                    <div class="grid-2"><div class="form-group"><label>Student Name</label><input type="text" id="sName" required></div><div class="form-group"><label>Date of Birth</label><input type="date" id="sDob" required></div></div>
+                    <div class="grid-3"><div class="form-group"><label>Class</label><select id="sClass" required><option value="Class 8">Class 8</option><option value="Class 9">Class 9</option><option value="Class 10">Class 10</option></select></div><div class="form-group"><label>Section</label><select id="sSection"><option value="A">A</option><option value="B">B</option><option value="N/A">N/A</option></select></div><div class="form-group"><label>Roll Number</label><input type="number" id="sRoll" required></div></div>
+                </fieldset>
+                <fieldset><legend>Family & Contact Details</legend>
+                    <div class="grid-2"><div class="form-group"><label>Father's Name</label><input type="text" id="sFather" required></div><div class="form-group"><label>Mother's Name</label><input type="text" id="sMother" required></div><div class="form-group"><label>Parent Mobile No.</label><input type="tel" id="sMobile" required></div><div class="form-group"><label>Student Login Email</label><input type="email" id="sEmail" required></div></div>
+                    <div class="form-group"><label>Login Password</label><input type="password" id="sPassword" required></div>
+                </fieldset>
+                <fieldset><legend>Permanent Address</legend>
+                    <div class="grid-2"><div class="form-group"><label>Village / Town</label><input type="text" id="sPermVill" required></div><div class="form-group"><label>Post Office (PO)</label><input type="text" id="sPermPO" required></div></div>
+                    <div class="grid-3"><div class="form-group"><label>District</label><input type="text" id="sPermDist" required></div><div class="form-group"><label>State</label><input type="text" id="sPermState" required></div><div class="form-group"><label>PIN Code</label><input type="number" id="sPermPin" required></div></div>
+                </fieldset>
+                <fieldset><legend>Present Address</legend>
+                    <div class="checkbox-container"><input type="checkbox" id="sSameAddress" onchange="copyAddress('add')"><label for="sSameAddress" style="margin:0;">Same as Permanent Address</label></div>
+                    <div class="grid-2"><div class="form-group"><label>Village / Town</label><input type="text" id="sPresVill" required></div><div class="form-group"><label>Post Office (PO)</label><input type="text" id="sPresPO" required></div></div>
+                    <div class="grid-3"><div class="form-group"><label>District</label><input type="text" id="sPresDist" required></div><div class="form-group"><label>State</label><input type="text" id="sPresState" required></div><div class="form-group"><label>PIN Code</label><input type="number" id="sPresPin" required></div></div>
+                </fieldset>
+                <button type="submit" class="submit-btn" id="sBtn" style="background-color: #2ecc71;">Save Student Record</button>
             </form>
         </div>
     </div>
 
-    <div class="modal-overlay" id="editTeacherModal">
-        <div class="modal-box">
-            <span class="close-btn" onclick="closeEditTeacherModal()">&times;</span>
-            <h3 style="margin-top: 0; text-align:center;">✏️ Edit Teacher Details</h3>
-            <form id="editTeacherForm" onsubmit="saveEditTeacher(event)">
-                <input type="hidden" id="etId">
-                <div class="form-group"><label>Teacher Name</label><input type="text" id="etName" required></div>
-                <div class="form-group"><label>Subject</label><input type="text" id="etSubject" required></div>
-                <div class="form-group"><label>Login Email</label><input type="email" id="etEmail" required></div>
-                <button type="submit" class="submit-btn">Update Details</button>
-            </form>
-        </div>
-    </div>
+    <!-- TEACHER & EDIT MODALS -->
+    <div class="modal-overlay" id="teacherModal"><div class="modal-box"><span class="close-btn" onclick="closeTeacherModal()">&times;</span><h3 style="margin-top: 0; text-align:center;">Register Teacher</h3><form id="teacherForm" onsubmit="addTeacher(event)"><div class="form-group"><label>Teacher Name</label><input type="text" id="tName" required></div><div class="form-group"><label>Subject</label><input type="text" id="tSubject" required></div><div class="form-group"><label>Login Email</label><input type="email" id="tEmail" required></div><div class="form-group"><label>Password</label><input type="password" id="tPassword" required></div><button type="submit" class="submit-btn" id="tBtn">Save Teacher</button></form></div></div>
+    
+    <div class="modal-overlay" id="editTeacherModal"><div class="modal-box"><span class="close-btn" onclick="closeEditTeacherModal()">&times;</span><h3 style="margin-top: 0; text-align:center;">✏️ Edit Teacher</h3><form id="editTeacherForm" onsubmit="saveEditTeacher(event)"><input type="hidden" id="etId"><div class="form-group"><label>Teacher Name</label><input type="text" id="etName" required></div><div class="form-group"><label>Subject</label><input type="text" id="etSubject" required></div><div class="form-group"><label>Login Email</label><input type="email" id="etEmail" required></div><button type="submit" class="submit-btn">Update Details</button></form></div></div>
 
-    <div class="modal-overlay" id="editStudentModal">
-        <div class="modal-box">
-            <span class="close-btn" onclick="closeEditStudentModal()">&times;</span>
-            <h3 style="margin-top: 0; text-align:center;">✏️ Edit Student Details</h3>
-            <form id="editStudentForm" onsubmit="saveEditStudent(event)">
-                <input type="hidden" id="esId">
-                <div class="form-group"><label>Student Name</label><input type="text" id="esName" required></div>
-                <div style="display: flex; gap: 10px;">
-                    <div class="form-group" style="flex: 1;"><label>Class</label>
-                        <select id="esClass" required>
-                            <option value="Class 8">Class 8</option><option value="Class 9">Class 9</option><option value="Class 10">Class 10</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="flex: 1;"><label>Section</label>
-                        <select id="esSection">
-                            <option value="A">A</option><option value="B">B</option><option value="N/A">N/A</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group"><label>Roll Number</label><input type="number" id="esRoll" required></div>
-                <div class="form-group"><label>Login Email</label><input type="email" id="esEmail" required></div>
-                <button type="submit" class="submit-btn" style="background-color: #2ecc71;">Update Details</button>
-            </form>
-        </div>
-    </div>
+    <div class="modal-overlay" id="editStudentModal"><div class="modal-box large"><span class="close-btn" onclick="closeEditStudentModal()">&times;</span><h3 style="margin-top: 0; text-align:center; color:#f39c12;">✏️ Edit Student Details</h3><form id="editStudentForm" onsubmit="saveEditStudent(event)"><input type="hidden" id="esId"><fieldset><legend>Personal & Academic Info</legend><div class="grid-2"><div class="form-group"><label>Student Name</label><input type="text" id="esName" required></div><div class="form-group"><label>Date of Birth</label><input type="date" id="esDob" required></div></div><div class="grid-3"><div class="form-group"><label>Class</label><select id="esClass" required><option value="Class 8">Class 8</option><option value="Class 9">Class 9</option><option value="Class 10">Class 10</option></select></div><div class="form-group"><label>Section</label><select id="esSection"><option value="A">A</option><option value="B">B</option><option value="N/A">N/A</option></select></div><div class="form-group"><label>Roll Number</label><input type="number" id="esRoll" required></div></div></fieldset><fieldset><legend>Family & Contact Details</legend><div class="grid-2"><div class="form-group"><label>Father's Name</label><input type="text" id="esFather" required></div><div class="form-group"><label>Mother's Name</label><input type="text" id="esMother" required></div><div class="form-group"><label>Parent Mobile No.</label><input type="tel" id="esMobile" required></div><div class="form-group"><label>Student Login Email</label><input type="email" id="esEmail" required></div></div></fieldset><fieldset><legend>Permanent Address</legend><div class="grid-2"><div class="form-group"><label>Village / Town</label><input type="text" id="esPermVill" required></div><div class="form-group"><label>Post Office (PO)</label><input type="text" id="esPermPO" required></div></div><div class="grid-3"><div class="form-group"><label>District</label><input type="text" id="esPermDist" required></div><div class="form-group"><label>State</label><input type="text" id="esPermState" required></div><div class="form-group"><label>PIN Code</label><input type="number" id="esPermPin" required></div></div></fieldset><fieldset><legend>Present Address</legend><div class="checkbox-container"><input type="checkbox" id="esSameAddress" onchange="copyAddress('edit')"><label for="esSameAddress" style="margin:0;">Same as Permanent Address</label></div><div class="grid-2"><div class="form-group"><label>Village / Town</label><input type="text" id="esPresVill" required></div><div class="form-group"><label>Post Office (PO)</label><input type="text" id="esPresPO" required></div></div><div class="grid-3"><div class="form-group"><label>District</label><input type="text" id="esPresDist" required></div><div class="form-group"><label>State</label><input type="text" id="esPresState" required></div><div class="form-group"><label>PIN Code</label><input type="number" id="esPresPin" required></div></div></fieldset><button type="submit" class="submit-btn" style="background-color: #f39c12;">Update Details</button></form></div></div>
 
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, query, where, deleteField } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDg4HlG4M9lgqYSjV-fdqKacN94QNgfvOY",
@@ -225,7 +432,42 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Modals Controls
+        window.allStudentsList = []; 
+        window.studentDataMap = {};
+        window.todayStaffAbsentList = []; 
+        window.todayStudentAbsentList = []; 
+
+        // --- TAB NAVIGATION LOGIC ---
+        window.switchTab = function(tabId) {
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.sidebar a').forEach(link => link.classList.remove('active-link'));
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('nav-' + tabId).classList.add('active-link');
+
+            const titles = { 
+                'dashboardSec': 'Admin Control Panel', 
+                'noticeSec': 'Public Notice Board', 
+                'teachersSec': 'HR & Staff Management', 
+                'studentAttSec': 'Student Attendance Tracker',
+                'reportSec': 'Leave & Absence Records', 
+                'studentsSec': 'Student Management' 
+            };
+            document.getElementById('pageTitle').innerText = titles[tabId];
+
+            if(window.innerWidth <= 850) {
+                document.querySelector('.sidebar').classList.remove('active');
+                document.querySelector('.sidebar-overlay').classList.remove('active');
+            }
+        };
+
+        window.toggleSidebar = function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.sidebar-overlay').classList.toggle('active');
+        }
+
+        window.openNoticeModal = () => { document.getElementById('noticeModal').style.display = 'flex'; document.getElementById('nDate').value = new Date().toISOString().split('T')[0]; }
+        window.closeNoticeModal = () => document.getElementById('noticeModal').style.display = 'none';
+
         window.openTeacherModal = () => document.getElementById('teacherModal').style.display = 'flex';
         window.closeTeacherModal = () => document.getElementById('teacherModal').style.display = 'none';
         window.openStudentModal = () => document.getElementById('studentModal').style.display = 'flex';
@@ -236,180 +478,442 @@
         window.openEditStudentModal = () => document.getElementById('editStudentModal').style.display = 'flex';
         window.closeEditStudentModal = () => document.getElementById('editStudentModal').style.display = 'none';
 
+        window.openAbsentListModal = function(type) {
+            const ul = document.getElementById('absentNamesUl');
+            const title = document.getElementById('absentModalTitle');
+            const modalBox = document.getElementById('absentModalBox');
+            
+            if(type === 'staff') {
+                title.innerHTML = '⚠️ Today\'s Absent Staff';
+                title.style.color = '#c0392b';
+                modalBox.classList.remove('large'); 
+
+                if(window.todayStaffAbsentList.length === 0) {
+                    ul.innerHTML = '<li style="text-align:center; color:#2ecc71; font-weight:bold;">Great! Everyone is present today. 🎉</li>';
+                } else {
+                    ul.innerHTML = window.todayStaffAbsentList.map(name => `<li>🔴 ${name}</li>`).join('');
+                }
+            } else if(type === 'student') {
+                title.innerHTML = '⚠️ Absent Students Full Details';
+                title.style.color = '#d35400';
+                modalBox.classList.add('large'); 
+
+                if(window.todayStudentAbsentList.length === 0) {
+                    ul.innerHTML = '<li style="text-align:center; color:#2ecc71; font-weight:bold;">Great! Everyone is present today. 🎉</li>';
+                } else {
+                    let html = '<div style="overflow-x: auto;"><table style="width:100%; border-collapse: collapse; font-size:14px; text-align:left; margin-top:10px;">';
+                    html += '<tr style="background:#fdf2e9;"><th style="padding:10px; border-bottom:2px solid #ccc;">Roll & Student Name</th><th style="padding:10px; border-bottom:2px solid #ccc;">Class & Sec</th><th style="padding:10px; border-bottom:2px solid #ccc;">Parents & Contact</th><th style="padding:10px; border-bottom:2px solid #ccc;">Status</th></tr>';
+                    
+                    window.todayStudentAbsentList.forEach(item => {
+                        const s = window.studentDataMap[item.id]; 
+                        if(s) {
+                            let secDisplay = s.section && s.section !== "N/A" ? ` - Sec ${s.section}` : '';
+                            let father = s.fatherName || "N/A"; 
+                            let mobile = s.mobile || "N/A";
+                            
+                            html += `<tr style="border-bottom:1px solid #eee;">
+                                <td style="padding:10px;"><strong>${s.name}</strong><br><small style="color:#666;">Roll No: ${s.rollNumber}</small></td>
+                                <td style="padding:10px;">${s.className}${secDisplay}</td>
+                                <td style="padding:10px;"><small>F: ${father}<br>📞 ${mobile}</small></td>
+                                <td style="padding:10px; color:${item.status === 'Absent' ? 'red' : '#f39c12'}; font-weight:bold;">${item.status}</td>
+                            </tr>`;
+                        } else {
+                            html += `<tr style="border-bottom:1px solid #eee;"><td style="padding:10px;" colspan="4"><strong>${item.name}</strong> - ${item.className} (${item.status})</td></tr>`;
+                        }
+                    });
+                    html += '</table></div>';
+                    ul.innerHTML = html;
+                }
+            }
+            document.getElementById('absentListModal').style.display = 'flex';
+        }
+        window.closeAbsentListModal = () => document.getElementById('absentListModal').style.display = 'none';
+
+        window.openFeeModal = function(id, name, month) {
+            document.getElementById('feeStudentId').value = id;
+            document.getElementById('feeStudentName').value = name;
+            document.getElementById('feeMonthLabel').value = month;
+            document.getElementById('feeDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('feeModal').style.display = 'flex';
+        }
+        window.closeFeeModal = () => document.getElementById('feeModal').style.display = 'none';
+
         window.onload = function() { 
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('attDate').value = today;
-            document.getElementById('reportStartDate').value = today;
-            document.getElementById('reportEndDate').value = today;
-            loadTeachers(); loadStudents(); 
+            const todayStr = new Date().toISOString().split('T')[0];
+            document.getElementById('attDate').value = todayStr;
+            document.getElementById('sAttDate').value = todayStr;
+            document.getElementById('reportStartDate').value = todayStr;
+            document.getElementById('reportEndDate').value = todayStr;
+
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            document.getElementById('feeMonthFilter').value = monthNames[new Date().getMonth()];
+
+            loadDashboardStats();
+            loadTeachers(); 
+            loadStudents().then(() => loadStudentAttendance()); 
+            loadNotices();
         }
 
-        // FETCH TEACHERS
+        window.loadDashboardStats = async function() {
+            try {
+                const tSnap = await getDocs(collection(db, "teachers"));
+                document.getElementById('dashTeachersCount').innerText = tSnap.size;
+
+                const sSnap = await getDocs(collection(db, "students"));
+                document.getElementById('dashStudentsCount').innerText = sSnap.size;
+
+                const todayStr = new Date().toISOString().split('T')[0];
+                const attSnap = await getDocs(query(collection(db, "teacher_attendance"), where("date", "==", todayStr)));
+                
+                let tAbsentCount = 0; window.todayStaffAbsentList = [];
+                attSnap.forEach(doc => {
+                    const data = doc.data();
+                    if(data.status === 'Absent' || data.status === 'Leave') {
+                        tAbsentCount++; window.todayStaffAbsentList.push(`${data.teacherName} (${data.status})`);
+                    }
+                });
+                document.getElementById('dashAbsentCount').innerText = tAbsentCount;
+
+                const sAttSnap = await getDocs(query(collection(db, "student_attendance"), where("date", "==", todayStr)));
+                let sAbsentCount = 0; window.todayStudentAbsentList = [];
+                sAttSnap.forEach(doc => {
+                    const data = doc.data();
+                    if(data.status === 'Absent' || data.status === 'Leave') {
+                        sAbsentCount++; 
+                        window.todayStudentAbsentList.push({ 
+                            id: data.studentId, 
+                            name: data.studentName, 
+                            className: data.className, 
+                            status: data.status 
+                        });
+                    }
+                });
+                document.getElementById('dashStudentAbsentCount').innerText = sAbsentCount;
+
+            } catch (e) { console.error("Error loading stats:", e); }
+        }
+
+
+        // ==========================================
+        //  ATTENDANCE LOGIC (SAVE BUTTON & HOLIDAY)
+        // ==========================================
+
+        // Save BULK Student Attendance
+        window.saveBulkStudentAttendance = async function() {
+            const btn = document.getElementById('saveStudentAttBtn');
+            btn.innerText = "⏳ Saving...";
+            const dateVal = document.getElementById('sAttDate').value;
+            const selects = document.querySelectorAll('.student-att-select');
+            
+            let promises = [];
+            selects.forEach(sel => {
+                const sId = sel.getAttribute('data-id');
+                const sName = sel.getAttribute('data-name');
+                const sClass = sel.getAttribute('data-class');
+                const statusValue = sel.value;
+                
+                if(statusValue !== "Not Marked") {
+                    promises.push(setDoc(doc(db, "student_attendance", `${sId}_${dateVal}`), {
+                        studentId: sId, studentName: sName, className: sClass, date: dateVal, status: statusValue
+                    }));
+                }
+            });
+
+            try {
+                await Promise.all(promises);
+                alert("✅ Student Attendance Saved Successfully!");
+                if(dateVal === new Date().toISOString().split('T')[0]) loadDashboardStats();
+            } catch(e) {
+                alert("Error saving attendance: " + e.message);
+            } finally {
+                btn.innerText = "💾 Save Attendance";
+            }
+        }
+
+        // Save BULK Teacher Attendance
+        window.saveBulkTeacherAttendance = async function() {
+            const btn = document.getElementById('saveTeacherAttBtn');
+            btn.innerText = "⏳ Saving...";
+            const dateVal = document.getElementById('attDate').value;
+            const selects = document.querySelectorAll('.teacher-att-select');
+            
+            let promises = [];
+            selects.forEach(sel => {
+                const tId = sel.getAttribute('data-id');
+                const tName = sel.getAttribute('data-name');
+                const statusValue = sel.value;
+                
+                if(statusValue !== "Not Marked") {
+                    promises.push(setDoc(doc(db, "teacher_attendance", `${tId}_${dateVal}`), {
+                        teacherId: tId, teacherName: tName, date: dateVal, status: statusValue
+                    }));
+                }
+            });
+
+            try {
+                await Promise.all(promises);
+                alert("✅ Teacher Attendance Saved Successfully!");
+                if(dateVal === new Date().toISOString().split('T')[0]) loadDashboardStats();
+            } catch(e) {
+                alert("Error saving attendance: " + e.message);
+            } finally {
+                btn.innerText = "💾 Save Attendance";
+            }
+        }
+
+        // GLOBAL HOLIDAY SCRIPT (Updates Database Directly for everyone)
+        window.declareFullSchoolHoliday = async function(dateInputId) {
+            const dateVal = document.getElementById(dateInputId).value;
+            if(!confirm(`🚨 WARNING: Are you sure you want to declare a Full School Holiday for ${dateVal}?\n\nThis will mark 'Holiday 🌴' for ALL Teachers and ALL Students instantly.`)) return;
+
+            try {
+                let promises = [];
+                
+                // 1. Mark All Students
+                if(window.allStudentsList.length === 0) {
+                    const snap = await getDocs(collection(db, "students"));
+                    window.allStudentsList = [];
+                    snap.forEach(doc => { const d=doc.data(); d.id=doc.id; window.allStudentsList.push(d); });
+                }
+                window.allStudentsList.forEach(s => {
+                    promises.push(setDoc(doc(db, "student_attendance", `${s.id}_${dateVal}`), {
+                        studentId: s.id, studentName: s.name, className: s.className, date: dateVal, status: "Holiday"
+                    }));
+                });
+
+                // 2. Mark All Teachers
+                const tSnap = await getDocs(collection(db, "teachers"));
+                tSnap.forEach(tDoc => {
+                    const t = tDoc.data();
+                    promises.push(setDoc(doc(db, "teacher_attendance", `${tDoc.id}_${dateVal}`), {
+                        teacherId: tDoc.id, teacherName: t.name, date: dateVal, status: "Holiday"
+                    }));
+                });
+
+                await Promise.all(promises);
+                alert(`🎉 Success! Full School Holiday marked for ${dateVal}.`);
+                
+                // Reload UI
+                loadTeachers();
+                loadStudentAttendance();
+                if(dateVal === new Date().toISOString().split('T')[0]) loadDashboardStats();
+
+            } catch(e) {
+                alert("Error declaring holiday: " + e.message);
+            }
+        }
+
+        // Load Student Attendance (Modified to stop auto-save onchange)
+        window.loadStudentAttendance = async function() {
+            const tbody = document.getElementById('studentAttTableBody');
+            const selectedDate = document.getElementById('sAttDate').value;
+            const classFilter = document.getElementById('attClassFilter').value;
+            const sectionFilter = document.getElementById('attSectionFilter').value;
+
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Loading...</td></tr>';
+            
+            try {
+                if(window.allStudentsList.length === 0) {
+                    const snap = await getDocs(collection(db, "students"));
+                    window.allStudentsList = [];
+                    snap.forEach(doc => { const d=doc.data(); d.id=doc.id; window.allStudentsList.push(d); });
+                }
+
+                const attSnapshot = await getDocs(query(collection(db, "student_attendance"), where("date", "==", selectedDate)));
+                let attMap = {};
+                attSnapshot.forEach(doc => { attMap[doc.data().studentId] = doc.data().status; });
+
+                if (window.allStudentsList.length === 0) { tbody.innerHTML = '<tr><td colspan="4">No students registered yet.</td></tr>'; return; }
+                tbody.innerHTML = '';
+                let html = '';
+
+                window.allStudentsList.forEach((s) => {
+                    if(classFilter !== 'All' && s.className !== classFilter) return;
+                    if(sectionFilter !== 'All' && s.section !== sectionFilter) return;
+
+                    let currentStatus = attMap[s.id] || 'Not Marked';
+                    
+                    // ONCHANGE HATA DIYA GAYA HAI AUR DATA ATTR ADD KIYE HAIN
+                    let attSelect = `
+                    <select class="att-select student-att-select" data-id="${s.id}" data-name="${s.name}" data-class="${s.className}">
+                        <option value="Not Marked" ${currentStatus==='Not Marked'?'selected':''}>Not Marked</option>
+                        <option value="Present" ${currentStatus==='Present'?'selected':''}>Present</option>
+                        <option value="Absent" ${currentStatus==='Absent'?'selected':''}>Absent</option>
+                        <option value="Leave" ${currentStatus==='Leave'?'selected':''}>Leave</option>
+                        <option value="Holiday" ${currentStatus==='Holiday'?'selected':''}>Holiday 🌴</option>
+                    </select>`;
+                    
+                    let secDisplay = s.section && s.section !== "N/A" ? ` - Sec ${s.section}` : '';
+                    html += `<tr>
+                        <td><strong>${s.rollNumber}</strong></td>
+                        <td><strong>${s.name}</strong></td>
+                        <td>${s.className}${secDisplay}</td>
+                        <td>${attSelect}</td>
+                    </tr>`;
+                });
+
+                tbody.innerHTML = html === '' ? `<tr><td colspan="4" style="text-align: center; color: #888;">No students match the current filter.</td></tr>` : html;
+            } catch(e) { console.error(e); }
+        }
+
+        // Load Teacher Attendance (Modified to stop auto-save onchange)
         window.loadTeachers = async function() {
             const tbody = document.getElementById('teacherTableBody');
             const selectedDate = document.getElementById('attDate').value;
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Loading...</td></tr>';
-            
             try {
                 const querySnapshot = await getDocs(collection(db, "teachers"));
                 const attSnapshot = await getDocs(query(collection(db, "teacher_attendance"), where("date", "==", selectedDate)));
-                
-                let attMap = {};
-                attSnapshot.forEach(doc => { attMap[doc.data().teacherId] = doc.data().status; });
-
+                let attMap = {}; attSnapshot.forEach(doc => { attMap[doc.data().teacherId] = doc.data().status; });
                 if (querySnapshot.empty) { tbody.innerHTML = '<tr><td colspan="5">No teachers.</td></tr>'; return; }
                 tbody.innerHTML = '';
 
                 querySnapshot.forEach((record) => {
-                    const t = record.data();
-                    const id = record.id;
+                    const t = record.data(); const id = record.id;
                     let currentStatus = attMap[id] || 'Not Marked';
                     let salaryStatus = t.salaryPaid ? `<button onclick="updateFinance('teachers', '${id}', 'salaryPaid', false)" class="badge-paid">Paid ✅</button>` : `<button onclick="updateFinance('teachers', '${id}', 'salaryPaid', true)" class="badge-unpaid">Unpaid ❌</button>`;
                     
-                    let attSelect = `<select class="att-select" onchange="markDateAttendance('${id}', '${t.name}', this.value)"><option value="Not Marked" ${currentStatus==='Not Marked'?'selected':''}>Not Marked</option><option value="Present" ${currentStatus==='Present'?'selected':''}>Present</option><option value="Absent" ${currentStatus==='Absent'?'selected':''}>Absent</option><option value="Leave" ${currentStatus==='Leave'?'selected':''}>Leave</option></select>`;
-
-                    tbody.innerHTML += `<tr>
-                        <td><strong>${t.name}</strong><br><small style="color:#777;">${t.email}</small></td>
-                        <td>${t.subject}</td>
-                        <td>${attSelect}</td>
-                        <td>${salaryStatus}</td>
-                        <td>
-                            <button onclick="openTeacherEdit('${id}', '${t.name}', '${t.subject}', '${t.email}')" class="action-icon" title="Edit Full Details">✏️</button>
-                            <button onclick="adminChangePassword('teachers', '${id}')" class="action-icon" title="Change Password">🔑</button>
-                            <button onclick="deleteRecord('teachers', '${id}')" class="action-icon" style="color:red;" title="Delete">🗑️</button>
-                        </td>
-                    </tr>`;
+                    // ONCHANGE HATA DIYA GAYA HAI
+                    let attSelect = `<select class="att-select teacher-att-select" data-id="${id}" data-name="${t.name}">
+                        <option value="Not Marked" ${currentStatus==='Not Marked'?'selected':''}>Not Marked</option>
+                        <option value="Present" ${currentStatus==='Present'?'selected':''}>Present</option>
+                        <option value="Absent" ${currentStatus==='Absent'?'selected':''}>Absent</option>
+                        <option value="Leave" ${currentStatus==='Leave'?'selected':''}>Leave</option>
+                        <option value="Holiday" ${currentStatus==='Holiday'?'selected':''}>Holiday 🌴</option>
+                    </select>`;
+                    tbody.innerHTML += `<tr><td><strong>${t.name}</strong><br><small style="color:#777;">${t.email}</small></td><td>${t.subject}</td><td>${attSelect}</td><td>${salaryStatus}</td><td><button onclick="openTeacherEdit('${id}', '${t.name}', '${t.subject}', '${t.email}')" class="action-icon" title="Edit Full Details">✏️</button><button onclick="adminChangePassword('teachers', '${id}')" class="action-icon" title="Change Password">🔑</button><button onclick="deleteRecord('teachers', '${id}')" class="action-icon" style="color:red;" title="Delete">🗑️</button></td></tr>`;
                 });
             } catch (error) { console.error(error); }
         }
 
-        // FETCH STUDENTS (With Complete details shown)
-        window.loadStudents = async function() {
-            const tbody = document.getElementById('studentTableBody');
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Loading...</td></tr>';
-            try {
-                const querySnapshot = await getDocs(collection(db, "students"));
-                if (querySnapshot.empty) { tbody.innerHTML = '<tr><td colspan="5">No students found.</td></tr>'; return; }
-                tbody.innerHTML = '';
-
-                querySnapshot.forEach((record) => {
-                    const s = record.data();
-                    const id = record.id;
-                    let feeStatus = s.feePaid ? `<button onclick="updateFinance('students', '${id}', 'feePaid', false)" class="badge-paid">Paid ✅</button>` : `<button onclick="updateFinance('students', '${id}', 'feePaid', true)" class="badge-unpaid">Unpaid ❌</button>`;
-                    let secDisplay = s.section && s.section !== "N/A" ? ` - Sec ${s.section}` : '';
-
-                    tbody.innerHTML += `<tr>
-                        <td><strong>${s.rollNumber}</strong></td>
-                        <td><strong>${s.name}</strong><br><small style="color:#777;">${s.email}</small></td>
-                        <td>${s.className}${secDisplay}</td>
-                        <td>${feeStatus}</td>
-                        <td>
-                            <button onclick="openStudentEdit('${id}', '${s.name}', '${s.className}', '${s.section || 'N/A'}', '${s.rollNumber}', '${s.email}')" class="action-icon" title="Edit Full Details">✏️</button>
-                            <button onclick="adminChangePassword('students', '${id}')" class="action-icon" title="Change Password">🔑</button>
-                            <button onclick="deleteRecord('students', '${id}')" class="action-icon" style="color:red;" title="Delete">🗑️</button>
-                        </td>
-                    </tr>`;
-                });
-            } catch (error) { console.error(error); }
-        }
 
         // ==========================================
-        // ADMIN PASSWORD UPDATE POWER (🔑)
+        // OTHER EXISTING FUNCTIONS
         // ==========================================
-        window.adminChangePassword = async function(collectionName, docId) {
-            const newPassword = prompt("🚨 Admin Security: Type New Password for this user:");
-            if(newPassword && newPassword.trim() !== "") {
-                try {
-                    await updateDoc(doc(db, collectionName, docId), { password: newPassword });
-                    alert("Success! Password permanently updated in Firebase server.");
-                } catch(error) { alert("Failed to update password: " + error.message); }
+
+        window.copyAddress = function(mode) {
+            const prefix = (mode === 'add') ? 's' : 'es';
+            const isChecked = document.getElementById(prefix + 'SameAddress').checked;
+            if (isChecked) {
+                document.getElementById(prefix + 'PresVill').value = document.getElementById(prefix + 'PermVill').value;
+                document.getElementById(prefix + 'PresPO').value = document.getElementById(prefix + 'PermPO').value;
+                document.getElementById(prefix + 'PresDist').value = document.getElementById(prefix + 'PermDist').value;
+                document.getElementById(prefix + 'PresState').value = document.getElementById(prefix + 'PermState').value;
+                document.getElementById(prefix + 'PresPin').value = document.getElementById(prefix + 'PermPin').value;
+            } else {
+                document.getElementById(prefix + 'PresVill').value = ""; document.getElementById(prefix + 'PresPO').value = ""; document.getElementById(prefix + 'PresDist').value = ""; document.getElementById(prefix + 'PresState').value = ""; document.getElementById(prefix + 'PresPin').value = "";
             }
         }
 
-        // ==========================================
-        // COMPREHENSIVE EDIT LOGIC (✏️)
-        // ==========================================
-        window.openTeacherEdit = function(id, name, subject, email) {
-            document.getElementById('etId').value = id;
-            document.getElementById('etName').value = name;
-            document.getElementById('etSubject').value = subject;
-            document.getElementById('etEmail').value = email;
-            openEditTeacherModal();
+        window.saveFeePayment = async function(event) {
+            event.preventDefault(); document.getElementById('fBtn').innerText = "Processing...";
+            const id = document.getElementById('feeStudentId').value;
+            const month = document.getElementById('feeMonthLabel').value;
+            const dateStr = document.getElementById('feeDate').value;
+            try { await updateDoc(doc(db, "students", id), { [`feeRecords.${month}`]: dateStr }); closeFeeModal(); loadStudents(); } catch(e) { alert("Error: " + e.message); } finally { document.getElementById('fBtn').innerText = "Mark as Paid ✅"; }
         }
 
-        window.saveEditTeacher = async function(event) {
-            event.preventDefault();
-            const id = document.getElementById('etId').value;
+        window.revokeFee = async function(id, name, month) {
+            if(confirm(`Are you sure you want to mark ${name}'s ${month} fee as UNPAID?`)) { try { await updateDoc(doc(db, "students", id), { [`feeRecords.${month}`]: deleteField() }); loadStudents(); } catch(e) { alert("Error: " + e.message); } }
+        }
+
+        window.loadStudents = async function() {
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Fetching students from server...</td></tr>';
             try {
-                await updateDoc(doc(db, "teachers", id), {
-                    name: document.getElementById('etName').value,
-                    subject: document.getElementById('etSubject').value,
-                    email: document.getElementById('etEmail').value.toLowerCase()
+                const querySnapshot = await getDocs(collection(db, "students"));
+                window.allStudentsList = []; window.studentDataMap = {}; 
+                if (querySnapshot.empty) { tbody.innerHTML = '<tr><td colspan="6">No students found.</td></tr>'; return; }
+                querySnapshot.forEach((record) => { const s = record.data(); s.id = record.id; window.allStudentsList.push(s); window.studentDataMap[s.id] = s; });
+                renderStudents();
+            } catch (error) { console.error(error); tbody.innerHTML = '<tr><td colspan="6" style="color:red;">Error fetching data.</td></tr>'; }
+        }
+
+        window.renderStudents = function() {
+            const tbody = document.getElementById('studentTableBody');
+            const searchInput = document.getElementById('searchStudentInput').value.toLowerCase().trim();
+            const targetMonth = document.getElementById('feeMonthFilter').value;
+            const statusFilter = document.getElementById('feeStatusFilter').value;
+            const classFilter = document.getElementById('classFilter').value;     
+            const sectionFilter = document.getElementById('sectionFilter').value; 
+            
+            document.getElementById('tableMonthLabel').innerText = targetMonth;
+            tbody.innerHTML = ''; let html = '';
+
+            window.allStudentsList.forEach((s) => {
+                const feeRecords = s.feeRecords || {};
+                const isPaid = !!feeRecords[targetMonth];
+                const paymentDate = feeRecords[targetMonth] || "";
+                
+                if(searchInput !== "") {
+                    const sName = (s.name || "").toLowerCase();
+                    const sRoll = (s.rollNumber || "").toString().toLowerCase();
+                    if(!sName.includes(searchInput) && !sRoll.includes(searchInput)) return;
+                }
+
+                if(classFilter !== 'All' && s.className !== classFilter) return;
+                if(sectionFilter !== 'All' && s.section !== sectionFilter) return;
+                if(statusFilter === 'Paid' && !isPaid) return;
+                if(statusFilter === 'Unpaid' && isPaid) return;
+
+                let secDisplay = s.section && s.section !== "N/A" ? ` - Sec ${s.section}` : '';
+                let father = s.fatherName || "N/A"; let mobile = s.mobile || "N/A";
+                let feeUI = isPaid ? `<button onclick="revokeFee('${s.id}', '${s.name}', '${targetMonth}')" class="badge-paid" title="Click to mark Unpaid">Paid ✅<br><small style="font-weight:normal; font-size:10px;">${paymentDate}</small></button>` : `<button onclick="openFeeModal('${s.id}', '${s.name}', '${targetMonth}')" class="badge-unpaid">Unpaid ❌</button>`;
+
+                html += `<tr><td><strong>${s.rollNumber}</strong></td><td><strong>${s.name}</strong><br><small style="color:#777;">${s.email}</small></td><td><small>F: ${father}<br>📞 ${mobile}</small></td><td>${s.className}${secDisplay}</td><td>${feeUI}</td><td><button onclick="openStudentEdit('${s.id}')" class="action-icon" title="Edit Full Details">✏️</button><button onclick="adminChangePassword('students', '${s.id}')" class="action-icon" title="Change Password">🔑</button><button onclick="deleteRecord('students', '${s.id}')" class="action-icon" style="color:red;" title="Delete">🗑️</button></td></tr>`;
+            });
+            tbody.innerHTML = html === '' ? `<tr><td colspan="6" style="text-align: center; color: #888;">No students match the current search or filter.</td></tr>` : html;
+        }
+
+        window.loadNotices = async function() {
+            const tbody = document.getElementById('noticeTableBody');
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Loading notices...</td></tr>';
+            try {
+                const querySnapshot = await getDocs(collection(db, "notices"));
+                if (querySnapshot.empty) { tbody.innerHTML = '<tr><td colspan="4">No notices published yet.</td></tr>'; return; }
+                tbody.innerHTML = ''; let noticesArray = []; querySnapshot.forEach(doc => noticesArray.push({id: doc.id, ...doc.data()}));
+                noticesArray.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                noticesArray.forEach(n => {
+                    let badgeColor = '#95a5a6';
+                    if(n.category === 'Holiday') badgeColor = '#2ecc71'; if(n.category === 'Exam') badgeColor = '#e74c3c'; if(n.category === 'Meeting') badgeColor = '#3498db'; if(n.category === 'Sports') badgeColor = '#f39c12';
+                    tbody.innerHTML += `<tr><td><strong>${n.date}</strong></td><td><span style="background:${badgeColor}; color:white; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:bold;">${n.category}</span></td><td><strong>${n.title}</strong><br><small style="color:#555;">${n.description}</small></td><td><button onclick="deleteRecord('notices', '${n.id}')" class="action-icon" style="color:red;" title="Delete Notice">🗑️</button></td></tr>`;
                 });
-                alert("Teacher data updated successfully!");
-                closeEditTeacherModal(); loadTeachers();
-            } catch(e) { alert("Error updating: " + e.message); }
+            } catch (error) { console.error(error); }
         }
 
-        window.openStudentEdit = function(id, name, className, section, roll, email) {
-            document.getElementById('esId').value = id;
-            document.getElementById('esName').value = name;
-            document.getElementById('esClass').value = className;
-            document.getElementById('esSection').value = section;
-            document.getElementById('esRoll').value = roll;
-            document.getElementById('esEmail').value = email;
-            openEditStudentModal();
+        window.addNotice = async function(event) { event.preventDefault(); document.getElementById('nBtn').innerText = "Publishing..."; try { await addDoc(collection(db, "notices"), { title: document.getElementById('nTitle').value, category: document.getElementById('nCategory').value, date: document.getElementById('nDate').value, description: document.getElementById('nDesc').value, timestamp: new Date() }); document.getElementById('noticeForm').reset(); window.closeNoticeModal(); loadNotices(); } catch (error) { alert(error.message); } finally { document.getElementById('nBtn').innerText = "Publish Notice"; } }
+
+        window.adminChangePassword = async function(collectionName, docId) { const newPassword = prompt("🚨 Admin Security: Type New Password for this user:"); if(newPassword && newPassword.trim() !== "") { try { await updateDoc(doc(db, collectionName, docId), { password: newPassword }); alert("Success! Password permanently updated in Firebase server."); } catch(error) { alert("Failed to update password: " + error.message); } } }
+
+        window.openTeacherEdit = function(id, name, subject, email) { document.getElementById('etId').value = id; document.getElementById('etName').value = name; document.getElementById('etSubject').value = subject; document.getElementById('etEmail').value = email; openEditTeacherModal(); }
+        window.saveEditTeacher = async function(event) { event.preventDefault(); const id = document.getElementById('etId').value; try { await updateDoc(doc(db, "teachers", id), { name: document.getElementById('etName').value, subject: document.getElementById('etSubject').value, email: document.getElementById('etEmail').value.toLowerCase() }); alert("Teacher data updated successfully!"); closeEditTeacherModal(); loadTeachers(); } catch(e) { alert("Error updating: " + e.message); } }
+
+        window.openStudentEdit = function(id) {
+            const s = window.studentDataMap[id]; document.getElementById('esId').value = id;
+            document.getElementById('esName').value = s.name || ''; document.getElementById('esDob').value = s.dob || ''; document.getElementById('esClass').value = s.className || 'Class 8'; document.getElementById('esSection').value = s.section || 'N/A'; document.getElementById('esRoll').value = s.rollNumber || '';
+            document.getElementById('esFather').value = s.fatherName || ''; document.getElementById('esMother').value = s.motherName || ''; document.getElementById('esMobile').value = s.mobile || ''; document.getElementById('esEmail').value = s.email || '';
+            if(s.permAddress) { document.getElementById('esPermVill').value = s.permAddress.vill || ''; document.getElementById('esPermPO').value = s.permAddress.po || ''; document.getElementById('esPermDist').value = s.permAddress.dist || ''; document.getElementById('esPermState').value = s.permAddress.state || ''; document.getElementById('esPermPin').value = s.permAddress.pin || ''; }
+            if(s.presAddress) { document.getElementById('esPresVill').value = s.presAddress.vill || ''; document.getElementById('esPresPO').value = s.presAddress.po || ''; document.getElementById('esPresDist').value = s.presAddress.dist || ''; document.getElementById('esPresState').value = s.presAddress.state || ''; document.getElementById('esPresPin').value = s.presAddress.pin || ''; }
+            document.getElementById('esSameAddress').checked = false; openEditStudentModal();
         }
 
-        window.saveEditStudent = async function(event) {
-            event.preventDefault();
-            const id = document.getElementById('esId').value;
-            try {
-                await updateDoc(doc(db, "students", id), {
-                    name: document.getElementById('esName').value,
-                    className: document.getElementById('esClass').value,
-                    section: document.getElementById('esSection').value,
-                    rollNumber: document.getElementById('esRoll').value,
-                    email: document.getElementById('esEmail').value.toLowerCase()
-                });
-                alert("Student data updated successfully!");
-                closeEditStudentModal(); loadStudents();
-            } catch(e) { alert("Error updating: " + e.message); }
-        }
+        window.saveEditStudent = async function(event) { event.preventDefault(); const id = document.getElementById('esId').value; try { await updateDoc(doc(db, "students", id), { name: document.getElementById('esName').value, dob: document.getElementById('esDob').value, className: document.getElementById('esClass').value, section: document.getElementById('esSection').value, rollNumber: document.getElementById('esRoll').value, fatherName: document.getElementById('esFather').value, motherName: document.getElementById('esMother').value, mobile: document.getElementById('esMobile').value, email: document.getElementById('esEmail').value.toLowerCase(), permAddress: { vill: document.getElementById('esPermVill').value, po: document.getElementById('esPermPO').value, dist: document.getElementById('esPermDist').value, state: document.getElementById('esPermState').value, pin: document.getElementById('esPermPin').value }, presAddress: { vill: document.getElementById('esPresVill').value, po: document.getElementById('esPresPO').value, dist: document.getElementById('esPresDist').value, state: document.getElementById('esPresState').value, pin: document.getElementById('esPresPin').value } }); alert("Student data updated successfully!"); closeEditStudentModal(); loadStudents(); loadStudentAttendance(); } catch(e) { alert("Error updating: " + e.message); } }
 
-        // Remaining attendance and baseline functions
-        window.markDateAttendance = async function(tId, tName, statusValue) {
-            try { await setDoc(doc(db, "teacher_attendance", `${tId}_${document.getElementById('attDate').value}`), { teacherId: tId, teacherName: tName, date: document.getElementById('attDate').value, status: statusValue }); } catch (error) { alert("Error saving attendance"); }
+        window.generateReport = async function() { const tbody = document.getElementById('reportTableBody'); tbody.innerHTML = '<tr><td colspan="3">Processing...</td></tr>'; try { const snapshot = await getDocs(query(collection(db, "teacher_attendance"), where("date", ">=", document.getElementById('reportStartDate').value), where("date", "<=", document.getElementById('reportEndDate').value))); let html = ''; snapshot.forEach(doc => { const d = doc.data(); if(d.status === 'Absent' || d.status === 'Leave') { html += `<tr><td>${d.date}</td><td><strong>${d.teacherName}</strong></td><td><span class="${d.status==='Absent'?'badge-unpaid':'badge-leave'}">${d.status}</span></td></tr>`; } }); tbody.innerHTML = html === '' ? '<tr><td colspan="3" style="text-align:center; color:green;">All present! No absences.</td></tr>' : html; } catch (error) { tbody.innerHTML = '<tr><td colspan="3">Error loading.</td></tr>'; } }
+        window.updateFinance = async function(collectionName, docId, fieldName, isPaid) { try { await updateDoc(doc(db, collectionName, docId), { [fieldName]: isPaid }); if(collectionName === 'students') loadStudents(); else loadTeachers(); } catch (error) { alert("Update failed"); } }
+        
+        window.deleteRecord = async function(collectionName, docId) { 
+            if(confirm("Permanently delete this record?")) { 
+                try { await deleteDoc(doc(db, collectionName, docId)); 
+                    if(collectionName === 'students') { loadStudents(); loadStudentAttendance(); loadDashboardStats(); }
+                    else if(collectionName === 'teachers') { loadTeachers(); loadDashboardStats(); }
+                    else if(collectionName === 'notices') loadNotices(); 
+                } catch (error) { alert("Delete Failed"); } 
+            } 
         }
-
-        window.generateReport = async function() {
-            const tbody = document.getElementById('reportTableBody');
-            tbody.innerHTML = '<tr><td colspan="3">Processing...</td></tr>';
-            try {
-                const snapshot = await getDocs(query(collection(db, "teacher_attendance"), where("date", ">=", document.getElementById('reportStartDate').value), where("date", "<=", document.getElementById('reportEndDate').value)));
-                let html = '';
-                snapshot.forEach(doc => { const d = doc.data(); if(d.status === 'Absent' || d.status === 'Leave') { html += `<tr><td>${d.date}</td><td><strong>${d.teacherName}</strong></td><td><span class="${d.status==='Absent'?'badge-unpaid':'badge-leave'}">${d.status}</span></td></tr>`; } });
-                tbody.innerHTML = html === '' ? '<tr><td colspan="3" style="text-align:center; color:green;">All present! No absences.</td></tr>' : html;
-            } catch (error) { tbody.innerHTML = '<tr><td colspan="3">Error loading.</td></tr>'; }
-        }
-
-        window.updateFinance = async function(collectionName, docId, fieldName, isPaid) {
-            try { await updateDoc(doc(db, collectionName, docId), { [fieldName]: isPaid }); if(collectionName === 'students') loadStudents(); else loadTeachers(); } catch (error) { alert("Update failed"); }
-        }
-
-        window.deleteRecord = async function(collectionName, docId) {
-            if(confirm("Permanently delete this record?")) { try { await deleteDoc(doc(db, collectionName, docId)); if(collectionName === 'students') loadStudents(); else loadTeachers(); } catch (error) { alert("Delete Failed"); } }
-        }
-
-        window.addTeacher = async function(event) {
-            event.preventDefault(); document.getElementById('tBtn').innerText = "Saving...";
-            try { await addDoc(collection(db, "teachers"), { name: document.getElementById('tName').value, subject: document.getElementById('tSubject').value, email: document.getElementById('tEmail').value.toLowerCase(), password: document.getElementById('tPassword').value, salaryPaid: false, dateAdded: new Date() }); document.getElementById('teacherForm').reset(); window.closeTeacherModal(); loadTeachers(); } catch (error) { alert(error.message); } finally { document.getElementById('tBtn').innerText = "Save Teacher"; }
-        }
-
-        window.addStudent = async function(event) {
-            event.preventDefault(); document.getElementById('sBtn').innerText = "Saving...";
-            try { await addDoc(collection(db, "students"), { name: document.getElementById('sName').value, className: document.getElementById('sClass').value, section: document.getElementById('sSection').value, rollNumber: document.getElementById('sRoll').value, email: document.getElementById('sEmail').value.toLowerCase(), password: document.getElementById('sPassword').value, feePaid: false, dateAdded: new Date() }); document.getElementById('studentForm').reset(); window.closeStudentModal(); loadStudents(); } catch (error) { alert(error.message); } finally { document.getElementById('sBtn').innerText = "Save Student"; }
-        }
+        
+        window.addTeacher = async function(event) { event.preventDefault(); document.getElementById('tBtn').innerText = "Saving..."; try { await addDoc(collection(db, "teachers"), { name: document.getElementById('tName').value, subject: document.getElementById('tSubject').value, email: document.getElementById('tEmail').value.toLowerCase(), password: document.getElementById('tPassword').value, salaryPaid: false, dateAdded: new Date() }); document.getElementById('teacherForm').reset(); window.closeTeacherModal(); loadTeachers(); loadDashboardStats(); } catch (error) { alert(error.message); } finally { document.getElementById('tBtn').innerText = "Save Teacher"; } }
+        window.addStudent = async function(event) { event.preventDefault(); document.getElementById('sBtn').innerText = "Saving..."; try { await addDoc(collection(db, "students"), { name: document.getElementById('sName').value, dob: document.getElementById('sDob').value, className: document.getElementById('sClass').value, section: document.getElementById('sSection').value, rollNumber: document.getElementById('sRoll').value, fatherName: document.getElementById('sFather').value, motherName: document.getElementById('sMother').value, mobile: document.getElementById('sMobile').value, email: document.getElementById('sEmail').value.toLowerCase(), password: document.getElementById('sPassword').value, permAddress: { vill: document.getElementById('sPermVill').value, po: document.getElementById('sPermPO').value, dist: document.getElementById('sPermDist').value, state: document.getElementById('sPermState').value, pin: document.getElementById('sPermPin').value }, presAddress: { vill: document.getElementById('sPresVill').value, po: document.getElementById('sPresPO').value, dist: document.getElementById('sPresDist').value, state: document.getElementById('sPresState').value, pin: document.getElementById('sPresPin').value }, feeRecords: {}, dateAdded: new Date() }); document.getElementById('studentForm').reset(); window.closeStudentModal(); loadStudents(); loadStudentAttendance(); loadDashboardStats(); } catch (error) { alert(error.message); } finally { document.getElementById('sBtn').innerText = "Save Student Record"; } }
     </script>
 </body>
 </html>
