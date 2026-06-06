@@ -212,7 +212,7 @@
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
     </script>
 
-    <script type="module">
+        <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -230,210 +230,57 @@
         window.onload = function() {
             document.getElementById("welcomeText").innerText = `Welcome, ${sName}!`;
             document.getElementById("classBadge").innerText = `Class: ${sClass}`;
-
-            const today = new Date();
-            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
-            const currentDay = today.toISOString().split('T')[0];
-            document.getElementById('attStartDate').value = firstDay;
-            document.getElementById('attEndDate').value = currentDay;
-
+            
             loadMyAssignments(sClass, sName); 
             loadTodayAttendance(); 
             filterAttendance(); 
-            loadFees(sName, sClass); 
+            loadFees(sName); 
             loadNotices(); 
-            loadMyMarks(sClass, sName);
+            loadMyMarks(sName);
         }
 
-        /* 1. ASSIGNMENTS FETCH */
-        window.loadMyAssignments = async function(studentClass, studentName) {
-            const tbody = document.getElementById('assignmentTableBody');
+        /* FIXED: Fees data students collection se fetch hoga */
+        window.loadFees = async function(studentName) {
+            const tbody = document.getElementById('feesTableBody');
             try {
-                const qAssign = query(collection(db, "assignments"), where("className", "==", studentClass));
-                const assignSnap = await getDocs(qAssign);
+                const q = query(collection(db, "students"), where("name", "==", studentName));
+                const snapshot = await getDocs(q);
                 
-                const qSubmissions = query(collection(db, "assignment_submissions"), where("studentName", "==", studentName));
-                const submissionSnap = await getDocs(qSubmissions);
-                
-                let teacherStatusMap = {};
-                submissionSnap.forEach(doc => { teacherStatusMap[doc.data().assignmentId] = doc.data().status; });
-
-                let actualPendingCount = 0;
-
-                if(assignSnap.empty) { 
-                    tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;">No assignments assigned.</td></tr>'; 
-                    document.getElementById('statAssignments').innerText = 0; 
+                if(snapshot.empty) { 
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No records found.</td></tr>'; 
                     return; 
                 }
                 
-                tbody.innerHTML = '';
-                assignSnap.forEach(doc => {
-                    const a = doc.data();
-                    const assignmentId = doc.id;
-                    const currentStatus = teacherStatusMap[assignmentId] || 'Pending';
+                snapshot.forEach(doc => {
+                    const s = doc.data();
+                    const feeRecords = s.feeRecords || {};
+                    tbody.innerHTML = '';
+                    let hasUnpaid = false;
+                    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
                     
-                    let statusBadgeHTML = '';
-                    if (currentStatus === 'Received') {
-                        statusBadgeHTML = `<span class="badge bg-success">✅ Received by Teacher</span>`;
-                    } else {
-                        statusBadgeHTML = `<span class="badge bg-danger">⏳ Pending</span>`;
-                        actualPendingCount++; 
-                    }
-
-                    let fileBtn = a.fileUrl && a.fileUrl !== "#" ? `<a href="${a.fileUrl}" target="_blank" class="btn-view">View File</a>` : `<span style="color:#aaa;">No File</span>`;
-                    
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>
-                                <strong style="font-size:16px;">${a.title}</strong> ${statusBadgeHTML} <br>
-                                <p style="color:#555; background:#f9f9f9; padding:10px; border-radius:4px; border-left:3px solid #ccc; margin: 8px 0;">${a.description || 'No description provided.'}</p>
-                                <small style="color:var(--danger); font-weight:bold;">📅 Due Date: ${a.dueDate || 'N/A'}</small>
-                            </td>
-                            <td style="vertical-align: middle;">${fileBtn}</td>
+                    months.forEach(month => {
+                        let isPaid = !!feeRecords[month];
+                        if(!isPaid) hasUnpaid = true;
+                        tbody.innerHTML += `<tr>
+                            <td><strong>${month}</strong></td>
+                            <td>₹--</td>
+                            <td><span class="badge ${isPaid ? 'bg-success' : 'bg-danger'}">${isPaid ? 'Paid ✅' : 'Unpaid ❌'}</span></td>
                         </tr>`;
+                    });
+                    
+                    document.getElementById('statFees').innerText = hasUnpaid ? 'Dues Pending' : 'All Clear';
+                    document.getElementById('statFees').style.color = hasUnpaid ? 'var(--danger)' : 'var(--primary)';
                 });
-                document.getElementById('statAssignments').innerText = actualPendingCount;
             } catch(error) { console.error(error); }
         }
 
-        /* 2. TODAY'S ATTENDANCE FETCH */
-        window.loadTodayAttendance = async function() {
-            const todayStr = new Date().toISOString().split('T')[0];
-            const todayCard = document.getElementById('statTodayAttendance');
-            try {
-                const q = query(collection(db, "student_attendance"), where("studentName", "==", sName), where("date", "==", todayStr));
-                const snapshot = await getDocs(q);
-
-                if(snapshot.empty) { todayCard.innerHTML = `<span class="badge bg-info">Not Marked Yet</span>`; return; }
-
-                let finalStatus = "Present";
-                snapshot.forEach(doc => {
-                    const status = doc.data().status;
-                    if(status === "Absent") finalStatus = "Absent";
-                    else if (status === "Leave" && finalStatus !== "Absent") finalStatus = "Leave";
-                });
-
-                if(finalStatus === "Absent") todayCard.innerHTML = `<span class="badge bg-danger">Absent</span>`;
-                else if(finalStatus === "Leave") todayCard.innerHTML = `<span class="badge bg-warning">On Leave</span>`;
-                else todayCard.innerHTML = `<span class="badge bg-success">Present</span>`;
-            } catch (err) { todayCard.innerText = "Error"; }
-        }
-
-        /* 3. FILTER ATTENDANCE */
-        window.filterAttendance = async function() {
-            const start = document.getElementById('attStartDate').value;
-            const end = document.getElementById('attEndDate').value;
-            const statusFilter = document.getElementById('attStatusFilter').value;
-            const tbody = document.getElementById('attendanceTableBody');
-            
-            if(!start || !end) return;
-            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Fetching logs...</td></tr>';
-
-            try {
-                const q = query(collection(db, "student_attendance"), where("studentName", "==", sName), where("date", ">=", start), where("date", "<=", end));
-                const snapshot = await getDocs(q);
-                
-                let totalDays = 0; let presentDays = 0; let recordCount = 0;
-
-                if(snapshot.empty) { 
-                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#888;">No attendance marked.</td></tr>'; 
-                    document.getElementById('statAttendance').innerText = '0%';
-                    return; 
-                }
-                
-                tbody.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const att = doc.data();
-                    
-                    totalDays++;
-                    if(att.status === 'Present') presentDays++;
-
-                    if(statusFilter !== "All" && att.status !== statusFilter) return;
-
-                    recordCount++;
-                    let badgeClass = att.status === 'Present' ? 'bg-success' : (att.status === 'Absent' ? 'bg-danger' : 'bg-warning');
-
-                    tbody.innerHTML += `<tr><td>${att.date}</td><td><strong>${att.className}</strong></td><td><span class="badge ${badgeClass}">${att.status}</span></td></tr>`;
-                });
-
-                if(recordCount === 0) tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#888;">No records found for ${statusFilter}</td></tr>`;
-
-                if(totalDays > 0) {
-                    let pct = Math.round((presentDays / totalDays) * 100);
-                    document.getElementById('statAttendance').innerText = pct + '%';
-                    document.getElementById('statAttendance').style.color = pct < 75 ? "var(--danger)" : "var(--primary)";
-                } else {
-                    document.getElementById('statAttendance').innerText = '0%';
-                }
-            } catch(error) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:red;">Error fetching attendance.</td></tr>'; }
-        }
-
-        /* 4. FEES FETCH (UPDATED & FIXED) */
-        window.loadFees = async function(studentName, studentClass) {
-            const tbody = document.getElementById('feesTableBody');
-            try {
-                // Fetching fees based on studentName
-                const q = query(collection(db, "fees"), where("studentName", "==", studentName));
-                const snapshot = await getDocs(q);
-                
-                if(snapshot.empty) { 
-                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#888;">No fee records found in database.</td></tr>'; 
-                    document.getElementById('statFees').innerText = 'No Data';
-                    document.getElementById('statFees').style.color = '#777';
-                    return; 
-                }
-                
-                tbody.innerHTML = '';
-                let hasUnpaid = false;
-
-                snapshot.forEach(doc => {
-                    const f = doc.data();
-                    
-                    // Case-insensitive check for status
-                    let currentStatus = (f.status || "").toLowerCase();
-                    let badgeClass = currentStatus === 'paid' ? 'bg-success' : 'bg-danger';
-                    
-                    if(currentStatus !== 'paid') {
-                        hasUnpaid = true;
-                    }
-                    
-                    // Handling missing fields gracefully
-                    tbody.innerHTML += `<tr>
-                        <td><strong>${f.month || f.term || '-'}</strong></td>
-                        <td>₹${f.amount || '0'}</td>
-                        <td><span class="badge ${badgeClass}">${f.status || 'Pending'}</span></td>
-                    </tr>`;
-                });
-
-                document.getElementById('statFees').innerText = hasUnpaid ? 'Dues Pending' : 'All Clear';
-                document.getElementById('statFees').style.color = hasUnpaid ? 'var(--danger)' : 'var(--primary)';
-            } catch(error) { 
-                console.error("Fee error: ", error); 
-                document.getElementById('statFees').innerText = "Error";
-            }
-        }
-
-        /* 5. NOTICES FETCH */
-        window.loadNotices = async function() {
-            const noticeDiv = document.getElementById('noticeBoardDiv');
-            try {
-                const snapshot = await getDocs(collection(db, "notices"));
-                noticeDiv.innerHTML = '';
-                if (snapshot.empty) { noticeDiv.innerHTML = '<p style="text-align:center;">No announcements.</p>'; return; }
-                snapshot.forEach((doc) => {
-                    const n = doc.data();
-                    noticeDiv.innerHTML += `<div class="notice-item"><h4>${n.title}</h4><p>${n.message}</p></div>`;
-                });
-            } catch(err) { console.error(err); }
-        }
-
-        /* 6. MARKS FETCH */
-        window.loadMyMarks = async function(studentClass, studentName) {
+        /* MARKS FETCH */
+        window.loadMyMarks = async function(studentName) {
             const tbody = document.getElementById('marksTableBody');
             try {
-                const q = query(collection(db, "marks"), where("className", "==", studentClass), where("studentName", "==", studentName));
+                const q = query(collection(db, "marks"), where("studentName", "==", studentName));
                 const snapshot = await getDocs(q);
-                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;">No exam records found.</td></tr>'; return; }
+                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;">No records.</td></tr>'; return; }
                 tbody.innerHTML = '';
                 snapshot.forEach(doc => {
                     const m = doc.data();
@@ -442,10 +289,71 @@
             } catch(err) { console.error(err); }
         }
 
-        window.secureLogout = function() {
-            localStorage.clear();
-            window.location.href = "main-website.html";
+        /* ASSIGNMENTS FETCH */
+        window.loadMyAssignments = async function(studentClass, studentName) {
+            const tbody = document.getElementById('assignmentTableBody');
+            try {
+                const qAssign = query(collection(db, "assignments"), where("className", "==", studentClass));
+                const assignSnap = await getDocs(qAssign);
+                const qSubmissions = query(collection(db, "assignment_submissions"), where("studentName", "==", studentName));
+                const submissionSnap = await getDocs(qSubmissions);
+                
+                let teacherStatusMap = {};
+                submissionSnap.forEach(doc => { teacherStatusMap[doc.data().assignmentId] = doc.data().status; });
+
+                let actualPendingCount = 0;
+                tbody.innerHTML = '';
+                assignSnap.forEach(doc => {
+                    const a = doc.data();
+                    const assignmentId = doc.id;
+                    const currentStatus = teacherStatusMap[assignmentId] || 'Pending';
+                    if (currentStatus !== 'Received') actualPendingCount++; 
+                    tbody.innerHTML += `<tr><td><strong>${a.title}</strong> <span class="badge ${currentStatus==='Received'?'bg-success':'bg-danger'}">${currentStatus}</span><br><small>Due: ${a.dueDate}</small></td><td>${a.fileUrl !== "#" ? `<a href="${a.fileUrl}" target="_blank" class="btn-view">View</a>` : ''}</td></tr>`;
+                });
+                document.getElementById('statAssignments').innerText = actualPendingCount;
+            } catch(error) { console.error(error); }
         }
+
+        window.loadTodayAttendance = async function() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const todayCard = document.getElementById('statTodayAttendance');
+            try {
+                const q = query(collection(db, "student_attendance"), where("studentName", "==", sName), where("date", "==", todayStr));
+                const snapshot = await getDocs(q);
+                if(snapshot.empty) { todayCard.innerHTML = `<span class="badge bg-info">Not Marked Yet</span>`; return; }
+                let finalStatus = "Present";
+                snapshot.forEach(doc => { if(doc.data().status === "Absent") finalStatus = "Absent"; });
+                todayCard.innerHTML = `<span class="badge ${finalStatus === 'Present' ? 'bg-success' : 'bg-danger'}">${finalStatus}</span>`;
+            } catch (err) { todayCard.innerText = "Error"; }
+        }
+
+        window.filterAttendance = async function() {
+            const start = document.getElementById('attStartDate').value;
+            const end = document.getElementById('attEndDate').value;
+            const tbody = document.getElementById('attendanceTableBody');
+            try {
+                const q = query(collection(db, "student_attendance"), where("studentName", "==", sName), where("date", ">=", start), where("date", "<=", end));
+                const snapshot = await getDocs(q);
+                let totalDays = 0; let presentDays = 0;
+                tbody.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const att = doc.data();
+                    totalDays++; if(att.status === 'Present') presentDays++;
+                    tbody.innerHTML += `<tr><td>${att.date}</td><td>${att.className}</td><td><span class="badge ${att.status === 'Present' ? 'bg-success' : 'bg-danger'}">${att.status}</span></td></tr>`;
+                });
+                if(totalDays > 0) document.getElementById('statAttendance').innerText = Math.round((presentDays / totalDays) * 100) + '%';
+            } catch(error) { console.error(error); }
+        }
+
+        window.loadNotices = async function() {
+            const noticeDiv = document.getElementById('noticeBoardDiv');
+            const snapshot = await getDocs(collection(db, "notices"));
+            noticeDiv.innerHTML = '';
+            snapshot.forEach((doc) => { const n = doc.data(); noticeDiv.innerHTML += `<div class="notice-item"><h4>${n.title}</h4><p>${n.message}</p></div>`; });
+        }
+
+        window.secureLogout = function() { localStorage.clear(); window.location.href = "main-website.html"; }
     </script>
+
 </body>
 </html>
