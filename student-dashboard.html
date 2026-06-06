@@ -119,9 +119,10 @@
                     <h2 id="statAssignments" style="color: var(--danger);">--</h2>
                     <small style="color: var(--info); font-size: 11px; margin-top: 5px; display: block;">👉 Click to view details</small>
                 </div>
-                <div class="stat-card" style="border-bottom-color: var(--warning);">
+                <div class="stat-card clickable" style="cursor: pointer; border-bottom-color: var(--warning);" onclick="document.getElementById('nav-fees').click()">
                     <h4>Fee Dues Status</h4>
                     <h2 id="statFees">--</h2>
+                    <small style="color: var(--info); font-size: 11px; margin-top: 5px; display: block;">👉 View Fee Ledger</small>
                 </div>
             </div>
 
@@ -230,14 +231,12 @@
             document.getElementById("welcomeText").innerText = `Welcome, ${sName}!`;
             document.getElementById("classBadge").innerText = `Class: ${sClass}`;
 
-            // Set Date Defaults for Attendance Filter
             const today = new Date();
             const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
             const currentDay = today.toISOString().split('T')[0];
             document.getElementById('attStartDate').value = firstDay;
             document.getElementById('attEndDate').value = currentDay;
 
-            // Load all Dashboard Data
             loadMyAssignments(sClass, sName); 
             loadTodayAttendance(); 
             filterAttendance(); 
@@ -246,7 +245,7 @@
             loadMyMarks(sClass, sName);
         }
 
-        /* 1. ASSIGNMENTS FETCH WITH "RECEIVED" LOGIC */
+        /* 1. ASSIGNMENTS FETCH */
         window.loadMyAssignments = async function(studentClass, studentName) {
             const tbody = document.getElementById('assignmentTableBody');
             try {
@@ -302,7 +301,6 @@
             const todayStr = new Date().toISOString().split('T')[0];
             const todayCard = document.getElementById('statTodayAttendance');
             try {
-                // Fetch attendance from student_attendance collection (Based on Teacher Portal structure)
                 const q = query(collection(db, "student_attendance"), where("studentName", "==", sName), where("date", "==", todayStr));
                 const snapshot = await getDocs(q);
 
@@ -321,7 +319,7 @@
             } catch (err) { todayCard.innerText = "Error"; }
         }
 
-        /* 3. FILTER ATTENDANCE & CALCULATE PERCENTAGE */
+        /* 3. FILTER ATTENDANCE */
         window.filterAttendance = async function() {
             const start = document.getElementById('attStartDate').value;
             const end = document.getElementById('attEndDate').value;
@@ -347,11 +345,9 @@
                 snapshot.forEach(doc => {
                     const att = doc.data();
                     
-                    // Calculate overall percentage
                     totalDays++;
                     if(att.status === 'Present') presentDays++;
 
-                    // Apply filter for table display
                     if(statusFilter !== "All" && att.status !== statusFilter) return;
 
                     recordCount++;
@@ -362,7 +358,6 @@
 
                 if(recordCount === 0) tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#888;">No records found for ${statusFilter}</td></tr>`;
 
-                // Set Percentage
                 if(totalDays > 0) {
                     let pct = Math.round((presentDays / totalDays) * 100);
                     document.getElementById('statAttendance').innerText = pct + '%';
@@ -373,17 +368,18 @@
             } catch(error) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:red;">Error fetching attendance.</td></tr>'; }
         }
 
-        /* 4. FEES FETCH */
+        /* 4. FEES FETCH (UPDATED & FIXED) */
         window.loadFees = async function(studentName, studentClass) {
             const tbody = document.getElementById('feesTableBody');
             try {
+                // Fetching fees based on studentName
                 const q = query(collection(db, "fees"), where("studentName", "==", studentName));
                 const snapshot = await getDocs(q);
                 
                 if(snapshot.empty) { 
-                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No fee records available.</td></tr>'; 
-                    document.getElementById('statFees').innerText = 'All Clear';
-                    document.getElementById('statFees').style.color = 'var(--primary)';
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#888;">No fee records found in database.</td></tr>'; 
+                    document.getElementById('statFees').innerText = 'No Data';
+                    document.getElementById('statFees').style.color = '#777';
                     return; 
                 }
                 
@@ -392,14 +388,29 @@
 
                 snapshot.forEach(doc => {
                     const f = doc.data();
-                    let badgeClass = f.status === 'Paid' ? 'bg-success' : 'bg-danger';
-                    if(f.status !== 'Paid') hasUnpaid = true;
-                    tbody.innerHTML += `<tr><td><strong>${f.month}</strong></td><td>₹${f.amount}</td><td><span class="badge ${badgeClass}">${f.status}</span></td></tr>`;
+                    
+                    // Case-insensitive check for status
+                    let currentStatus = (f.status || "").toLowerCase();
+                    let badgeClass = currentStatus === 'paid' ? 'bg-success' : 'bg-danger';
+                    
+                    if(currentStatus !== 'paid') {
+                        hasUnpaid = true;
+                    }
+                    
+                    // Handling missing fields gracefully
+                    tbody.innerHTML += `<tr>
+                        <td><strong>${f.month || f.term || '-'}</strong></td>
+                        <td>₹${f.amount || '0'}</td>
+                        <td><span class="badge ${badgeClass}">${f.status || 'Pending'}</span></td>
+                    </tr>`;
                 });
 
                 document.getElementById('statFees').innerText = hasUnpaid ? 'Dues Pending' : 'All Clear';
                 document.getElementById('statFees').style.color = hasUnpaid ? 'var(--danger)' : 'var(--primary)';
-            } catch(error) { console.error(error); }
+            } catch(error) { 
+                console.error("Fee error: ", error); 
+                document.getElementById('statFees').innerText = "Error";
+            }
         }
 
         /* 5. NOTICES FETCH */
