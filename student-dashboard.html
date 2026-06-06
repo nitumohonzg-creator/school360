@@ -260,4 +260,271 @@
             navLinks.forEach(link => link.classList.remove('active-nav'));
             element.classList.add('active-nav');
 
-            // 4. Mobile screen par navigation auto-
+            // 4. Mobile screen par navigation auto-close ho jaye click ke baad
+            if(window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('active');
+            }
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDg4HlG4M9lgqYSjV-fdqKacN94QNgfvOY",
+            authDomain: "school360-9c832.firebaseapp.com",
+            projectId: "school360-9c832",
+            storageBucket: "school360-9c832.firebasestorage.app",
+            messagingSenderId: "923777949473",
+            appId: "1:923777949473:web:f90a784d9d5609a1616860"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Student Data from Browser Login State
+        const sName = localStorage.getItem("studentName") || "Demo Student"; 
+        const sClass = localStorage.getItem("studentClass") || "10th";
+
+        window.onload = function() {
+            if (!localStorage.getItem("studentName")) {
+                alert("Please login first.");
+                window.location.href = "main-website.html";
+            }
+
+            document.getElementById("welcomeText").innerText = `Welcome, ${sName}!`;
+            document.getElementById("classBadge").innerText = `Class: ${sClass}`;
+
+            // Background Data Prefetch (For Stats Card updates)
+            loadNotices();
+            loadMyAssignments(sClass);
+            loadMyMarks(sClass, sName);
+            loadFees(sName, sClass);
+            loadTodayAttendance(); // Aaj ki attendance direct fetch
+
+            // Set default date range to current month for the filter panel
+            const today = new Date();
+            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+            const currentDay = today.toISOString().split('T')[0];
+            document.getElementById('attStartDate').value = firstDay;
+            document.getElementById('attEndDate').value = currentDay;
+            
+            filterAttendance(); // History initial fetch
+        }
+
+        /* DYNAMIC FEATURE 1: TODAY'S ATTENDANCE REPORT */
+        window.loadTodayAttendance = async function() {
+            const todayStr = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+            const todayCard = document.getElementById('statTodayAttendance');
+
+            try {
+                const q = query(
+                    collection(db, "attendance"), 
+                    where("studentName", "==", sName),
+                    where("date", "==", todayStr)
+                );
+                const snapshot = await getDocs(q);
+
+                if(snapshot.empty) {
+                    todayCard.innerHTML = `<span class="badge bg-info">No Class / N/A</span>`;
+                    return;
+                }
+
+                // Agar records milein to display check karo (e.g., kisi subject mein Absent to status alert badal jayega)
+                let statusSummary = "Present";
+                let absentSubjects = [];
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if(data.status === "Absent") {
+                        statusSummary = "Absent";
+                        absentSubjects.push(data.subject);
+                    } else if (data.status === "Leave" && statusSummary !== "Absent") {
+                        statusSummary = "Leave";
+                    }
+                });
+
+                if(statusSummary === "Absent") {
+                    todayCard.innerHTML = `<span class="badge bg-danger">Absent</span> <br><small style="font-size:11px;color:var(--danger)">In: ${absentSubjects.join(', ')}</small>`;
+                } else if(statusSummary === "Leave") {
+                    todayCard.innerHTML = `<span class="badge bg-warning">On Leave</span>`;
+                } else {
+                    todayCard.innerHTML = `<span class="badge bg-success">Present</span>`;
+                }
+
+            } catch (err) {
+                console.error(err);
+                todayCard.innerText = "Error";
+            }
+        }
+
+        /* DYNAMIC FEATURE 2: SUBJECT WISE ATTENDANCE WITH STATUS FILTER */
+        window.filterAttendance = async function() {
+            const start = document.getElementById('attStartDate').value;
+            const end = document.getElementById('attEndDate').value;
+            const statusFilter = document.getElementById('attStatusFilter').value;
+            const tbody = document.getElementById('attendanceTableBody');
+            
+            if(!start || !end) { alert("Please select both dates"); return; }
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Fetching filtered logs...</td></tr>';
+
+            try {
+                const q = query(
+                    collection(db, "attendance"), 
+                    where("studentName", "==", sName),
+                    where("date", ">=", start),
+                    where("date", "<=", end)
+                );
+                
+                const snapshot = await getDocs(q);
+                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#888;">No attendance marked for this duration.</td></tr>'; return; }
+                
+                tbody.innerHTML = '';
+                let totalDays = 0;
+                let presentDays = 0;
+                let recordCount = 0;
+
+                snapshot.forEach(doc => {
+                    const att = doc.data();
+
+                    // Yahan hum select status filter apply kar rahe hain code logic se
+                    if(statusFilter !== "All" && att.status !== statusFilter) {
+                        return; // Agar status match nahi karta to is row ko skip karo
+                    }
+
+                    recordCount++;
+                    let badgeClass = '';
+                    if(att.status === 'Present') { badgeClass = 'bg-success'; presentDays++; totalDays++; }
+                    else if(att.status === 'Absent') { badgeClass = 'bg-danger'; totalDays++; }
+                    else if(att.status === 'Leave') { badgeClass = 'bg-warning'; totalDays++; }
+                    else if(att.status === 'Holiday') { badgeClass = 'bg-info'; }
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${att.date}</td>
+                            <td><strong>${att.subject}</strong></td>
+                            <td><span class="badge ${badgeClass}">${att.status}</span></td>
+                        </tr>`;
+                });
+
+                if(recordCount === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#888;">No matching records found for status: ' + statusFilter + '</td></tr>';
+                }
+
+                // Overall Percentage calculate karne ke liye back-calculation
+                if(totalDays > 0) {
+                    let pct = Math.round((presentDays / totalDays) * 100);
+                    document.getElementById('statAttendance').innerText = pct + '%';
+                    document.getElementById('statAttendance').style.color = pct < 75 ? "var(--danger)" : "var(--primary)";
+                }
+
+            } catch(error) { 
+                console.error(error); 
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:red;">Error fetching attendance.</td></tr>';
+            }
+        }
+
+        /* 3. ASSIGNMENTS FETCH */
+        window.loadMyAssignments = async function(studentClass) {
+            const tbody = document.getElementById('assignmentTableBody');
+            try {
+                const q = query(collection(db, "assignments"), where("className", "==", studentClass));
+                const snapshot = await getDocs(q);
+                
+                let pendingCount = 0;
+                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;">No assignments assigned.</td></tr>'; document.getElementById('statAssignments').innerText = 0; return; }
+                
+                tbody.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const a = doc.data();
+                    pendingCount++;
+                    let fileBtn = a.fileUrl && a.fileUrl !== "#" ? `<a href="${a.fileUrl}" target="_blank" class="btn-view">View Homework File</a>` : `<span style="color:#aaa;">No File attachment</span>`;
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>
+                                <strong style="font-size:16px;">${a.title}</strong> <span class="badge bg-info" style="font-size:10px; margin-left:5px;">${a.subject || 'General'}</span><br>
+                                <p style="color:#555; background:#f9f9f9; padding:10px; border-radius:4px; border-left:3px solid #ccc; margin: 8px 0;">${a.description || 'No description provided by teacher.'}</p>
+                                <small style="color:#666;">👨‍🏫 Assigned By: <b>${a.teacherName || 'Subject Teacher'}</b></small><br>
+                                <small style="color:var(--danger); font-weight:bold; display:block; margin-top:4px;">📅 Submission Deadline: ${a.dueDate || 'N/A'}</small>
+                            </td>
+                            <td style="vertical-align: middle;">${fileBtn}</td>
+                        </tr>`;
+                });
+                document.getElementById('statAssignments').innerText = pendingCount;
+            } catch(error) { console.error(error); }
+        }
+
+        /* 4. FEES FETCH */
+        window.loadFees = async function(studentName, studentClass) {
+            const tbody = document.getElementById('feesTableBody');
+            try {
+                const q = query(collection(db, "fees"), where("studentName", "==", studentName));
+                const snapshot = await getDocs(q);
+                
+                if(snapshot.empty) { 
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No fee records available.</td></tr>'; 
+                    document.getElementById('statFees').innerText = 'Cleared';
+                    return; 
+                }
+                
+                tbody.innerHTML = '';
+                let hasUnpaid = false;
+
+                snapshot.forEach(doc => {
+                    const f = doc.data();
+                    let badgeClass = f.status === 'Paid' ? 'bg-success' : 'bg-danger';
+                    if(f.status !== 'Paid') hasUnpaid = true;
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${f.month}</strong></td>
+                            <td>₹${f.amount}</td>
+                            <td><span class="badge ${badgeClass}">${f.status}</span></td>
+                        </tr>`;
+                });
+
+                document.getElementById('statFees').innerText = hasUnpaid ? 'Dues Pending' : 'All Clear';
+                document.getElementById('statFees').style.color = hasUnpaid ? 'var(--danger)' : 'var(--primary)';
+            } catch(error) { console.error(error); }
+        }
+
+        /* 5. NOTICES & 6. MARKS (UNCHANGED CORE LOGIC) */
+        window.loadNotices = async function() {
+            const noticeDiv = document.getElementById('noticeBoardDiv');
+            try {
+                const snapshot = await getDocs(collection(db, "notices"));
+                noticeDiv.innerHTML = '';
+                if (snapshot.empty) { noticeDiv.innerHTML = '<p style="text-align:center;">No announcements.</p>'; return; }
+                snapshot.forEach((doc) => {
+                    const n = doc.data();
+                    noticeDiv.innerHTML += `<div class="notice-item"><h4>${n.title}</h4><p>${n.message}</p></div>`;
+                });
+            } catch(err) { console.error(err); }
+        }
+
+        window.loadMyMarks = async function(studentClass, studentName) {
+            const tbody = document.getElementById('marksTableBody');
+            try {
+                const q = query(collection(db, "marks"), where("className", "==", studentClass), where("studentName", "==", studentName));
+                const snapshot = await getDocs(q);
+                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;">No exam records found.</td></tr>'; return; }
+                tbody.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const m = doc.data();
+                    tbody.innerHTML += `<tr><td><strong>${m.examName}</strong></td><td style="color: var(--primary); font-weight: bold;">${m.marks}</td></tr>`;
+                });
+            } catch(err) { console.error(err); }
+        }
+
+        window.secureLogout = function() {
+            localStorage.clear();
+            window.location.href = "main-website.html";
+        }
+    </script>
+</body>
+</html>
