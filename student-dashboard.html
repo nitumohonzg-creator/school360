@@ -16,8 +16,9 @@
         .logout-btn { background-color: #c0392b; color: white; text-align: center; margin: 20px; padding: 10px; border-radius: 5px; cursor: pointer; display: block; text-decoration: none; }
 
         .main-content { margin-left: 250px; padding: 30px; width: 100%; box-sizing: border-box; }
-        .header { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 30px; border-left: 5px solid #27ae60; }
+        .header { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 30px; border-left: 5px solid #27ae60; display: flex; justify-content: space-between; align-items: center; }
         .header h1 { margin: 0; color: #333; font-size: 24px; }
+        .student-badge { background: #27ae60; color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; }
 
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
@@ -30,16 +31,12 @@
         .notice-item p { margin: 0; font-size: 13px; color: #555; }
         .notice-date { font-size: 11px; color: #999; display: block; margin-top: 5px; }
 
-        /* Tables & Forms */
+        /* Tables */
         table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 15px; font-size: 14px;}
         th { background-color: #f4f7f6; padding: 12px; border-bottom: 2px solid #ccc; color: #333; }
         td { padding: 12px; border-bottom: 1px solid #eee; color: #555; }
         
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; color: #333; font-size: 14px;}
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: inherit;}
         .btn-view { background: #3498db; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 12px;}
-        .btn-search { background: #27ae60; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px;}
     </style>
 </head>
 <body>
@@ -50,13 +47,16 @@
         <a href="#noticeSec">📢 Notice Board</a>
         <a href="#assignmentSec">📂 My Assignments</a>
         <a href="#marksSec">📝 My Report Card</a>
-        <a href="main-website.html" class="logout-btn">Logout</a>
+        <a href="#" onclick="secureLogout()" class="logout-btn">Logout</a>
     </div>
 
     <div class="main-content">
         <div class="header">
-            <h1>Welcome, Student!</h1>
-            <p style="margin: 5px 0 0 0; color: #777;">Access your study materials, notices, and grades below.</p>
+            <div>
+                <h1 id="welcomeText">Welcome, Student!</h1>
+                <p style="margin: 5px 0 0 0; color: #777;">Your secure academic control panel.</p>
+            </div>
+            <div class="student-badge" id="classBadge">Class: Loading...</div>
         </div>
 
         <div class="box-container" id="noticeSec">
@@ -68,16 +68,7 @@
 
         <div class="dashboard-grid">
             <div class="box-container" id="assignmentSec">
-                <h3>📂 View Class Assignments</h3>
-                <div class="form-group">
-                    <label>Select Your Class to fetch assignments</label>
-                    <select id="myClassAssign" onchange="loadAssignments()">
-                        <option value="">-- Select Class --</option>
-                        <option value="Class 8">Class 8</option>
-                        <option value="Class 9">Class 9</option>
-                        <option value="Class 10">Class 10</option>
-                    </select>
-                </div>
+                <h3>📂 My Class Assignments</h3>
                 <div style="max-height: 300px; overflow-y: auto;">
                     <table>
                         <thead>
@@ -87,31 +78,15 @@
                             </tr>
                         </thead>
                         <tbody id="assignmentTableBody">
-                            <tr><td colspan="2" style="text-align: center; color:#888;">Select class to view.</td></tr>
+                            <tr><td colspan="2" style="text-align: center; color:#888;">Loading assignments...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
             <div class="box-container" id="marksSec" style="border-top: 4px solid #27ae60;">
-                <h3>📝 View My Marks</h3>
-                <div style="display: flex; gap: 10px;">
-                    <div class="form-group" style="flex: 1;">
-                        <label>Your Class</label>
-                        <select id="myClassMarks">
-                            <option value="Class 8">Class 8</option>
-                            <option value="Class 9">Class 9</option>
-                            <option value="Class 10">Class 10</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label>Your Name</label>
-                        <input type="text" id="myNameMarks" placeholder="e.g. Rahul">
-                    </div>
-                </div>
-                <button class="btn-search" onclick="loadMyMarks()">Search My Marks</button>
-                
-                <div style="margin-top: 20px;">
+                <h3>📝 My Personal Report Card</h3>
+                <div style="max-height: 300px; overflow-y: auto;">
                     <table>
                         <thead>
                             <tr>
@@ -120,7 +95,7 @@
                             </tr>
                         </thead>
                         <tbody id="marksTableBody">
-                            <tr><td colspan="2" style="text-align: center; color:#888;">Enter details to search.</td></tr>
+                            <tr><td colspan="2" style="text-align: center; color:#888;">Loading your marks...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -144,82 +119,87 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // 1. LOAD NOTICES
+        // Security Check: LocalStorage se data read karna
+        const sName = localStorage.getItem("studentName");
+        const sClass = localStorage.getItem("studentClass");
+
+        window.onload = function() {
+            // Agar koi bina login kiye direct page kholne ki koshish kare
+            if (!sName || !sClass) {
+                alert("Access Denied! Please login first.");
+                window.location.href = "main-website.html";
+                return;
+            }
+
+            // Screen par Student ka Real Name aur Class auto-set karna
+            document.getElementById("welcomeText").innerText = `Welcome, ${sName}!`;
+            document.getElementById("classBadge").innerText = `My Class: ${sClass}`;
+
+            // Automatic data fetch lagana bina dropdown ke
+            loadNotices();
+            loadMyAssignments(sClass);
+            loadMyMarks(sClass, sName);
+        }
+
+        // 1. LOAD GLOBAL NOTICES
         window.loadNotices = async function() {
             const noticeDiv = document.getElementById('noticeBoardDiv');
             try {
                 const querySnapshot = await getDocs(collection(db, "notices"));
                 noticeDiv.innerHTML = '';
-                
-                if (querySnapshot.empty) {
-                    noticeDiv.innerHTML = '<p style="text-align:center; color:#888;">No new announcements.</p>';
-                    return;
-                }
+                if (querySnapshot.empty) { noticeDiv.innerHTML = '<p style="text-align:center; color:#888;">No new announcements.</p>'; return; }
 
                 querySnapshot.forEach((doc) => {
                     const notice = doc.data();
                     const dateObj = notice.dateAdded ? notice.dateAdded.toDate() : new Date();
                     const dateStr = dateObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-
                     noticeDiv.innerHTML += `
                         <div class="notice-item">
                             <h4>${notice.title}</h4>
                             <p>${notice.message}</p>
                             <span class="notice-date">Posted on: ${dateStr}</span>
-                        </div>
-                    `;
+                        </div>`;
                 });
             } catch(error) { console.error(error); }
         }
 
-        // 2. LOAD ASSIGNMENTS (Based on Class)
-        window.loadAssignments = async function() {
-            const selectedClass = document.getElementById('myClassAssign').value;
+        // 2. AUTOMATIC ASSIGNMENT FETCH (FILTERED BY LOGGED-IN CLASS)
+        window.loadMyAssignments = async function(studentClass) {
             const tbody = document.getElementById('assignmentTableBody');
-            
-            if(!selectedClass) { tbody.innerHTML = '<tr><td colspan="2">Select class first</td></tr>'; return; }
-            tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;">Fetching assignments...</td></tr>';
-            
             try {
-                const q = query(collection(db, "assignments"), where("className", "==", selectedClass));
+                const q = query(collection(db, "assignments"), where("className", "==", studentClass));
                 const snapshot = await getDocs(q);
                 
-                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;">No assignments found.</td></tr>'; return; }
+                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:#888;">No assignments for your class.</td></tr>'; return; }
                 
                 tbody.innerHTML = '';
                 snapshot.forEach(doc => {
                     const a = doc.data();
+                    let fileBtn = a.fileUrl === "#" ? `<span style="color:#aaa;">No File</span>` : `<a href="${a.fileUrl}" target="_blank" class="btn-view">View Link</a>`;
                     tbody.innerHTML += `
                         <tr>
                             <td>
                                 <strong>${a.title}</strong><br>
-                                <small style="color:red;">Due: ${a.dueDate}</small>
+                                <small style="color:#777;">${a.description || 'No description'}</small><br>
+                                <small style="color:red; font-weight:bold;">Due Date: ${a.dueDate}</small>
                             </td>
-                            <td><a href="${a.fileUrl}" target="_blank" class="btn-view">View Link</a></td>
-                        </tr>
-                    `;
+                            <td>${fileBtn}</td>
+                        </tr>`;
                 });
             } catch(error) { console.error(error); }
         }
 
-        // 3. LOAD MARKS (Based on Class and Name)
-        window.loadMyMarks = async function() {
-            const selectedClass = document.getElementById('myClassMarks').value;
-            const studentName = document.getElementById('myNameMarks').value;
+        // 3. AUTOMATIC MARKS FETCH (FILTERED BY LOGGED-IN NAME & CLASS)
+        window.loadMyMarks = async function(studentClass, studentName) {
             const tbody = document.getElementById('marksTableBody');
-            
-            if(!studentName) { alert("Please enter your name!"); return; }
-            tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;">Searching...</td></tr>';
-            
             try {
-                // Firebase mein query lagayenge: Class aur Naam dono match hone chahiye
                 const q = query(collection(db, "marks"), 
-                    where("className", "==", selectedClass),
+                    where("className", "==", studentClass),
                     where("studentName", "==", studentName)
                 );
                 const snapshot = await getDocs(q);
                 
-                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:red;">No marks found for this name. (Check spelling)</td></tr>'; return; }
+                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:#888;">No exam records found for you yet.</td></tr>'; return; }
                 
                 tbody.innerHTML = '';
                 snapshot.forEach(doc => {
@@ -228,15 +208,15 @@
                         <tr>
                             <td><strong>${m.examName}</strong></td>
                             <td style="color: #27ae60; font-weight: bold; font-size: 16px;">${m.marks}</td>
-                        </tr>
-                    `;
+                        </tr>`;
                 });
             } catch(error) { console.error(error); }
         }
 
-        // Run when page loads
-        window.onload = function() {
-            loadNotices();
+        // Logout logic to clear browser memory
+        window.secureLogout = function() {
+            localStorage.clear();
+            window.location.href = "main-website.html";
         }
     </script>
 </body>
