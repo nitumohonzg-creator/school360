@@ -8,143 +8,173 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f4f7f6; display: flex; }
         
         /* Teacher Sidebar Theme (Purple/Blue) */
-        .sidebar { width: 250px; background-color: #34495e; color: white; height: 100vh; padding-top: 20px; position: fixed; overflow-y: auto;}
+        .sidebar { width: 250px; background-color: #34495e; color: white; height: 100vh; padding-top: 20px; position: fixed; overflow-y: auto; z-index: 100;}
         .sidebar h2 { text-align: center; color: #9b59b6; margin-bottom: 30px; }
         .sidebar h2 span { color: white; }
-        .sidebar a { display: block; color: white; padding: 15px 25px; text-decoration: none; font-size: 16px; border-bottom: 1px solid #2c3e50; }
-        .sidebar a:hover { background-color: #2c3e50; }
-        .logout-btn { background-color: #e74c3c; color: white; text-align: center; margin: 20px; padding: 10px; border-radius: 5px; cursor: pointer; display: block; text-decoration: none; }
+        .sidebar a { display: block; color: white; padding: 15px 25px; text-decoration: none; font-size: 16px; border-bottom: 1px solid #2c3e50; transition: 0.3s; cursor: pointer;}
+        .sidebar a:hover, .sidebar a.active-link { background-color: #9b59b6; }
+        .logout-btn { background-color: #e74c3c; color: white; text-align: center; margin: 20px; padding: 10px; border-radius: 5px; display: block; text-decoration: none; }
 
         .main-content { margin-left: 250px; padding: 30px; width: 100%; box-sizing: border-box; }
         .header { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 30px; border-left: 5px solid #9b59b6; }
         .header h1 { margin: 0; color: #333; font-size: 24px; }
 
-        /* Dashboard Layout Grid */
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-        .full-width { grid-column: span 2; }
+        /* Section Visibility */
+        .section { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .section.active { display: block; }
 
-        .box-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .box-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px;}
         .box-container h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         
         /* Form & Tables */
-        .form-group { margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; width: 100%;}
         .form-group label { display: block; margin-bottom: 5px; font-weight: 500; color: #333; font-size: 14px;}
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: inherit;}
-        .btn-submit { background: #9b59b6; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; }
         
-        table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 15px; font-size: 14px;}
+        .flex-row { display: flex; gap: 15px; flex-wrap: wrap; }
+        .flex-row > div { flex: 1; min-width: 200px; }
+
+        .btn-submit { background: #9b59b6; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s;}
+        .btn-submit:hover { opacity: 0.9; }
+        
+        .table-responsive { overflow-x: auto; width: 100%; }
+        table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 15px; font-size: 14px; min-width: 500px;}
         th { background-color: #f4f7f6; padding: 12px; border-bottom: 2px solid #ccc; color: #333; }
         td { padding: 12px; border-bottom: 1px solid #eee; color: #555; }
         
         .att-select, .date-input { padding: 8px; border-radius: 4px; border: 1px solid #ccc; outline: none; font-family: inherit; }
         .mark-input { width: 80px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
+
+        /* Responsive Mobile Design */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; display: flex; flex-wrap: wrap; padding: 10px; box-sizing: border-box; justify-content: center; z-index: 10;}
+            .sidebar h2 { width: 100%; margin-bottom: 10px; font-size: 20px;}
+            .sidebar a { border-bottom: none; border-radius: 5px; padding: 10px 15px; margin: 2px; font-size: 14px; flex-grow: 1; text-align: center;}
+            .logout-btn { margin: 2px; flex-grow: 1;}
+            .main-content { margin-left: 0; padding: 15px; }
+            .box-container h3 { flex-direction: column; align-items: flex-start; gap: 10px;}
+        }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
         <h2>Teacher<span>Portal</span></h2>
-        <a href="#">🏠 Dashboard</a>
-        <a href="#uploadSec">📂 Assignments</a>
-        <a href="#studentAttSec">📅 Student Attendance</a>
-        <a href="#marksSec">📝 Update Marks</a>
+        <a id="nav-dashboardSec" class="active-link" onclick="showSection('dashboardSec')">🏠 Dashboard</a>
+        <a id="nav-uploadSec" onclick="showSection('uploadSec')">📂 Post Assignment</a>
+        <a id="nav-studentAttSec" onclick="showSection('studentAttSec')">📅 Attendance</a>
+        <a id="nav-marksSec" onclick="showSection('marksSec')">📝 Grade Assignments</a>
         <a href="main-website.html" class="logout-btn">Logout</a>
     </div>
 
     <div class="main-content">
         <div class="header">
             <h1>Welcome, Teacher!</h1>
-            <p style="margin: 5px 0 0 0; color: #777;">Manage assignments, marks, and student attendance seamlessly.</p>
+            <p style="margin: 5px 0 0 0; color: #777;">Manage assignments, grading, and student attendance seamlessly.</p>
         </div>
 
-        <div class="dashboard-grid">
-            <div class="box-container" id="uploadSec">
-                <h3>📂 Post New Assignment</h3>
-                <form id="assignmentForm" onsubmit="uploadAssignment(event)">
-                    <div class="form-group">
-                        <label>Assignment Title</label>
-                        <input type="text" id="aTitle" placeholder="e.g., Chapter 1 Science Notes" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Description / Instructions</label>
-                        <textarea id="aDescription" rows="3" placeholder="Write instructions or assignment questions here..." required></textarea>
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <div class="form-group" style="flex: 1;">
-                            <label>Target Class</label>
-                            <select id="aClass" required>
-                                <option value="Class 8">Class 8</option>
-                                <option value="Class 9">Class 9</option>
-                                <option value="Class 10">Class 10</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>Due Date</label>
-                            <input type="date" id="aDueDate" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Attachment Link (Optional - Google Drive / Web Link)</label>
-                        <input type="url" id="aLink" placeholder="Paste link here if any, or leave blank">
-                    </div>
-                    <button type="submit" class="btn-submit" id="aBtn">Post Assignment</button>
-                </form>
-            </div>
+        <div id="dashboardSec" class="section active box-container" style="text-align: center; padding: 40px 20px;">
+            <h2 style="color: #2c3e50;">Hello! Have a great day at school.</h2>
+            <p style="color: #666;">Please select an option from the menu to manage your class activities.</p>
+            <p>📋 <strong>Notice:</strong> Exam marks will be updated by the School Admin via Marksheets. Teachers should only grade Assignments & Homeworks here.</p>
+        </div>
 
-            <div class="box-container" id="marksSec" style="border-top: 4px solid #2980b9;">
-                <h3>📝 Enter Student Marks</h3>
-                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <div class="form-group" style="flex: 1; margin:0;">
-                        <label>Select Class</label>
-                        <select id="markClass" onchange="loadStudentsForMarks()">
-                            <option value="">-- Choose Class --</option>
+        <div id="uploadSec" class="section box-container">
+            <h3>📂 Post New Assignment / Homework</h3>
+            <form id="assignmentForm" onsubmit="uploadAssignment(event)">
+                <div class="form-group">
+                    <label>Assignment Title</label>
+                    <input type="text" id="aTitle" placeholder="e.g., Chapter 1 Science Notes" required>
+                </div>
+                <div class="form-group">
+                    <label>Description / Instructions</label>
+                    <textarea id="aDescription" rows="3" placeholder="Write instructions or assignment questions here..." required></textarea>
+                </div>
+                <div class="flex-row">
+                    <div class="form-group">
+                        <label>Target Class</label>
+                        <select id="aClass" required>
                             <option value="Class 8">Class 8</option>
                             <option value="Class 9">Class 9</option>
                             <option value="Class 10">Class 10</option>
                         </select>
                     </div>
-                    <div class="form-group" style="flex: 1; margin:0;">
-                        <label>Exam Name</label>
-                        <input type="text" id="examName" placeholder="e.g., Unit Test 1">
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" id="aDueDate" required>
                     </div>
                 </div>
-                
-                <div style="max-height: 250px; overflow-y: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Roll</th>
-                                <th>Student Name</th>
-                                <th>Marks</th>
-                            </tr>
-                        </thead>
-                        <tbody id="marksTableBody">
-                            <tr><td colspan="3" style="text-align: center; color:#888;">Select a class to load students.</td></tr>
-                        </tbody>
-                    </table>
+                <div class="form-group">
+                    <label>Attachment Link (Optional - Google Drive / Web Link)</label>
+                    <input type="url" id="aLink" placeholder="Paste link here if any, or leave blank">
                 </div>
-                <button class="btn-submit" onclick="saveAllMarks()" style="background-color: #2980b9; margin-top: 15px;">Save All Marks</button>
-            </div>
+                <button type="submit" class="btn-submit" id="aBtn">Post Assignment</button>
+            </form>
+        </div>
 
-            <div class="box-container full-width" id="studentAttSec" style="border-top: 4px solid #2ecc71;">
-                <h3>
-                    📅 Mark Student Attendance
-                    <div style="display: flex; gap: 15px; align-items: center;">
-                        <select id="attClass" class="att-select" onchange="loadStudentsForAttendance()">
-                            <option value="">-- Choose Class --</option>
-                            <option value="Class 8">Class 8</option>
-                            <option value="Class 9">Class 9</option>
-                            <option value="Class 10">Class 10</option>
-                        </select>
-                        <input type="date" id="studentAttDate" class="date-input" onchange="loadStudentsForAttendance()">
-                    </div>
-                </h3>
+        <div id="marksSec" class="section box-container" style="border-top: 4px solid #2980b9;">
+            <h3>📝 Grade Submitted Assignments</h3>
+            <div class="flex-row" style="margin-bottom: 15px;">
+                <div class="form-group" style="margin:0;">
+                    <label>Select Class</label>
+                    <select id="markClass" onchange="loadClassDataForGrading()">
+                        <option value="">-- Choose Class --</option>
+                        <option value="Class 8">Class 8</option>
+                        <option value="Class 9">Class 9</option>
+                        <option value="Class 10">Class 10</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label>Select Assignment to Grade</label>
+                    <select id="assignmentSelect">
+                        <option value="">-- Select Class First --</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Roll</th>
+                            <th>Student Name</th>
+                            <th>Assignment Marks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="marksTableBody">
+                        <tr><td colspan="3" style="text-align: center; color:#888;">Select a class and assignment to load students.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn-submit" onclick="saveAssignmentMarks()" style="background-color: #2980b9; margin-top: 15px;">Save All Marks</button>
+        </div>
+
+        <div id="studentAttSec" class="section box-container" style="border-top: 4px solid #2ecc71;">
+            <h3>
+                📅 Mark Student Attendance
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <select id="attClass" class="att-select" onchange="loadStudentsForAttendance()">
+                        <option value="">-- Class --</option>
+                        <option value="Class 8">Class 8</option>
+                        <option value="Class 9">Class 9</option>
+                        <option value="Class 10">Class 10</option>
+                    </select>
+                    <input type="date" id="studentAttDate" class="date-input" onchange="loadStudentsForAttendance()">
+                </div>
+            </h3>
+            <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
                             <th>Roll Number</th>
                             <th>Student Name</th>
-                            <th>Attendance Status (Auto-Saves)</th>
+                            <th>Status (Auto-Saves)</th>
                         </tr>
                     </thead>
                     <tbody id="studentAttTableBody">
@@ -153,6 +183,7 @@
                 </table>
             </div>
         </div>
+
     </div>
 
     <script type="module">
@@ -171,28 +202,42 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Page Start hone par Aaj ki Date set karna
+        // ==========================================
+        // 0. NAVIGATION / SPA LOGIC
+        // ==========================================
+        window.showSection = function(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            // Remove active class from all links
+            document.querySelectorAll('.sidebar a').forEach(link => link.classList.remove('active-link'));
+            
+            // Show target section & highlight active link
+            document.getElementById(sectionId).classList.add('active');
+            const activeNav = document.getElementById('nav-' + sectionId);
+            if(activeNav) activeNav.classList.add('active-link');
+        }
+
+        // Setup Date on Load
         window.onload = function() {
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('studentAttDate').value = today;
         }
 
         // ==========================================
-        // 1. ASSIGNMENT LOGIC (With Optional Link)
+        // 1. ASSIGNMENT UPLOAD
         // ==========================================
         window.uploadAssignment = async function(event) {
             event.preventDefault();
             const btn = document.getElementById('aBtn');
             btn.innerText = "Posting... Please Wait";
             
-            // Link agar blank hai toh use "No Attachment" set karein
             const linkInput = document.getElementById('aLink').value;
             const finalLink = linkInput.trim() !== "" ? linkInput : "#";
 
             try {
                 await addDoc(collection(db, "assignments"), {
                     title: document.getElementById('aTitle').value,
-                    description: document.getElementById('aDescription').value, // Naya Field Added
+                    description: document.getElementById('aDescription').value,
                     className: document.getElementById('aClass').value,
                     dueDate: document.getElementById('aDueDate').value,
                     fileUrl: finalLink, 
@@ -209,7 +254,7 @@
         }
 
         // ==========================================
-        // 2. NAYA FEATURE: DATE-WISE STUDENT ATTENDANCE
+        // 2. ATTENDANCE LOGIC
         // ==========================================
         window.loadStudentsForAttendance = async function() {
             const sClass = document.getElementById('attClass').value;
@@ -220,18 +265,14 @@
             tbody.innerHTML = '<tr><td colspan="3" style="text-align: center;">Loading class roster...</td></tr>';
 
             try {
-                // 1. Saare Students fetch karo selected class ke
                 const qStudents = query(collection(db, "students"), where("className", "==", sClass));
                 const studentSnap = await getDocs(qStudents);
 
-                // 2. Us specific date ki saved attendance fetch karo
                 const qAtt = query(collection(db, "student_attendance"), where("date", "==", sDate), where("className", "==", sClass));
                 const attSnap = await getDocs(qAtt);
 
                 let attMap = {};
-                attSnap.forEach(doc => {
-                    attMap[doc.data().studentId] = doc.data().status;
-                });
+                attSnap.forEach(doc => { attMap[doc.data().studentId] = doc.data().status; });
 
                 if(studentSnap.empty) { tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color:red;">No students registered in this class.</td></tr>'; return; }
                 
@@ -261,56 +302,69 @@
             } catch(error) { alert("Error loading roster: " + error.message); }
         }
 
-        // Real-time Save Student Attendance
         window.saveStudentAttendance = async function(sId, sName, sClass, statusValue) {
             const sDate = document.getElementById('studentAttDate').value;
-            // Unique ID format: StudentID_Date (No duplicates)
             const docId = `${sId}_${sDate}`;
-
             try {
                 await setDoc(doc(db, "student_attendance", docId), {
-                    studentId: sId,
-                    studentName: sName,
-                    className: sClass,
-                    date: sDate,
-                    status: statusValue
+                    studentId: sId, studentName: sName, className: sClass, date: sDate, status: statusValue
                 });
             } catch (error) { alert("Failed to save attendance!"); }
         }
 
         // ==========================================
-        // 3. MARKS ENTRY LOGIC
+        // 3. GRADE ASSIGNMENTS (Marks Entry)
         // ==========================================
-        window.loadStudentsForMarks = async function() {
+        window.loadClassDataForGrading = async function() {
             const selectedClass = document.getElementById('markClass').value;
             const tbody = document.getElementById('marksTableBody');
+            const assignDropdown = document.getElementById('assignmentSelect');
             
-            if(!selectedClass) { tbody.innerHTML = '<tr><td colspan="3">Select class first</td></tr>'; return; }
+            if(!selectedClass) { 
+                tbody.innerHTML = '<tr><td colspan="3">Select class first</td></tr>'; 
+                assignDropdown.innerHTML = '<option value="">-- Select Class First --</option>';
+                return; 
+            }
+
             tbody.innerHTML = '<tr><td colspan="3" style="text-align: center;">Loading students...</td></tr>';
             
             try {
-                const q = query(collection(db, "students"), where("className", "==", selectedClass));
-                const snapshot = await getDocs(q);
+                // Fetch Posted Assignments for Dropdown
+                assignDropdown.innerHTML = '<option value="">-- Select an Assignment --</option>';
+                const qAssign = query(collection(db, "assignments"), where("className", "==", selectedClass));
+                const assignSnap = await getDocs(qAssign);
+                assignSnap.forEach(doc => {
+                    let data = doc.data();
+                    assignDropdown.innerHTML += `<option value="${doc.id}">${data.title}</option>`;
+                });
+
+                // Fetch Students to Grade
+                const qStudents = query(collection(db, "students"), where("className", "==", selectedClass));
+                const snapshot = await getDocs(qStudents);
                 if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="3">No students found.</td></tr>'; return; }
                 
                 tbody.innerHTML = '';
                 snapshot.forEach(doc => {
                     const s = doc.data();
                     tbody.innerHTML += `
-                        <tr class="student-row" data-id="${doc.id}" data-name="${s.name}" data-roll="${s.rollNumber}">
+                        <tr class="student-row" data-id="${doc.id}" data-name="${s.name}">
                             <td>${s.rollNumber}</td>
                             <td>${s.name}</td>
-                            <td><input type="number" class="mark-input" placeholder="00"></td>
+                            <td><input type="number" class="mark-input" placeholder="e.g., 10"></td>
                         </tr>
                     `;
                 });
             } catch(error) { console.error(error); }
         }
 
-        window.saveAllMarks = async function() {
-            const exam = document.getElementById('examName').value;
+        window.saveAssignmentMarks = async function() {
+            const assignmentSelect = document.getElementById('assignmentSelect');
+            const assignmentId = assignmentSelect.value;
+            const assignmentName = assignmentSelect.options[assignmentSelect.selectedIndex].text;
             const selectedClass = document.getElementById('markClass').value;
-            if(!exam || !selectedClass) { alert("Please enter Exam Name and select Class!"); return; }
+            
+            if(!selectedClass) { alert("Please select a Class!"); return; }
+            if(!assignmentId) { alert("Please select an Assignment from the dropdown to grade!"); return; }
 
             const rows = document.querySelectorAll('.student-row');
             let savedCount = 0;
@@ -321,20 +375,22 @@
                 const marksObtained = row.querySelector('.mark-input').value;
 
                 if(marksObtained !== "") {
-                    await addDoc(collection(db, "marks"), {
+                    // Storing Assignment Marks in Firebase
+                    await addDoc(collection(db, "assignment_marks"), {
                         studentId: studentId,
                         studentName: studentName,
                         className: selectedClass,
-                        examName: exam,
+                        assignmentId: assignmentId,
+                        assignmentName: assignmentName,
                         marks: marksObtained,
-                        dateUploaded: new Date()
+                        dateGraded: new Date()
                     });
                     savedCount++;
                 }
             }
-            alert(`Success! Saved marks for ${savedCount} students.`);
-            document.getElementById('examName').value = "";
-            loadStudentsForMarks(); 
+            alert(`Success! Saved assignment grades for ${savedCount} students.`);
+            // Reset inputs
+            rows.forEach(row => row.querySelector('.mark-input').value = "");
         }
     </script>
 </body>
