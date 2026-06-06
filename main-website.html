@@ -88,7 +88,7 @@
     </div>
 
     <!-- Nayi Firebase Logic -->
-    <script type="module">
+        <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -110,7 +110,7 @@
         window.openLoginModal = () => document.getElementById('loginModal').style.display = 'flex';
         window.closeLoginModal = () => document.getElementById('loginModal').style.display = 'none';
 
-        // NAYA MULTI-ROLE LOGIN LOGIC
+        // MULTI-ROLE LOGIN LOGIC (UPDATED WITH LOCALSTORAGE)
         window.loginUser = async function(event) {
             event.preventDefault();
             const roleCollection = document.getElementById('loginRole').value;
@@ -120,14 +120,26 @@
             logBtn.innerText = "Checking Credentials...";
 
             try {
-                // System check karega ki selected role wali list mein email/pass hai ya nahi
                 const q = query(collection(db, roleCollection), where("email", "==", email), where("password", "==", pass));
                 const querySnapshot = await getDocs(q);
 
                 if (!querySnapshot.empty) {
                     alert("Login Successful! Redirecting...");
                     
-                    // Role ke hisaab se alag dashboard par bhejna
+                    const userDoc = querySnapshot.docs[0];
+                    const userData = userDoc.data();
+                    
+                    // Browser ki memory mein login user ki details save karna
+                    localStorage.setItem("userRole", roleCollection);
+                    localStorage.setItem("userEmail", email);
+                    
+                    if(roleCollection === "students") {
+                        localStorage.setItem("studentName", userData.name);
+                        localStorage.setItem("studentClass", userData.className);
+                        localStorage.setItem("studentId", userDoc.id);
+                    }
+
+                    // Role ke hisaab se dashboard par bhejna
                     if(roleCollection === "schools") window.location.href = "index.html";
                     else if(roleCollection === "teachers") window.location.href = "teacher-dashboard.html";
                     else if(roleCollection === "students") window.location.href = "student-dashboard.html";
@@ -164,5 +176,6 @@
             }
         }
     </script>
+
 </body>
 </html>
