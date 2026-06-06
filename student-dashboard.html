@@ -5,107 +5,234 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Portal - School360</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f4f7f6; display: flex; }
+        :root {
+            --primary: #27ae60;
+            --primary-dark: #2ecc71;
+            --bg: #f4f7f6;
+            --text-main: #333;
+            --text-light: #777;
+            --white: #ffffff;
+            --danger: #e74c3c;
+            --warning: #f1c40f;
+            --info: #3498db;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: var(--bg); display: flex; overflow-x: hidden; }
         
-        /* Student Sidebar Theme (Green) */
-        .sidebar { width: 250px; background-color: #27ae60; color: white; height: 100vh; padding-top: 20px; position: fixed; overflow-y: auto;}
-        .sidebar h2 { text-align: center; color: #ecf0f1; margin-bottom: 30px; }
-        .sidebar h2 span { color: white; }
-        .sidebar a { display: block; color: white; padding: 15px 25px; text-decoration: none; font-size: 16px; border-bottom: 1px solid #2ecc71; }
-        .sidebar a:hover { background-color: #2ecc71; }
-        .logout-btn { background-color: #c0392b; color: white; text-align: center; margin: 20px; padding: 10px; border-radius: 5px; cursor: pointer; display: block; text-decoration: none; }
+        /* Sidebar Styles */
+        .sidebar { width: 250px; background-color: var(--primary); color: white; height: 100vh; padding-top: 20px; position: fixed; overflow-y: auto; transition: 0.3s; z-index: 1000; }
+        .sidebar h2 { text-align: center; margin-bottom: 30px; font-size: 22px; }
+        .sidebar h2 span { color: #ecf0f1; font-weight: normal; }
+        .sidebar a { display: block; color: white; padding: 15px 25px; text-decoration: none; font-size: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); transition: 0.2s; }
+        .sidebar a:hover { background-color: var(--primary-dark); padding-left: 30px; }
+        .logout-btn { background-color: #c0392b !important; text-align: center; margin: 20px; border-radius: 5px; border-bottom: none !important; }
+        .logout-btn:hover { background-color: #a93226 !important; padding-left: 25px !important; }
 
-        .main-content { margin-left: 250px; padding: 30px; width: 100%; box-sizing: border-box; }
-        .header { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 30px; border-left: 5px solid #27ae60; display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { margin: 0; color: #333; font-size: 24px; }
-        .student-badge { background: #27ae60; color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; }
-
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-
-        .box-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px;}
-        .box-container h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        /* Main Content */
+        .main-content { margin-left: 250px; padding: 20px 30px; width: calc(100% - 250px); box-sizing: border-box; transition: 0.3s; }
         
+        /* Header & Mobile Toggle */
+        .header { background: var(--white); padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 25px; border-left: 5px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { margin: 0; color: var(--text-main); font-size: 24px; }
+        .student-badge { background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; }
+        
+        .menu-toggle { display: none; font-size: 24px; cursor: pointer; background: none; border: none; color: var(--text-main); margin-right: 15px; }
+
+        /* Quick Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .stat-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; border-bottom: 4px solid var(--primary); }
+        .stat-card h4 { margin: 0 0 10px 0; color: var(--text-light); font-size: 14px; text-transform: uppercase; }
+        .stat-card h2 { margin: 0; color: var(--text-main); font-size: 28px; }
+
+        /* Dashboard Grid */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
+        .box-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); max-height: 450px; overflow-y: auto; }
+        .box-container h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; position: sticky; top: 0; background: white; z-index: 10; }
+
         /* Notices */
-        .notice-item { background: #fdfae6; padding: 15px; border-left: 4px solid #f1c40f; margin-bottom: 10px; border-radius: 4px; }
+        .notice-item { background: #fdfae6; padding: 15px; border-left: 4px solid var(--warning); margin-bottom: 10px; border-radius: 4px; }
         .notice-item h4 { margin: 0 0 5px 0; color: #d35400; }
-        .notice-item p { margin: 0; font-size: 13px; color: #555; }
+        .notice-item p { margin: 0; font-size: 13px; color: #555; line-height: 1.4; }
         .notice-date { font-size: 11px; color: #999; display: block; margin-top: 5px; }
 
-        /* Tables */
-        table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 15px; font-size: 14px;}
-        th { background-color: #f4f7f6; padding: 12px; border-bottom: 2px solid #ccc; color: #333; }
-        td { padding: 12px; border-bottom: 1px solid #eee; color: #555; }
+        /* Tables & Lists */
+        table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px; font-size: 14px;}
+        th { background-color: var(--bg); padding: 12px; border-bottom: 2px solid #ccc; color: var(--text-main); position: sticky; top: 40px; z-index: 9; }
+        td { padding: 12px; border-bottom: 1px solid #eee; color: #555; vertical-align: top; }
         
-        .btn-view { background: #3498db; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 12px;}
+        /* Badges & Buttons */
+        .btn-view { background: var(--info); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 12px; display: inline-block;}
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white; }
+        .bg-success { background-color: var(--primary); }
+        .bg-danger { background-color: var(--danger); }
+        .bg-warning { background-color: var(--warning); color: #333; }
+        .bg-info { background-color: var(--info); }
+
+        /* Attendance Filters */
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center; }
+        .filter-bar input[type="date"] { padding: 6px; border: 1px solid #ccc; border-radius: 4px; }
+        .filter-bar button { padding: 6px 12px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; width: 100%; padding: 15px; }
+            .menu-toggle { display: inline-block; }
+            .header { align-items: flex-start; flex-direction: column; gap: 10px; }
+            .header-top { display: flex; width: 100%; align-items: center; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .filter-bar { flex-direction: column; align-items: stretch; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <h2>Student<span>Portal</span></h2>
-        <a href="#">🏠 My Dashboard</a>
-        <a href="#noticeSec">📢 Notice Board</a>
-        <a href="#assignmentSec">📂 My Assignments</a>
-        <a href="#marksSec">📝 My Report Card</a>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <h2>School<span>360</span></h2>
+        <a href="#dashboardTop" onclick="closeSidebar()">🏠 My Dashboard</a>
+        <a href="#attendanceSec" onclick="closeSidebar()">📅 Attendance</a>
+        <a href="#assignmentSec" onclick="closeSidebar()">📂 Assignments</a>
+        <a href="#marksSec" onclick="closeSidebar()">📝 Report Card</a>
+        <a href="#feesSec" onclick="closeSidebar()">💳 Fee Status</a>
+        <a href="#noticeSec" onclick="closeSidebar()">📢 Notices</a>
         <a href="#" onclick="secureLogout()" class="logout-btn">Logout</a>
     </div>
 
-    <div class="main-content">
+    <!-- Main Workspace -->
+    <div class="main-content" id="dashboardTop">
+        
+        <!-- Header -->
         <div class="header">
-            <div>
-                <h1 id="welcomeText">Welcome, Student!</h1>
-                <p style="margin: 5px 0 0 0; color: #777;">Your secure academic control panel.</p>
+            <div class="header-top">
+                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                <div>
+                    <h1 id="welcomeText">Welcome, Student!</h1>
+                    <p style="margin: 5px 0 0 0; color: #777;">Your secure academic control panel.</p>
+                </div>
             </div>
             <div class="student-badge" id="classBadge">Class: Loading...</div>
         </div>
 
-        <div class="box-container" id="noticeSec">
-            <h3>📢 Latest School Announcements</h3>
-            <div id="noticeBoardDiv">
-                <p style="text-align:center; color:#888; font-size:14px;">Loading notices...</p>
+        <!-- Quick Stats Widget (New Feature) -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Overall Attendance</h4>
+                <h2 id="statAttendance">--%</h2>
+            </div>
+            <div class="stat-card">
+                <h4>Pending Assignments</h4>
+                <h2 id="statAssignments" style="color: var(--danger);">--</h2>
+            </div>
+            <div class="stat-card">
+                <h4>Fee Status</h4>
+                <h2 id="statFees">--</h2>
             </div>
         </div>
 
         <div class="dashboard-grid">
+            
+            <!-- Attendance Section (New Feature) -->
+            <div class="box-container" id="attendanceSec">
+                <h3>📅 Subject-wise Attendance</h3>
+                <div class="filter-bar">
+                    <label style="font-size: 13px; color:#555;">From:</label>
+                    <input type="date" id="attStartDate">
+                    <label style="font-size: 13px; color:#555;">To:</label>
+                    <input type="date" id="attEndDate">
+                    <button onclick="filterAttendance()">Check</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Subject</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceTableBody">
+                        <tr><td colspan="3" style="text-align: center; color:#888;">Select dates to view attendance...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Enhanced Assignments -->
             <div class="box-container" id="assignmentSec">
                 <h3>📂 My Class Assignments</h3>
-                <div style="max-height: 300px; overflow-y: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Assignment Details</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="assignmentTableBody">
-                            <tr><td colspan="2" style="text-align: center; color:#888;">Loading assignments...</td></tr>
-                        </tbody>
-                    </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Details</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assignmentTableBody">
+                        <tr><td colspan="2" style="text-align: center; color:#888;">Loading assignments...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Fees Section (New Feature) -->
+            <div class="box-container" id="feesSec" style="border-top: 4px solid var(--warning);">
+                <h3>💳 Fee Details & Receipts</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Month/Term</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="feesTableBody">
+                        <tr><td colspan="3" style="text-align: center; color:#888;">Loading fee details...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Notices -->
+            <div class="box-container" id="noticeSec">
+                <h3>📢 Latest School Announcements</h3>
+                <div id="noticeBoardDiv">
+                    <p style="text-align:center; color:#888; font-size:14px;">Loading notices...</p>
                 </div>
             </div>
 
-            <div class="box-container" id="marksSec" style="border-top: 4px solid #27ae60;">
+            <!-- Marks -->
+            <div class="box-container" id="marksSec">
                 <h3>📝 My Personal Report Card</h3>
-                <div style="max-height: 300px; overflow-y: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Exam Name</th>
-                                <th>Marks Obtained</th>
-                            </tr>
-                        </thead>
-                        <tbody id="marksTableBody">
-                            <tr><td colspan="2" style="text-align: center; color:#888;">Loading your marks...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Exam Name</th>
+                            <th>Marks Obtained</th>
+                        </tr>
+                    </thead>
+                    <tbody id="marksTableBody">
+                        <tr><td colspan="2" style="text-align: center; color:#888;">Loading your marks...</td></tr>
+                    </tbody>
+                </table>
             </div>
+
         </div>
     </div>
 
+    <!-- UI Interaction Scripts -->
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+        function closeSidebar() {
+            if(window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('active');
+            }
+        }
+    </script>
+
+    <!-- Firebase Integration -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDg4HlG4M9lgqYSjV-fdqKacN94QNgfvOY",
@@ -119,101 +246,203 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Security Check: LocalStorage se data read karna
-        const sName = localStorage.getItem("studentName");
-        const sClass = localStorage.getItem("studentClass");
+        // Security Check
+        const sName = localStorage.getItem("studentName") || "Demo Student"; 
+        const sClass = localStorage.getItem("studentClass") || "10th";
 
         window.onload = function() {
-            // Agar koi bina login kiye direct page kholne ki koshish kare
-            if (!sName || !sClass) {
-                alert("Access Denied! Please login first.");
-                window.location.href = "main-website.html";
-                return;
+            if (!localStorage.getItem("studentName")) {
+                alert("Please login first.");
+                window.location.href = "main-website.html"; // Redirect to your login
+                // return; // Uncomment this in production
             }
 
-            // Screen par Student ka Real Name aur Class auto-set karna
             document.getElementById("welcomeText").innerText = `Welcome, ${sName}!`;
-            document.getElementById("classBadge").innerText = `My Class: ${sClass}`;
+            document.getElementById("classBadge").innerText = `Class: ${sClass}`;
 
-            // Automatic data fetch lagana bina dropdown ke
+            // Load All Data
             loadNotices();
             loadMyAssignments(sClass);
             loadMyMarks(sClass, sName);
+            loadFees(sName, sClass);
+            
+            // Set default date for attendance to current month
+            const today = new Date();
+            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+            const currentDay = today.toISOString().split('T')[0];
+            document.getElementById('attStartDate').value = firstDay;
+            document.getElementById('attEndDate').value = currentDay;
+            filterAttendance(); // Initial load
         }
 
-        // 1. LOAD GLOBAL NOTICES
+        /* 1. NOTICES */
         window.loadNotices = async function() {
             const noticeDiv = document.getElementById('noticeBoardDiv');
             try {
                 const querySnapshot = await getDocs(collection(db, "notices"));
                 noticeDiv.innerHTML = '';
-                if (querySnapshot.empty) { noticeDiv.innerHTML = '<p style="text-align:center; color:#888;">No new announcements.</p>'; return; }
+                if (querySnapshot.empty) { noticeDiv.innerHTML = '<p style="text-align:center;">No announcements.</p>'; return; }
 
                 querySnapshot.forEach((doc) => {
-                    const notice = doc.data();
-                    const dateObj = notice.dateAdded ? notice.dateAdded.toDate() : new Date();
-                    const dateStr = dateObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+                    const n = doc.data();
                     noticeDiv.innerHTML += `
                         <div class="notice-item">
-                            <h4>${notice.title}</h4>
-                            <p>${notice.message}</p>
-                            <span class="notice-date">Posted on: ${dateStr}</span>
+                            <h4>${n.title}</h4>
+                            <p>${n.message}</p>
                         </div>`;
                 });
             } catch(error) { console.error(error); }
         }
 
-        // 2. AUTOMATIC ASSIGNMENT FETCH (FILTERED BY LOGGED-IN CLASS)
+        /* 2. ENHANCED ASSIGNMENTS */
         window.loadMyAssignments = async function(studentClass) {
             const tbody = document.getElementById('assignmentTableBody');
             try {
                 const q = query(collection(db, "assignments"), where("className", "==", studentClass));
                 const snapshot = await getDocs(q);
                 
-                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:#888;">No assignments for your class.</td></tr>'; return; }
+                let pendingCount = 0;
+                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;">No assignments.</td></tr>'; document.getElementById('statAssignments').innerText = 0; return; }
                 
                 tbody.innerHTML = '';
                 snapshot.forEach(doc => {
                     const a = doc.data();
-                    let fileBtn = a.fileUrl === "#" ? `<span style="color:#aaa;">No File</span>` : `<a href="${a.fileUrl}" target="_blank" class="btn-view">View Link</a>`;
+                    pendingCount++;
+                    let fileBtn = a.fileUrl && a.fileUrl !== "#" ? `<a href="${a.fileUrl}" target="_blank" class="btn-view">View File</a>` : `<span style="color:#aaa;">No File</span>`;
                     tbody.innerHTML += `
                         <tr>
                             <td>
-                                <strong>${a.title}</strong><br>
-                                <small style="color:#777;">${a.description || 'No description'}</small><br>
-                                <small style="color:red; font-weight:bold;">Due Date: ${a.dueDate}</small>
+                                <strong>${a.title}</strong> <span class="badge bg-info" style="font-size:10px;">${a.subject || 'General'}</span><br>
+                                <small style="color:#444; display:block; margin: 4px 0;">${a.description || 'No description provided.'}</small>
+                                <small style="color:#777;">👨‍🏫 Teacher: <b>${a.teacherName || 'Unknown'}</b></small><br>
+                                <small style="color:var(--danger); font-weight:bold;">Due: ${a.dueDate || 'N/A'}</small>
                             </td>
-                            <td>${fileBtn}</td>
+                            <td style="vertical-align: middle;">${fileBtn}</td>
                         </tr>`;
                 });
+                document.getElementById('statAssignments').innerText = pendingCount;
             } catch(error) { console.error(error); }
         }
 
-        // 3. AUTOMATIC MARKS FETCH (FILTERED BY LOGGED-IN NAME & CLASS)
+        /* 3. MARKS */
         window.loadMyMarks = async function(studentClass, studentName) {
+            // Unchanged from your original logic
             const tbody = document.getElementById('marksTableBody');
             try {
-                const q = query(collection(db, "marks"), 
-                    where("className", "==", studentClass),
-                    where("studentName", "==", studentName)
-                );
+                const q = query(collection(db, "marks"), where("className", "==", studentClass), where("studentName", "==", studentName));
                 const snapshot = await getDocs(q);
-                
-                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:#888;">No exam records found for you yet.</td></tr>'; return; }
-                
+                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;">No exam records.</td></tr>'; return; }
                 tbody.innerHTML = '';
                 snapshot.forEach(doc => {
                     const m = doc.data();
-                    tbody.innerHTML += `
-                        <tr>
-                            <td><strong>${m.examName}</strong></td>
-                            <td style="color: #27ae60; font-weight: bold; font-size: 16px;">${m.marks}</td>
-                        </tr>`;
+                    tbody.innerHTML += `<tr><td><strong>${m.examName}</strong></td><td style="color: var(--primary); font-weight: bold;">${m.marks}</td></tr>`;
                 });
             } catch(error) { console.error(error); }
         }
 
-        // Logout logic to clear browser memory
+        /* 4. ATTENDANCE (NEW) */
+        window.filterAttendance = async function() {
+            const start = document.getElementById('attStartDate').value;
+            const end = document.getElementById('attEndDate').value;
+            const tbody = document.getElementById('attendanceTableBody');
+            
+            if(!start || !end) { alert("Please select both dates"); return; }
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Fetching data...</td></tr>';
+
+            try {
+                // In your Firestore, you should have an "attendance" collection.
+                // Document fields: studentName, className, date (YYYY-MM-DD), subject, status (Present/Absent/Leave/Holiday)
+                const q = query(
+                    collection(db, "attendance"), 
+                    where("studentName", "==", sName),
+                    where("date", ">=", start),
+                    where("date", "<=", end)
+                );
+                
+                const snapshot = await getDocs(q);
+                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#888;">No attendance marked for selected dates.</td></tr>'; return; }
+                
+                tbody.innerHTML = '';
+                let totalDays = 0;
+                let presentDays = 0;
+
+                snapshot.forEach(doc => {
+                    const att = doc.data();
+                    let badgeClass = '';
+                    if(att.status === 'Present') { badgeClass = 'bg-success'; presentDays++; totalDays++; }
+                    else if(att.status === 'Absent') { badgeClass = 'bg-danger'; totalDays++; }
+                    else if(att.status === 'Leave') { badgeClass = 'bg-warning'; totalDays++; }
+                    else if(att.status === 'Holiday') { badgeClass = 'bg-info'; } // Holidays don't count towards %
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${att.date}</td>
+                            <td><strong>${att.subject}</strong></td>
+                            <td><span class="badge ${badgeClass}">${att.status}</span></td>
+                        </tr>`;
+                });
+
+                // Update Quick Stat
+                if(totalDays > 0) {
+                    let pct = Math.round((presentDays / totalDays) * 100);
+                    document.getElementById('statAttendance').innerText = pct + '%';
+                    document.getElementById('statAttendance').style.color = pct < 75 ? "var(--danger)" : "var(--primary)";
+                }
+
+            } catch(error) { 
+                console.error("Attendance fetch error:", error); 
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:red;">Database structure for attendance needed. Check console.</td></tr>';
+            }
+        }
+
+        /* 5. FEE STATUS (NEW) */
+        window.loadFees = async function(studentName, studentClass) {
+            const tbody = document.getElementById('feesTableBody');
+            try {
+                // In your Firestore, create a "fees" collection.
+                // Fields: studentName, className, month, amount, status (Paid/Unpaid/Overdue)
+                const q = query(collection(db, "fees"), where("studentName", "==", studentName));
+                const snapshot = await getDocs(q);
+                
+                if(snapshot.empty) { 
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No fee records found.</td></tr>'; 
+                    document.getElementById('statFees').innerText = 'Cleared';
+                    document.getElementById('statFees').style.color = "var(--primary)";
+                    return; 
+                }
+                
+                tbody.innerHTML = '';
+                let hasUnpaid = false;
+
+                snapshot.forEach(doc => {
+                    const f = doc.data();
+                    let badgeClass = f.status === 'Paid' ? 'bg-success' : (f.status === 'Overdue' ? 'bg-danger' : 'bg-warning');
+                    if(f.status !== 'Paid') hasUnpaid = true;
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${f.month}</strong></td>
+                            <td>₹${f.amount}</td>
+                            <td><span class="badge ${badgeClass}">${f.status}</span></td>
+                        </tr>`;
+                });
+
+                // Update Quick Stat
+                const statElem = document.getElementById('statFees');
+                if(hasUnpaid) {
+                    statElem.innerText = 'Dues Pending';
+                    statElem.style.color = 'var(--danger)';
+                } else {
+                    statElem.innerText = 'All Clear';
+                    statElem.style.color = 'var(--primary)';
+                }
+
+            } catch(error) { 
+                console.error("Fees fetch error:", error); 
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:red;">Database structure for fees needed.</td></tr>';
+            }
+        }
+
         window.secureLogout = function() {
             localStorage.clear();
             window.location.href = "main-website.html";
