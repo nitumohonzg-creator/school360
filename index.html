@@ -32,7 +32,7 @@
         .badge-unpaid { background: #e74c3c; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; border:none;}
         .badge-paid { background: #2ecc71; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; border:none;}
         .badge-leave { background: #f39c12; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;}
-        .action-icon { cursor: pointer; font-size: 16px; margin-right: 10px; background: none; border: none; }
+        .action-icon { cursor: pointer; font-size: 16px; margin-right: 8px; background: none; border: none; padding: 2px; }
         .att-select, .date-input { padding: 8px; border-radius: 4px; border: 1px solid #ccc; outline: none; font-family: inherit;}
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
@@ -68,25 +68,23 @@
             </div>
             <div class="card" style="border-top-color: #2ecc71;">
                 <h3 style="margin:0;">🎓 Student Admission</h3>
-                <button class="btn" style="background-color: #2ecc71;" onclick="openStudentModal()">+ Add New Student</button>
+                <button class="btn" style="background-color: #2ecc7 green;" onclick="openStudentModal()">+ Add New Student</button>
             </div>
         </div>
 
         <div class="box-container" id="teachersSec">
-            <h3>
-                👨‍🏫 Mark Teacher Attendance
+            <h3>👨‍🏫 Teacher Management (Salary & Attendance)
                 <div style="font-size: 14px; font-weight: normal;">
-                    <label>Select Date: </label>
-                    <input type="date" id="attDate" class="date-input" onchange="loadTeachers()">
+                    <label>Date: </label><input type="date" id="attDate" class="date-input" onchange="loadTeachers()">
                 </div>
             </h3>
             <table>
                 <thead>
                     <tr>
-                        <th>Teacher Name</th>
+                        <th>Teacher Info</th>
                         <th>Subject</th>
-                        <th>Attendance (Auto-Saves)</th>
-                        <th>Salary Status</th>
+                        <th>Attendance</th>
+                        <th>Salary</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -99,38 +97,24 @@
         <div class="box-container" id="reportSec" style="border-top: 4px solid #f39c12;">
             <h3>📅 Teacher Absence & Leave Report</h3>
             <div style="display: flex; gap: 15px; margin-bottom: 15px; align-items: flex-end;">
-                <div>
-                    <label style="display:block; font-size:12px; color:#555;">Start Date</label>
-                    <input type="date" id="reportStartDate" class="date-input">
-                </div>
-                <div>
-                    <label style="display:block; font-size:12px; color:#555;">End Date</label>
-                    <input type="date" id="reportEndDate" class="date-input">
-                </div>
+                <div><label style="font-size:12px;">Start Date</label><input type="date" id="reportStartDate" class="date-input"></div>
+                <div><label style="font-size:12px;">End Date</label><input type="date" id="reportEndDate" class="date-input"></div>
                 <button class="btn" onclick="generateReport()" style="margin-top:0; width:auto; background-color:#f39c12;">Generate Report</button>
             </div>
             <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Teacher Name</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="reportTableBody">
-                    <tr><td colspan="3" style="text-align: center; color:#888;">Select dates and click Generate Report.</td></tr>
-                </tbody>
+                <thead><tr><th>Date</th><th>Teacher Name</th><th>Status</th></tr></thead>
+                <tbody id="reportTableBody"><tr><td colspan="3" style="text-align: center; color:#888;">Select dates and click Generate.</td></tr></tbody>
             </table>
         </div>
 
         <div class="box-container" id="studentsSec">
-            <h3>🎓 Student Management (Fees)</h3>
+            <h3>🎓 Student Management (Full Details & Fees)</h3>
             <table>
                 <thead>
                     <tr>
                         <th>Roll No</th>
-                        <th>Student Name</th>
-                        <th>Class</th>
+                        <th>Student Info</th>
+                        <th>Class & Sec</th>
                         <th>Fee Status</th>
                         <th>Actions</th>
                     </tr>
@@ -162,12 +146,19 @@
             <h3 style="margin-top: 0; text-align:center;">Register Student</h3>
             <form id="studentForm" onsubmit="addStudent(event)">
                 <div class="form-group"><label>Student Name</label><input type="text" id="sName" required></div>
-                <div class="form-group"><label>Class</label>
-                    <select id="sClass" required>
-                        <option value="Class 8">Class 8</option>
-                        <option value="Class 9">Class 9</option>
-                        <option value="Class 10">Class 10</option>
-                    </select>
+                <div style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1;"><label>Class</label>
+                        <select id="sClass" required>
+                            <option value="Class 8">Class 8</option>
+                            <option value="Class 9">Class 9</option>
+                            <option value="Class 10">Class 10</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1;"><label>Section</label>
+                        <select id="sSection">
+                            <option value="A">A</option><option value="B">B</option><option value="N/A">N/A</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-group"><label>Roll Number</label><input type="number" id="sRoll" required></div>
                 <div class="form-group"><label>Login Email</label><input type="email" id="sEmail" required></div>
@@ -177,9 +168,49 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="editTeacherModal">
+        <div class="modal-box">
+            <span class="close-btn" onclick="closeEditTeacherModal()">&times;</span>
+            <h3 style="margin-top: 0; text-align:center;">✏️ Edit Teacher Details</h3>
+            <form id="editTeacherForm" onsubmit="saveEditTeacher(event)">
+                <input type="hidden" id="etId">
+                <div class="form-group"><label>Teacher Name</label><input type="text" id="etName" required></div>
+                <div class="form-group"><label>Subject</label><input type="text" id="etSubject" required></div>
+                <div class="form-group"><label>Login Email</label><input type="email" id="etEmail" required></div>
+                <button type="submit" class="submit-btn">Update Details</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="editStudentModal">
+        <div class="modal-box">
+            <span class="close-btn" onclick="closeEditStudentModal()">&times;</span>
+            <h3 style="margin-top: 0; text-align:center;">✏️ Edit Student Details</h3>
+            <form id="editStudentForm" onsubmit="saveEditStudent(event)">
+                <input type="hidden" id="esId">
+                <div class="form-group"><label>Student Name</label><input type="text" id="esName" required></div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1;"><label>Class</label>
+                        <select id="esClass" required>
+                            <option value="Class 8">Class 8</option><option value="Class 9">Class 9</option><option value="Class 10">Class 10</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1;"><label>Section</label>
+                        <select id="esSection">
+                            <option value="A">A</option><option value="B">B</option><option value="N/A">N/A</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group"><label>Roll Number</label><input type="number" id="esRoll" required></div>
+                <div class="form-group"><label>Login Email</label><input type="email" id="esEmail" required></div>
+                <button type="submit" class="submit-btn" style="background-color: #2ecc71;">Update Details</button>
+            </form>
+        </div>
+    </div>
+
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        // setDoc import kiya gaya hai Date-wise unique attendance ke liye
         import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -194,73 +225,88 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // Modals Controls
         window.openTeacherModal = () => document.getElementById('teacherModal').style.display = 'flex';
         window.closeTeacherModal = () => document.getElementById('teacherModal').style.display = 'none';
         window.openStudentModal = () => document.getElementById('studentModal').style.display = 'flex';
         window.closeStudentModal = () => document.getElementById('studentModal').style.display = 'none';
+        
+        window.openEditTeacherModal = () => document.getElementById('editTeacherModal').style.display = 'flex';
+        window.closeEditTeacherModal = () => document.getElementById('editTeacherModal').style.display = 'none';
+        window.openEditStudentModal = () => document.getElementById('editStudentModal').style.display = 'flex';
+        window.closeEditStudentModal = () => document.getElementById('editStudentModal').style.display = 'none';
 
-        // Page load hone par aaj ki date set karna
         window.onload = function() { 
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('attDate').value = today;
             document.getElementById('reportStartDate').value = today;
             document.getElementById('reportEndDate').value = today;
-            
-            loadTeachers(); 
-            loadStudents(); 
+            loadTeachers(); loadStudents(); 
         }
 
-        // 1. FETCH TEACHERS & SPECIFIC DATE ATTENDANCE
+        // FETCH TEACHERS
         window.loadTeachers = async function() {
             const tbody = document.getElementById('teacherTableBody');
             const selectedDate = document.getElementById('attDate').value;
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Loading data...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Loading...</td></tr>';
             
             try {
-                // Pehle saare teachers lao
                 const querySnapshot = await getDocs(collection(db, "teachers"));
+                const attSnapshot = await getDocs(query(collection(db, "teacher_attendance"), where("date", "==", selectedDate)));
                 
-                // Phir us date ki attendance lao
-                const attQuery = query(collection(db, "teacher_attendance"), where("date", "==", selectedDate));
-                const attSnapshot = await getDocs(attQuery);
-                
-                // Attendance ko ek dictionary/map mein daalo taaki match kar sakein
                 let attMap = {};
-                attSnapshot.forEach(doc => {
-                    attMap[doc.data().teacherId] = doc.data().status;
-                });
+                attSnapshot.forEach(doc => { attMap[doc.data().teacherId] = doc.data().status; });
 
-                if (querySnapshot.empty) { tbody.innerHTML = '<tr><td colspan="5">No teachers found.</td></tr>'; return; }
+                if (querySnapshot.empty) { tbody.innerHTML = '<tr><td colspan="5">No teachers.</td></tr>'; return; }
                 tbody.innerHTML = '';
 
                 querySnapshot.forEach((record) => {
                     const t = record.data();
                     const id = record.id;
-                    
-                    // Check karein ki is teacher ki aaj ki attendance mark hai ya nahi
                     let currentStatus = attMap[id] || 'Not Marked';
+                    let salaryStatus = t.salaryPaid ? `<button onclick="updateFinance('teachers', '${id}', 'salaryPaid', false)" class="badge-paid">Paid ✅</button>` : `<button onclick="updateFinance('teachers', '${id}', 'salaryPaid', true)" class="badge-unpaid">Unpaid ❌</button>`;
                     
-                    let salaryStatus = t.salaryPaid ? `<button onclick="updateFinance('teachers', '${id}', 'salaryPaid', false)" class="badge-paid">Paid ✅</button>` 
-                                                    : `<button onclick="updateFinance('teachers', '${id}', 'salaryPaid', true)" class="badge-unpaid">Unpaid ❌</button>`;
-                    
-                    // Onchange par teacher ka ID aur Naam dono bhejenge
-                    let attSelect = `
-                        <select class="att-select" onchange="markDateAttendance('${id}', '${t.name}', this.value)">
-                            <option value="Not Marked" ${currentStatus === 'Not Marked' ? 'selected' : ''}>Not Marked</option>
-                            <option value="Present" ${currentStatus === 'Present' ? 'selected' : ''}>Present</option>
-                            <option value="Absent" ${currentStatus === 'Absent' ? 'selected' : ''}>Absent</option>
-                            <option value="Leave" ${currentStatus === 'Leave' ? 'selected' : ''}>On Leave</option>
-                        </select>
-                    `;
+                    let attSelect = `<select class="att-select" onchange="markDateAttendance('${id}', '${t.name}', this.value)"><option value="Not Marked" ${currentStatus==='Not Marked'?'selected':''}>Not Marked</option><option value="Present" ${currentStatus==='Present'?'selected':''}>Present</option><option value="Absent" ${currentStatus==='Absent'?'selected':''}>Absent</option><option value="Leave" ${currentStatus==='Leave'?'selected':''}>Leave</option></select>`;
 
                     tbody.innerHTML += `<tr>
-                        <td><strong>${t.name}</strong><br><small style="color:#888">${t.email}</small></td>
+                        <td><strong>${t.name}</strong><br><small style="color:#777;">${t.email}</small></td>
                         <td>${t.subject}</td>
                         <td>${attSelect}</td>
                         <td>${salaryStatus}</td>
                         <td>
-                            <button onclick="editName('teachers', '${id}', '${t.name}')" class="action-icon" title="Edit Name">✏️</button>
-                            <button onclick="deleteRecord('teachers', '${id}')" class="action-icon" title="Delete" style="color:red;">🗑️</button>
+                            <button onclick="openTeacherEdit('${id}', '${t.name}', '${t.subject}', '${t.email}')" class="action-icon" title="Edit Full Details">✏️</button>
+                            <button onclick="adminChangePassword('teachers', '${id}')" class="action-icon" title="Change Password">🔑</button>
+                            <button onclick="deleteRecord('teachers', '${id}')" class="action-icon" style="color:red;" title="Delete">🗑️</button>
+                        </td>
+                    </tr>`;
+                });
+            } catch (error) { console.error(error); }
+        }
+
+        // FETCH STUDENTS (With Complete details shown)
+        window.loadStudents = async function() {
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Loading...</td></tr>';
+            try {
+                const querySnapshot = await getDocs(collection(db, "students"));
+                if (querySnapshot.empty) { tbody.innerHTML = '<tr><td colspan="5">No students found.</td></tr>'; return; }
+                tbody.innerHTML = '';
+
+                querySnapshot.forEach((record) => {
+                    const s = record.data();
+                    const id = record.id;
+                    let feeStatus = s.feePaid ? `<button onclick="updateFinance('students', '${id}', 'feePaid', false)" class="badge-paid">Paid ✅</button>` : `<button onclick="updateFinance('students', '${id}', 'feePaid', true)" class="badge-unpaid">Unpaid ❌</button>`;
+                    let secDisplay = s.section && s.section !== "N/A" ? ` - Sec ${s.section}` : '';
+
+                    tbody.innerHTML += `<tr>
+                        <td><strong>${s.rollNumber}</strong></td>
+                        <td><strong>${s.name}</strong><br><small style="color:#777;">${s.email}</small></td>
+                        <td>${s.className}${secDisplay}</td>
+                        <td>${feeStatus}</td>
+                        <td>
+                            <button onclick="openStudentEdit('${id}', '${s.name}', '${s.className}', '${s.section || 'N/A'}', '${s.rollNumber}', '${s.email}')" class="action-icon" title="Edit Full Details">✏️</button>
+                            <button onclick="adminChangePassword('students', '${id}')" class="action-icon" title="Change Password">🔑</button>
+                            <button onclick="deleteRecord('students', '${id}')" class="action-icon" style="color:red;" title="Delete">🗑️</button>
                         </td>
                     </tr>`;
                 });
@@ -268,123 +314,101 @@
         }
 
         // ==========================================
-        // NAYA: DATE-WISE ATTENDANCE SAVE KARNA
+        // ADMIN PASSWORD UPDATE POWER (🔑)
         // ==========================================
-        window.markDateAttendance = async function(tId, tName, statusValue) {
-            const selectedDate = document.getElementById('attDate').value;
-            // Ek unique ID banayenge TeacherID + Date milakar, taaki duplicate na bane
-            const docId = `${tId}_${selectedDate}`; 
-            
-            try {
-                await setDoc(doc(db, "teacher_attendance", docId), {
-                    teacherId: tId,
-                    teacherName: tName,
-                    date: selectedDate,
-                    status: statusValue
-                });
-            } catch (error) { alert("Attendance failed to save!"); }
+        window.adminChangePassword = async function(collectionName, docId) {
+            const newPassword = prompt("🚨 Admin Security: Type New Password for this user:");
+            if(newPassword && newPassword.trim() !== "") {
+                try {
+                    await updateDoc(doc(db, collectionName, docId), { password: newPassword });
+                    alert("Success! Password permanently updated in Firebase server.");
+                } catch(error) { alert("Failed to update password: " + error.message); }
+            }
         }
 
         // ==========================================
-        // NAYA: ABSENT / LEAVE REPORT GENERATOR
+        // COMPREHENSIVE EDIT LOGIC (✏️)
         // ==========================================
+        window.openTeacherEdit = function(id, name, subject, email) {
+            document.getElementById('etId').value = id;
+            document.getElementById('etName').value = name;
+            document.getElementById('etSubject').value = subject;
+            document.getElementById('etEmail').value = email;
+            openEditTeacherModal();
+        }
+
+        window.saveEditTeacher = async function(event) {
+            event.preventDefault();
+            const id = document.getElementById('etId').value;
+            try {
+                await updateDoc(doc(db, "teachers", id), {
+                    name: document.getElementById('etName').value,
+                    subject: document.getElementById('etSubject').value,
+                    email: document.getElementById('etEmail').value.toLowerCase()
+                });
+                alert("Teacher data updated successfully!");
+                closeEditTeacherModal(); loadTeachers();
+            } catch(e) { alert("Error updating: " + e.message); }
+        }
+
+        window.openStudentEdit = function(id, name, className, section, roll, email) {
+            document.getElementById('esId').value = id;
+            document.getElementById('esName').value = name;
+            document.getElementById('esClass').value = className;
+            document.getElementById('esSection').value = section;
+            document.getElementById('esRoll').value = roll;
+            document.getElementById('esEmail').value = email;
+            openEditStudentModal();
+        }
+
+        window.saveEditStudent = async function(event) {
+            event.preventDefault();
+            const id = document.getElementById('esId').value;
+            try {
+                await updateDoc(doc(db, "students", id), {
+                    name: document.getElementById('esName').value,
+                    className: document.getElementById('esClass').value,
+                    section: document.getElementById('esSection').value,
+                    rollNumber: document.getElementById('esRoll').value,
+                    email: document.getElementById('esEmail').value.toLowerCase()
+                });
+                alert("Student data updated successfully!");
+                closeEditStudentModal(); loadStudents();
+            } catch(e) { alert("Error updating: " + e.message); }
+        }
+
+        // Remaining attendance and baseline functions
+        window.markDateAttendance = async function(tId, tName, statusValue) {
+            try { await setDoc(doc(db, "teacher_attendance", `${tId}_${document.getElementById('attDate').value}`), { teacherId: tId, teacherName: tName, date: document.getElementById('attDate').value, status: statusValue }); } catch (error) { alert("Error saving attendance"); }
+        }
+
         window.generateReport = async function() {
             const tbody = document.getElementById('reportTableBody');
-            const sDate = document.getElementById('reportStartDate').value;
-            const eDate = document.getElementById('reportEndDate').value;
-            
-            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Fetching report...</td></tr>';
-            
+            tbody.innerHTML = '<tr><td colspan="3">Processing...</td></tr>';
             try {
-                // Date range ke hisaab se data fetch karna
-                const reportQuery = query(collection(db, "teacher_attendance"), 
-                    where("date", ">=", sDate), 
-                    where("date", "<=", eDate)
-                );
-                const snapshot = await getDocs(reportQuery);
-                
+                const snapshot = await getDocs(query(collection(db, "teacher_attendance"), where("date", ">=", document.getElementById('reportStartDate').value), where("date", "<=", document.getElementById('reportEndDate').value)));
                 let html = '';
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    // Sirf Absent aur Leave filter karenge
-                    if(data.status === 'Absent' || data.status === 'Leave') {
-                        let badgeClass = data.status === 'Absent' ? 'badge-unpaid' : 'badge-leave';
-                        html += `<tr>
-                            <td>${data.date}</td>
-                            <td><strong>${data.teacherName}</strong></td>
-                            <td><span class="${badgeClass}">${data.status}</span></td>
-                        </tr>`;
-                    }
-                });
-                
-                if(html === '') {
-                    tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: green;">All good! No absentees or leaves in this date range.</td></tr>';
-                } else {
-                    tbody.innerHTML = html;
-                }
-            } catch (error) {
-                console.error(error);
-                tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: red;">Error loading report.</td></tr>';
-            }
+                snapshot.forEach(doc => { const d = doc.data(); if(d.status === 'Absent' || d.status === 'Leave') { html += `<tr><td>${d.date}</td><td><strong>${d.teacherName}</strong></td><td><span class="${d.status==='Absent'?'badge-unpaid':'badge-leave'}">${d.status}</span></td></tr>`; } });
+                tbody.innerHTML = html === '' ? '<tr><td colspan="3" style="text-align:center; color:green;">All present! No absences.</td></tr>' : html;
+            } catch (error) { tbody.innerHTML = '<tr><td colspan="3">Error loading.</td></tr>'; }
         }
 
-        // 2. FETCH STUDENTS (With Fees) - Same as before
-        window.loadStudents = async function() {
-            const tbody = document.getElementById('studentTableBody');
-            tbody.innerHTML = '';
-            const querySnapshot = await getDocs(collection(db, "students"));
-            if (querySnapshot.empty) { tbody.innerHTML = '<tr><td colspan="5">No students found.</td></tr>'; return; }
-
-            querySnapshot.forEach((record) => {
-                const s = record.data();
-                const id = record.id;
-                let feeStatus = s.feePaid ? `<button onclick="updateFinance('students', '${id}', 'feePaid', false)" class="badge-paid">Paid ✅</button>` 
-                                          : `<button onclick="updateFinance('students', '${id}', 'feePaid', true)" class="badge-unpaid">Unpaid ❌</button>`;
-                tbody.innerHTML += `<tr>
-                    <td><strong>${s.rollNumber}</strong></td><td>${s.name}</td><td>${s.className}</td><td>${feeStatus}</td>
-                    <td>
-                        <button onclick="editName('students', '${id}', '${s.name}')" class="action-icon">✏️</button>
-                        <button onclick="deleteRecord('students', '${id}')" class="action-icon" style="color:red;">🗑️</button>
-                    </td></tr>`;
-            });
-        }
-
-        // Action Functions (Finance, Edit, Delete, Add)
         window.updateFinance = async function(collectionName, docId, fieldName, isPaid) {
-            try { await updateDoc(doc(db, collectionName, docId), { [fieldName]: isPaid });
-            if(collectionName === 'students') loadStudents(); else loadTeachers();
-            } catch (error) { alert("Error: " + error.message); }
-        }
-
-        window.editName = async function(collectionName, docId, oldName) {
-            const newName = prompt("Edit Name:", oldName);
-            if (newName && newName.trim() !== "" && newName !== oldName) {
-                try { await updateDoc(doc(db, collectionName, docId), { name: newName });
-                if(collectionName === 'students') loadStudents(); else loadTeachers();
-                } catch (error) { alert("Edit Failed!"); }
-            }
+            try { await updateDoc(doc(db, collectionName, docId), { [fieldName]: isPaid }); if(collectionName === 'students') loadStudents(); else loadTeachers(); } catch (error) { alert("Update failed"); }
         }
 
         window.deleteRecord = async function(collectionName, docId) {
-            if(confirm("Are you sure you want to permanently delete this record?")) {
-                try { await deleteDoc(doc(db, collectionName, docId));
-                if(collectionName === 'students') loadStudents(); else loadTeachers();
-                } catch (error) { alert("Delete Failed!"); }
-            }
+            if(confirm("Permanently delete this record?")) { try { await deleteDoc(doc(db, collectionName, docId)); if(collectionName === 'students') loadStudents(); else loadTeachers(); } catch (error) { alert("Delete Failed"); } }
         }
 
         window.addTeacher = async function(event) {
             event.preventDefault(); document.getElementById('tBtn').innerText = "Saving...";
-            try { await addDoc(collection(db, "teachers"), { name: document.getElementById('tName').value, subject: document.getElementById('tSubject').value, email: document.getElementById('tEmail').value.toLowerCase(), password: document.getElementById('tPassword').value, salaryPaid: false, dateAdded: new Date() });
-            document.getElementById('teacherForm').reset(); window.closeTeacherModal(); loadTeachers(); } 
-            catch (error) { alert(error.message); } finally { document.getElementById('tBtn').innerText = "Save Teacher"; }
+            try { await addDoc(collection(db, "teachers"), { name: document.getElementById('tName').value, subject: document.getElementById('tSubject').value, email: document.getElementById('tEmail').value.toLowerCase(), password: document.getElementById('tPassword').value, salaryPaid: false, dateAdded: new Date() }); document.getElementById('teacherForm').reset(); window.closeTeacherModal(); loadTeachers(); } catch (error) { alert(error.message); } finally { document.getElementById('tBtn').innerText = "Save Teacher"; }
         }
 
         window.addStudent = async function(event) {
             event.preventDefault(); document.getElementById('sBtn').innerText = "Saving...";
-            try { await addDoc(collection(db, "students"), { name: document.getElementById('sName').value, className: document.getElementById('sClass').value, rollNumber: document.getElementById('sRoll').value, email: document.getElementById('sEmail').value.toLowerCase(), password: document.getElementById('sPassword').value, feePaid: false, dateAdded: new Date() });
-            document.getElementById('studentForm').reset(); window.closeStudentModal(); loadStudents(); } 
-            catch (error) { alert(error.message); } finally { document.getElementById('sBtn').innerText = "Save Student"; }
+            try { await addDoc(collection(db, "students"), { name: document.getElementById('sName').value, className: document.getElementById('sClass').value, section: document.getElementById('sSection').value, rollNumber: document.getElementById('sRoll').value, email: document.getElementById('sEmail').value.toLowerCase(), password: document.getElementById('sPassword').value, feePaid: false, dateAdded: new Date() }); document.getElementById('studentForm').reset(); window.closeStudentModal(); loadStudents(); } catch (error) { alert(error.message); } finally { document.getElementById('sBtn').innerText = "Save Student"; }
         }
     </script>
 </body>
