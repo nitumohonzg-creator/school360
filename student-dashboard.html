@@ -58,16 +58,26 @@
         td { padding: 12px; border-bottom: 1px solid #eee; color: #555; vertical-align: top; }
         
         .btn-view { background: var(--info); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 12px; display: inline-block;}
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px;}
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white; display: inline-block; margin-left: 8px;}
         .bg-success { background-color: var(--primary); }
         .bg-danger { background-color: var(--danger); }
         .bg-warning { background-color: var(--warning); color: #333; }
         .bg-info { background-color: var(--info); }
+        .bg-leave { background-color: #8e44ad; }
 
         .filter-bar { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; background: #f9f9f9; padding: 12px; border-radius: 6px; }
         .filter-bar select, .filter-bar input[type="date"] { padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: white; font-size: 13px; }
         .filter-bar button { padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: inherit;}
         
+        .dashboard-layout { display: flex; gap: 20px; flex-wrap: wrap; }
+        .dashboard-main { flex: 2; min-width: 300px; }
+        .dashboard-side { flex: 1; min-width: 250px; }
+
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); }
             .sidebar.active { transform: translateX(0); }
@@ -88,6 +98,7 @@
         <a id="nav-marks" onclick="showSection('marksSec', this)">📝 Report Card</a>
         <a id="nav-fees" onclick="showSection('feesSec', this)">💳 Fee Status</a>
         <a id="nav-notices" onclick="showSection('noticeSec', this)">📢 Notice Board</a>
+        <a id="nav-leave" onclick="showSection('leaveReqSec', this)">📩 Leave Request</a>
         <a onclick="secureLogout()" class="logout-btn">Logout</a>
     </div>
 
@@ -120,21 +131,31 @@
                     <small style="color: var(--info); font-size: 11px; margin-top: 5px; display: block;">👉 Click to view details</small>
                 </div>
                 <div class="stat-card clickable" style="cursor: pointer; border-bottom-color: var(--warning);" onclick="document.getElementById('nav-fees').click()">
-                    <h4>Fee Dues Status</h4>
+                    <h4>Current Fee Dues</h4>
                     <h2 id="statFees">--</h2>
-                    <small style="color: var(--info); font-size: 11px; margin-top: 5px; display: block;">👉 View Fee Ledger</small>
+                    <small style="color: var(--info); font-size: 11px; margin-top: 5px; display: block;">👉 View Full Ledger</small>
                 </div>
             </div>
 
-            <div class="box-container" style="background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border: none;">
-                <h4 style="margin:0 0 5px 0; color: #2e7d32;">Academic Quick Tip 💡</h4>
-                <p style="margin:0; font-size:14px; color:#1b5e20;">Apne baki features jaise Fees, Assignments aur Report Card dekhne ke liye left side ke menu bar ka use karein.</p>
+            <div class="dashboard-layout">
+                <div class="dashboard-main box-container" style="background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border: none;">
+                    <h4 style="margin:0 0 5px 0; color: #2e7d32;">Academic Quick Tip 💡</h4>
+                    <p style="margin:0; font-size:14px; color:#1b5e20;">Apne baki features jaise Fees, Assignments aur Report Card dekhne ke liye left side ke menu bar ka use karein. <br><br> <a onclick="document.getElementById('nav-marks').click()" style="color:#27ae60; font-weight:bold; cursor:pointer;">👉 View Result / Report Card</a></p>
+                </div>
+                
+                <div class="dashboard-side box-container">
+                    <h4 style="margin:0 0 10px 0; color: var(--danger);">🚨 Recent Notices (Last 7 Days)</h4>
+                    <div id="recentNoticesDiv">
+                        <p style="font-size:13px; color:#777;">Loading...</p>
+                    </div>
+                    <button onclick="document.getElementById('nav-notices').click()" style="width:100%; background:none; border:1px solid #ccc; padding:5px; margin-top:10px; cursor:pointer;">View All Notices</button>
+                </div>
             </div>
         </div>
 
         <div id="attendanceSec" class="portal-section">
             <div class="box-container">
-                <h3>📅 Subject-wise Attendance History</h3>
+                <h3>📅 Class Attendance History</h3>
                 <div class="filter-bar">
                     <div><label>From Date:</label><input type="date" id="attStartDate"></div>
                     <div><label>To Date:</label><input type="date" id="attEndDate"></div>
@@ -144,13 +165,13 @@
                             <option value="All">All Status</option>
                             <option value="Present">Present Only</option>
                             <option value="Absent">Absent Only</option>
-                            <option value="Leave">Leave Only</option>
+                            <option value="Leave">Leave / Half Day</option>
                         </select>
                     </div>
                     <button onclick="filterAttendance()" style="margin-top: 18px;">Apply Filter</button>
                 </div>
                 <table>
-                    <thead><tr><th>Date</th><th>Subject</th><th>Status</th></tr></thead>
+                    <thead><tr><th>Date</th><th>Class</th><th>Status</th></tr></thead>
                     <tbody id="attendanceTableBody"><tr><td colspan="3" style="text-align: center;">Loading...</td></tr></tbody>
                 </table>
             </div>
@@ -168,27 +189,50 @@
 
         <div id="feesSec" class="portal-section">
             <div class="box-container" style="border-top: 4px solid var(--warning);">
-                <h3>💳 Fee Ledger & Payment Status</h3>
+                <h3>💳 Complete Fee Ledger</h3>
                 <table>
-                    <thead><tr><th>Month/Term</th><th>Amount</th><th>Status</th></tr></thead>
-                    <tbody id="feesTableBody"><tr><td colspan="3" style="text-align: center; color:#888;">Loading fee details...</td></tr></tbody>
+                    <thead><tr><th>Month/Term</th><th>Amount</th><th>Status</th><th>Paid On Date</th></tr></thead>
+                    <tbody id="feesTableBody"><tr><td colspan="4" style="text-align: center; color:#888;">Loading fee details...</td></tr></tbody>
                 </table>
             </div>
         </div>
 
         <div id="noticeSec" class="portal-section">
             <div class="box-container">
-                <h3>📢 Latest School Announcements</h3>
+                <h3>📢 All School Announcements</h3>
                 <div id="noticeBoardDiv"><p style="text-align:center; color:#888; font-size:14px;">Loading notices...</p></div>
             </div>
         </div>
 
         <div id="marksSec" class="portal-section">
             <div class="box-container">
-                <h3>📝 My Personal Report Card</h3>
+                <h3>📝 My Personal Report Card / Results</h3>
                 <table>
                     <thead><tr><th>Exam Name</th><th>Marks Obtained</th></tr></thead>
                     <tbody id="marksTableBody"><tr><td colspan="2" style="text-align: center; color:#888;">Loading your marks...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="leaveReqSec" class="portal-section">
+            <div class="box-container">
+                <h3>📩 Submit a Leave Request</h3>
+                <form id="leaveForm" onsubmit="submitLeaveRequest(event)">
+                    <div class="form-group">
+                        <label>Date of Leave needed:</label>
+                        <input type="date" id="leaveDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Reason / Description:</label>
+                        <textarea id="leaveReason" rows="3" required placeholder="Describe why you need leave..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit" id="leaveBtn">Send Leave Request to Admin</button>
+                </form>
+
+                <h4 style="margin-top: 30px;">My Past Requests</h4>
+                <table>
+                    <thead><tr><th>Date Request</th><th>Reason</th><th>Admin Status</th></tr></thead>
+                    <tbody id="myLeaveHistory"><tr><td colspan="3" style="text-align: center;">Loading...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -212,9 +256,9 @@
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
     </script>
 
-        <script type="module">
+    <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDg4HlG4M9lgqYSjV-fdqKacN94QNgfvOY",
@@ -237,19 +281,17 @@
             loadFees(sName); 
             loadNotices(); 
             loadMyMarks(sName);
+            loadMyLeaves();
         }
 
-        /* FIXED: Fees data students collection se fetch hoga */
+        // FEE DUES LOGIC (Current/Previous Months Only)
         window.loadFees = async function(studentName) {
             const tbody = document.getElementById('feesTableBody');
             try {
                 const q = query(collection(db, "students"), where("name", "==", studentName));
                 const snapshot = await getDocs(q);
                 
-                if(snapshot.empty) { 
-                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No records found.</td></tr>'; 
-                    return; 
-                }
+                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No records found.</td></tr>'; return; }
                 
                 snapshot.forEach(doc => {
                     const s = doc.data();
@@ -257,14 +299,22 @@
                     tbody.innerHTML = '';
                     let hasUnpaid = false;
                     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                    const currentMonthIndex = new Date().getMonth();
                     
-                    months.forEach(month => {
+                    months.forEach((month, index) => {
                         let isPaid = !!feeRecords[month];
-                        if(!isPaid) hasUnpaid = true;
+                        let paidDateDisplay = isPaid ? feeRecords[month] : '---';
+                        
+                        // Check dues only for months up to the current month
+                        if(index <= currentMonthIndex && !isPaid) {
+                            hasUnpaid = true;
+                        }
+
                         tbody.innerHTML += `<tr>
                             <td><strong>${month}</strong></td>
                             <td>₹--</td>
                             <td><span class="badge ${isPaid ? 'bg-success' : 'bg-danger'}">${isPaid ? 'Paid ✅' : 'Unpaid ❌'}</span></td>
+                            <td>${paidDateDisplay}</td>
                         </tr>`;
                     });
                     
@@ -282,10 +332,7 @@
                 const snapshot = await getDocs(q);
                 if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;">No records.</td></tr>'; return; }
                 tbody.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const m = doc.data();
-                    tbody.innerHTML += `<tr><td><strong>${m.examName}</strong></td><td style="color: var(--primary); font-weight: bold;">${m.marks}</td></tr>`;
-                });
+                snapshot.forEach(doc => { const m = doc.data(); tbody.innerHTML += `<tr><td><strong>${m.examName}</strong></td><td style="color: var(--primary); font-weight: bold;">${m.marks}</td></tr>`; });
             } catch(err) { console.error(err); }
         }
 
@@ -298,15 +345,10 @@
                 const qSubmissions = query(collection(db, "assignment_submissions"), where("studentName", "==", studentName));
                 const submissionSnap = await getDocs(qSubmissions);
                 
-                let teacherStatusMap = {};
-                submissionSnap.forEach(doc => { teacherStatusMap[doc.data().assignmentId] = doc.data().status; });
-
-                let actualPendingCount = 0;
-                tbody.innerHTML = '';
+                let teacherStatusMap = {}; submissionSnap.forEach(doc => { teacherStatusMap[doc.data().assignmentId] = doc.data().status; });
+                let actualPendingCount = 0; tbody.innerHTML = '';
                 assignSnap.forEach(doc => {
-                    const a = doc.data();
-                    const assignmentId = doc.id;
-                    const currentStatus = teacherStatusMap[assignmentId] || 'Pending';
+                    const a = doc.data(); const assignmentId = doc.id; const currentStatus = teacherStatusMap[assignmentId] || 'Pending';
                     if (currentStatus !== 'Received') actualPendingCount++; 
                     tbody.innerHTML += `<tr><td><strong>${a.title}</strong> <span class="badge ${currentStatus==='Received'?'bg-success':'bg-danger'}">${currentStatus}</span><br><small>Due: ${a.dueDate}</small></td><td>${a.fileUrl !== "#" ? `<a href="${a.fileUrl}" target="_blank" class="btn-view">View</a>` : ''}</td></tr>`;
                 });
@@ -314,6 +356,7 @@
             } catch(error) { console.error(error); }
         }
 
+        // Detailed Today Attendance
         window.loadTodayAttendance = async function() {
             const todayStr = new Date().toISOString().split('T')[0];
             const todayCard = document.getElementById('statTodayAttendance');
@@ -321,35 +364,121 @@
                 const q = query(collection(db, "student_attendance"), where("studentName", "==", sName), where("date", "==", todayStr));
                 const snapshot = await getDocs(q);
                 if(snapshot.empty) { todayCard.innerHTML = `<span class="badge bg-info">Not Marked Yet</span>`; return; }
-                let finalStatus = "Present";
-                snapshot.forEach(doc => { if(doc.data().status === "Absent") finalStatus = "Absent"; });
-                todayCard.innerHTML = `<span class="badge ${finalStatus === 'Present' ? 'bg-success' : 'bg-danger'}">${finalStatus}</span>`;
+                let finalStatus = "Not Marked";
+                snapshot.forEach(doc => { finalStatus = doc.data().status; });
+                
+                let badgeClass = 'bg-success';
+                if(finalStatus === 'Absent') badgeClass = 'bg-danger';
+                if(finalStatus === 'Leave' || finalStatus === 'Half Day') badgeClass = 'bg-leave';
+                if(finalStatus === 'Holiday') badgeClass = 'bg-warning';
+
+                todayCard.innerHTML = `<span class="badge ${badgeClass}">${finalStatus}</span>`;
             } catch (err) { todayCard.innerText = "Error"; }
         }
 
         window.filterAttendance = async function() {
             const start = document.getElementById('attStartDate').value;
             const end = document.getElementById('attEndDate').value;
+            const statusFilter = document.getElementById('attStatusFilter').value;
             const tbody = document.getElementById('attendanceTableBody');
             try {
-                const q = query(collection(db, "student_attendance"), where("studentName", "==", sName), where("date", ">=", start), where("date", "<=", end));
+                let q = query(collection(db, "student_attendance"), where("studentName", "==", sName));
+                if(start && end) q = query(collection(db, "student_attendance"), where("studentName", "==", sName), where("date", ">=", start), where("date", "<=", end));
+                
                 const snapshot = await getDocs(q);
                 let totalDays = 0; let presentDays = 0;
                 tbody.innerHTML = '';
                 snapshot.forEach(doc => {
                     const att = doc.data();
-                    totalDays++; if(att.status === 'Present') presentDays++;
-                    tbody.innerHTML += `<tr><td>${att.date}</td><td>${att.className}</td><td><span class="badge ${att.status === 'Present' ? 'bg-success' : 'bg-danger'}">${att.status}</span></td></tr>`;
+                    
+                    if(statusFilter !== 'All') {
+                        if(statusFilter === 'Leave' && att.status !== 'Leave' && att.status !== 'Half Day') return;
+                        if(statusFilter !== 'Leave' && att.status !== statusFilter) return;
+                    }
+
+                    if(att.status !== 'Not Marked' && att.status !== 'Holiday') totalDays++; 
+                    if(att.status === 'Present') presentDays++;
+                    
+                    let badgeClass = 'bg-success';
+                    if(att.status === 'Absent') badgeClass = 'bg-danger';
+                    if(att.status === 'Leave' || att.status === 'Half Day') badgeClass = 'bg-leave';
+                    if(att.status === 'Holiday') badgeClass = 'bg-warning';
+
+                    tbody.innerHTML += `<tr><td>${att.date}</td><td>${att.className}</td><td><span class="badge ${badgeClass}">${att.status}</span></td></tr>`;
                 });
                 if(totalDays > 0) document.getElementById('statAttendance').innerText = Math.round((presentDays / totalDays) * 100) + '%';
             } catch(error) { console.error(error); }
         }
 
+        // LOAD NOTICES (Recent on dashboard, all on tab)
         window.loadNotices = async function() {
             const noticeDiv = document.getElementById('noticeBoardDiv');
+            const recentDiv = document.getElementById('recentNoticesDiv');
             const snapshot = await getDocs(collection(db, "notices"));
-            noticeDiv.innerHTML = '';
-            snapshot.forEach((doc) => { const n = doc.data(); noticeDiv.innerHTML += `<div class="notice-item"><h4>${n.title}</h4><p>${n.message}</p></div>`; });
+            
+            noticeDiv.innerHTML = ''; recentDiv.innerHTML = '';
+            let noticesArray = [];
+            snapshot.forEach(doc => noticesArray.push({id: doc.id, ...doc.data()}));
+            noticesArray.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            const today = new Date();
+            let recentCount = 0;
+
+            noticesArray.forEach((n) => { 
+                // FIXED: Undefined Description uses n.description now
+                let noticeHtml = `<div class="notice-item"><h4>${n.title} <small style="float:right; color:#777; font-size:11px;">${n.date}</small></h4><p>${n.description}</p></div>`;
+                noticeDiv.innerHTML += noticeHtml;
+
+                // 7-day logic
+                let noticeDate = new Date(n.date);
+                let diffTime = Math.abs(today - noticeDate);
+                let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                if(diffDays <= 7) {
+                    recentDiv.innerHTML += `<div style="border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 5px;"><strong>${n.title}</strong><br><small>${n.date}</small></div>`;
+                    recentCount++;
+                }
+            });
+            if(recentCount === 0) recentDiv.innerHTML = '<p style="font-size:13px; color:#777;">No new notices in the last 7 days.</p>';
+        }
+
+        /* LEAVE REQUEST SYSTEM */
+        window.submitLeaveRequest = async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('leaveBtn'); btn.innerText = "Sending...";
+            const lDate = document.getElementById('leaveDate').value;
+            const lReason = document.getElementById('leaveReason').value;
+
+            try {
+                await addDoc(collection(db, "leave_requests"), {
+                    senderId: localStorage.getItem('studentId') || 'unknown',
+                    senderName: sName,
+                    role: 'Student',
+                    date: lDate,
+                    reason: lReason,
+                    status: 'Pending',
+                    timestamp: new Date()
+                });
+                alert("Leave request sent successfully to Admin!");
+                document.getElementById('leaveForm').reset();
+                loadMyLeaves();
+            } catch(error) { alert("Error: " + error.message); } finally { btn.innerText = "Send Leave Request to Admin"; }
+        }
+
+        window.loadMyLeaves = async function() {
+            const tbody = document.getElementById('myLeaveHistory');
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Loading...</td></tr>';
+            try {
+                const q = query(collection(db, "leave_requests"), where("senderName", "==", sName));
+                const snap = await getDocs(q);
+                let html = '';
+                snap.forEach(doc => {
+                    const r = doc.data();
+                    let badgeColor = r.status === 'Approved' ? 'bg-success' : (r.status === 'Rejected' ? 'bg-danger' : 'bg-info');
+                    html += `<tr><td>${r.date}</td><td>${r.reason}</td><td><span class="badge ${badgeColor}">${r.status}</span></td></tr>`;
+                });
+                tbody.innerHTML = html === '' ? '<tr><td colspan="3" style="text-align:center;">No past requests found.</td></tr>' : html;
+            } catch(e) { console.error(e); }
         }
 
         window.secureLogout = function() { localStorage.clear(); window.location.href = "main-website.html"; }
