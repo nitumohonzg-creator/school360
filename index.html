@@ -21,7 +21,7 @@
         .sidebar { width: 250px; background-color: #2c3e50; color: white; height: 100vh; padding-top: 20px; position: fixed; top: 0; left: 0; overflow-y: auto; z-index: 999; transition: transform 0.3s ease; }
         .sidebar h2 { text-align: center; color: #3498db; margin-bottom: 30px; font-size: 22px; padding: 0 10px;}
         .sidebar h2 span { color: white; }
-        .sidebar a { display: block; color: white; padding: 15px 25px; text-decoration: none; font-size: 15px; border-bottom: 1px solid #34495e; transition: 0.2s; }
+        .sidebar a { display: block; color: white; padding: 12px 20px; text-decoration: none; font-size: 14px; border-bottom: 1px solid #34495e; transition: 0.2s; }
         .sidebar a:hover, .sidebar a.active-link { background-color: #3498db; color: white; }
         .logout-btn { background-color: #e74c3c !important; color: white; text-align: center; margin: 20px; padding: 10px; border-radius: 5px; cursor: pointer; display: block; text-decoration: none; }
 
@@ -41,7 +41,8 @@
         .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex: 1; text-align: center; border-top: 5px solid #3498db; min-width: 200px; box-sizing: border-box; transition: 0.2s; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
         .btn { background-color: #3498db; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 14px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; box-sizing: border-box;}
-        
+        .btn-export { background-color: #27ae60; color: white; padding: 8px 15px; border: none; border-radius: 5px; font-size: 13px; cursor: pointer; font-weight: bold; }
+
         .box-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow-x: auto; margin-bottom: 30px;}
         .box-container h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;}
         
@@ -98,27 +99,33 @@
 </head>
 <body>
 
+    <!-- Mobile Header Navigation -->
     <div class="mobile-header">
         <h2 id="mobileSchoolName">School<span>360</span></h2>
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
     </div>
 
+    <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
+    <!-- Sidebar -->
     <div class="sidebar">
         <h2 id="sidebarSchoolName">School<span>360</span></h2>
         <a href="#" id="nav-dashboardSec" class="active-link" onclick="switchTab('dashboardSec')">📊 Master Dashboard</a>
         <a href="#" id="nav-noticeSec" onclick="switchTab('noticeSec')">📢 Public Notice</a>
+        <a href="#" id="nav-timetableSec" onclick="switchTab('timetableSec')">📅 Class Timetable</a>
         <a href="#" id="nav-teachersSec" onclick="switchTab('teachersSec')">👨‍🏫 HR & Attendance</a>
         <a href="#" id="nav-studentAttSec" onclick="switchTab('studentAttSec')">📝 School Attendance</a>
         <a href="#" id="nav-reportSec" onclick="switchTab('reportSec')">📅 Leave Report</a>
         <a href="#" id="nav-studentsSec" onclick="switchTab('studentsSec')">🎓 Students & Fees</a>
         <a href="#" id="nav-leaveReqSec" onclick="switchTab('leaveReqSec')">📩 Leave Requests</a>
+        <a href="#" id="nav-examApprovalSec" onclick="switchTab('examApprovalSec')">📝 Exam Approvals</a>
         <a href="#" id="nav-settingsSec" onclick="switchTab('settingsSec')">⚙️ School Settings</a>
         <a href="main-website.html" class="logout-btn">Logout</a>
     </div>
 
     <div class="main-content">
+        <!-- Permanent Header -->
         <div class="header">
             <div>
                 <h1 id="pageTitle">Admin Control Panel</h1>
@@ -126,8 +133,8 @@
             </div>
         </div>
 
+        <!-- DASHBOARD SECTION -->
         <div id="dashboardSec" class="content-section active">
-            
             <div class="action-cards">
                 <div class="card" style="border-top-color: #3498db;">
                     <h2 id="dashTeachersCount" style="margin: 0; font-size: 32px; color: #2c3e50;">0</h2>
@@ -137,12 +144,10 @@
                     <h2 id="dashStudentsCount" style="margin: 0; font-size: 32px; color: #2c3e50;">0</h2>
                     <p style="margin: 5px 0 0; color: #7f8c8d; font-weight: bold;">🎓 Total Students</p>
                 </div>
-                
                 <div class="card" style="border-top-color: #e74c3c; cursor: pointer; background-color: #fff0f0;" onclick="openAbsentListModal('staff')">
                     <h2 id="dashAbsentCount" style="margin: 0; font-size: 32px; color: #c0392b;">0</h2>
                     <p style="margin: 5px 0 0; color: #c0392b; font-weight: bold;">⚠️ Staff Absent Today <br><small>(Click to view list)</small></p>
                 </div>
-
                 <div class="card" style="border-top-color: #e67e22; cursor: pointer; background-color: #fdf2e9;" onclick="openAbsentListModal('student')">
                     <h2 id="dashStudentAbsentCount" style="margin: 0; font-size: 32px; color: #d35400;">0</h2>
                     <p style="margin: 5px 0 0; color: #d35400; font-weight: bold;">⚠️ Student Absent Today <br><small>(Click to view list)</small></p>
@@ -161,6 +166,7 @@
             </div>
         </div>
 
+        <!-- SETTINGS SECTION -->
         <div id="settingsSec" class="content-section box-container" style="border-top: 4px solid #34495e;">
             <h3 style="border:none; margin-bottom:15px;">⚙️ Global School Settings</h3>
             <p style="color:#666; font-size:14px; margin-top:0;">Manage your school name and academic session dates. This will reflect across all student and teacher portals automatically.</p>
@@ -188,6 +194,79 @@
             </form>
         </div>
 
+        <!-- TIMETABLE SECTION -->
+        <div id="timetableSec" class="content-section box-container" style="border-top: 4px solid #2980b9;">
+            <h3 style="border:none; margin-bottom:15px;">📅 Manage Class Timetable</h3>
+            <p style="color:#666; font-size:14px; margin-top:0;">Upload the weekly routine for classes. Students and teachers will see this in their portals.</p>
+            
+            <form onsubmit="addTimetable(event)" style="background: #eaf2f8; padding: 15px; border-radius: 8px; border: 1px solid #d4e6f1; margin-bottom: 20px;">
+                <div class="grid-3">
+                    <div class="form-group">
+                        <label>Class</label>
+                        <select id="ttClass" required>
+                            <option value="Class 8">Class 8</option><option value="Class 9">Class 9</option><option value="Class 10">Class 10</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Day of Week</label>
+                        <select id="ttDay" required>
+                            <option value="Monday">Monday</option><option value="Tuesday">Tuesday</option><option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option><option value="Friday">Friday</option><option value="Saturday">Saturday</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Time / Period</label>
+                        <input type="text" id="ttTime" placeholder="E.g. 09:00 AM - 09:45 AM" required>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Subject</label>
+                        <input type="text" id="ttSubject" placeholder="E.g. Mathematics" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Teacher Name</label>
+                        <input type="text" id="ttTeacher" placeholder="E.g. Mr. Sharma" required>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn" id="ttBtn" style="background-color: #2980b9;">Add to Timetable</button>
+            </form>
+
+            <div class="filter-panel" style="margin-top:10px;">
+                <div class="form-group">
+                    <label>Filter by Class</label>
+                    <select id="ttFilterClass" onchange="loadTimetableAdmin()">
+                        <option value="All">All Classes</option>
+                        <option value="Class 8">Class 8</option><option value="Class 9">Class 9</option><option value="Class 10">Class 10</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead><tr><th>Class</th><th>Day</th><th>Time/Period</th><th>Subject</th><th>Teacher</th><th>Action</th></tr></thead>
+                    <tbody id="timetableBody"><tr><td colspan="6" style="text-align: center;">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- EXAM APPROVALS SECTION -->
+        <div id="examApprovalSec" class="content-section box-container" style="border-top: 4px solid #8e44ad;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="margin:0; border:none;">📝 Exam Results Approval</h3>
+                <button class="btn-export" onclick="downloadCSV('examApprovalTable', 'Exam_Results_Pending.csv')">📥 Export CSV</button>
+            </div>
+            <p style="color:#666; font-size:14px; margin-top:0;">Review the marks submitted by teachers. Once approved, the marksheet will be visible in the student's portal with the school name.</p>
+            
+            <div style="overflow-x: auto; margin-top: 15px;">
+                <table id="examApprovalTable">
+                    <thead><tr><th>Date</th><th>Student Info</th><th>Exam Name</th><th>Theory Marks (Obt/Tot)</th><th>Practical Marks (Obt/Tot)</th><th>Submitted By</th><th>Actions</th></tr></thead>
+                    <tbody id="examApprovalBody"><tr><td colspan="7" style="text-align: center;">Loading pending results...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- LEAVE REQUESTS SECTION -->
         <div id="leaveReqSec" class="content-section box-container" style="border-top: 4px solid #34495e;">
             <h3 style="border:none; margin-bottom:0;">📩 Pending Leave Requests</h3>
             <div style="overflow-x: auto; margin-top: 15px;">
@@ -198,6 +277,7 @@
             </div>
         </div>
 
+        <!-- PUBLIC NOTICE SECTION -->
         <div id="noticeSec" class="content-section box-container" style="border-top: 4px solid #9b59b6;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                 <h3 style="margin:0; border:none;">📢 Notice Board & Updates</h3>
@@ -211,10 +291,14 @@
             </div>
         </div>
 
+        <!-- HR & ATTENDANCE SECTION -->
         <div id="teachersSec" class="content-section box-container">
-            <h3 style="border:none; margin-bottom:0;">👨‍🏫 Teacher Management (Salary & Attendance)</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="border:none; margin:0;">👨‍🏫 Teacher Management (Salary & Attendance)</h3>
+                <button class="btn-export" onclick="downloadCSV('teachersTable', 'Teachers_List.csv')">📥 Export CSV</button>
+            </div>
             
-            <div class="filter-panel" style="margin-top:10px;">
+            <div class="filter-panel">
                 <div class="form-group">
                     <label>📅 Select Date</label>
                     <input type="date" id="attDate" class="date-input" onchange="loadTeachers()" style="width:100%; box-sizing:border-box;">
@@ -226,15 +310,18 @@
             </div>
 
             <div style="overflow-x: auto;">
-                <table>
+                <table id="teachersTable">
                     <thead><tr><th>Teacher Info</th><th>Subject</th><th>Attendance</th><th>Salary</th><th>Actions</th></tr></thead>
                     <tbody id="teacherTableBody"><tr><td colspan="5" style="text-align: center;">Loading teachers...</td></tr></tbody>
                 </table>
             </div>
         </div>
 
+        <!-- STUDENT ATTENDANCE SECTION -->
         <div id="studentAttSec" class="content-section box-container" style="border-top: 4px solid #e67e22;">
-            <h3 style="border:none; margin-bottom:0;">📝 Full Day School Attendance</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="border:none; margin:0;">📝 Full Day School Attendance</h3>
+            </div>
             <p style="margin: 0 0 10px 0; font-size:13px; color:#e67e22;">*Note: This is the official full-day school attendance marked by Admin.</p>
             
             <div class="filter-panel" style="margin-top:10px;">
@@ -274,23 +361,31 @@
             </div>
         </div>
 
+        <!-- LEAVE REPORT SECTION -->
         <div id="reportSec" class="content-section box-container" style="border-top: 4px solid #f39c12;">
-            <h3>📅 Teacher Absence & Leave Report</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="margin:0; border:none;">📅 Teacher Absence & Leave Report</h3>
+                <button class="btn-export" onclick="downloadCSV('leaveReportTable', 'Leave_Report.csv')">📥 Export CSV</button>
+            </div>
             <div class="report-filters" style="display: flex; gap: 15px; margin-bottom: 15px; align-items: flex-end; flex-wrap: wrap;">
                 <div style="flex: 1;"><label style="font-size:12px; display:block;">Start Date</label><input type="date" id="reportStartDate" class="date-input" style="width:100%; box-sizing:border-box;"></div>
                 <div style="flex: 1;"><label style="font-size:12px; display:block;">End Date</label><input type="date" id="reportEndDate" class="date-input" style="width:100%; box-sizing:border-box;"></div>
                 <button class="btn" onclick="generateReport()" style="margin-top:0; width:auto; background-color:#f39c12; flex:1;">Generate Report</button>
             </div>
             <div style="overflow-x: auto;">
-                <table>
+                <table id="leaveReportTable">
                     <thead><tr><th>Date</th><th>Teacher Name</th><th>Status</th></tr></thead>
                     <tbody id="reportTableBody"><tr><td colspan="3" style="text-align: center; color:#888;">Select dates and click Generate.</td></tr></tbody>
                 </table>
             </div>
         </div>
 
+        <!-- STUDENTS SECTION (FEES, SEARCH & FILTERS) -->
         <div id="studentsSec" class="content-section box-container">
-            <h3>🎓 Student Management & Fees Tracker</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="margin:0; border:none;">🎓 Student Management & Fees Tracker</h3>
+                <button class="btn-export" onclick="downloadCSV('studentsTable', 'Students_List.csv')">📥 Export CSV</button>
+            </div>
             
             <div class="filter-panel">
                 <div class="form-group" style="flex: 2; min-width: 220px;">
@@ -338,7 +433,7 @@
             </div>
 
             <div style="overflow-x: auto;">
-                <table>
+                <table id="studentsTable">
                     <thead>
                         <tr>
                             <th>Roll No</th>
@@ -357,6 +452,7 @@
         </div>
     </div>
 
+    <!-- MODALS -->
     <div class="modal-overlay" id="absentListModal">
         <div class="modal-box" id="absentModalBox">
             <span class="close-btn" onclick="closeAbsentListModal()">&times;</span>
@@ -457,11 +553,13 @@
             const titles = { 
                 'dashboardSec': 'Admin Control Panel', 
                 'noticeSec': 'Public Notice Board', 
+                'timetableSec': 'Class Timetable',
                 'teachersSec': 'HR & Staff Management', 
                 'studentAttSec': 'Full School Attendance',
                 'reportSec': 'Leave & Absence Records', 
                 'studentsSec': 'Student Management',
                 'leaveReqSec': 'Manage Leave Requests',
+                'examApprovalSec': 'Review & Publish Exams',
                 'settingsSec': 'Global School Settings'
             };
             document.getElementById('pageTitle').innerText = titles[tabId];
@@ -471,11 +569,40 @@
                 document.querySelector('.sidebar-overlay').classList.remove('active');
             }
             if(tabId === 'leaveReqSec') loadLeaveRequests();
+            if(tabId === 'timetableSec') loadTimetableAdmin();
+            if(tabId === 'examApprovalSec') loadPendingExams();
         };
 
         window.toggleSidebar = function() {
             document.querySelector('.sidebar').classList.toggle('active');
             document.querySelector('.sidebar-overlay').classList.toggle('active');
+        }
+
+        /* --- CSV EXPORT LOGIC --- */
+        window.downloadCSV = function(tableId, filename) {
+            let csv = [];
+            let rows = document.querySelectorAll(`#${tableId} tr`);
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll("td, th");
+                // Don't export the "Actions" column (usually the last one)
+                let colLength = cols.length;
+                if(i === 0 && cols[colLength-1].innerText.includes("Action")) colLength = cols.length - 1;
+                
+                for (let j = 0; j < colLength; j++) {
+                    // Remove buttons/HTML, keep text. Escape quotes.
+                    let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, " ").replace(/"/g, '""');
+                    row.push('"' + data + '"');
+                }
+                csv.push(row.join(","));
+            }
+            let csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
+            let downloadLink = document.createElement("a");
+            downloadLink.download = filename;
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
         }
 
         /* --- SETTINGS LOGIC START --- */
@@ -535,7 +662,92 @@
                 btn.innerText = "Save Global Settings";
             }
         }
-        /* --- SETTINGS LOGIC END --- */
+
+        /* --- TIMETABLE LOGIC --- */
+        window.addTimetable = async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('ttBtn'); btn.innerText = "Adding...";
+            try {
+                await addDoc(collection(db, "timetable"), {
+                    className: document.getElementById('ttClass').value,
+                    day: document.getElementById('ttDay').value,
+                    time: document.getElementById('ttTime').value,
+                    subject: document.getElementById('ttSubject').value,
+                    teacher: document.getElementById('ttTeacher').value,
+                    timestamp: new Date()
+                });
+                alert("Timetable added successfully!");
+                document.getElementById('ttTime').value = '';
+                document.getElementById('ttSubject').value = '';
+                loadTimetableAdmin();
+            } catch(err) { alert(err.message); } finally { btn.innerText = "Add to Timetable"; }
+        }
+
+        window.loadTimetableAdmin = async function() {
+            const tbody = document.getElementById('timetableBody');
+            const filterClass = document.getElementById('ttFilterClass').value;
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Loading...</td></tr>';
+            
+            try {
+                let q = collection(db, "timetable");
+                if(filterClass !== 'All') {
+                    q = query(collection(db, "timetable"), where("className", "==", filterClass));
+                }
+                const snap = await getDocs(q);
+                let html = '';
+                snap.forEach(doc => {
+                    const t = doc.data();
+                    html += `<tr>
+                        <td><strong>${t.className}</strong></td>
+                        <td>${t.day}</td>
+                        <td>${t.time}</td>
+                        <td>${t.subject}</td>
+                        <td>${t.teacher}</td>
+                        <td><button onclick="deleteRecord('timetable', '${doc.id}')" class="action-icon" style="color:red;">🗑️</button></td>
+                    </tr>`;
+                });
+                tbody.innerHTML = html === '' ? '<tr><td colspan="6" style="text-align: center;">No timetable data found.</td></tr>' : html;
+            } catch(e) { console.error(e); }
+        }
+
+        /* --- EXAM APPROVALS LOGIC --- */
+        window.loadPendingExams = async function() {
+            const tbody = document.getElementById('examApprovalBody');
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Loading...</td></tr>';
+            try {
+                // Fetch marks that are in 'Pending' status
+                const q = query(collection(db, "marks"), where("status", "==", "Pending"));
+                const snap = await getDocs(q);
+                let html = '';
+                
+                snap.forEach(doc => {
+                    const m = doc.data();
+                    let dt = m.timestamp ? new Date(m.timestamp.toDate()).toLocaleDateString() : 'N/A';
+                    html += `<tr>
+                        <td>${dt}</td>
+                        <td><strong>${m.studentName}</strong><br><small>${m.className}</small></td>
+                        <td>${m.examName}</td>
+                        <td><span style="color:#2980b9; font-weight:bold;">${m.theoryObt}</span> / ${m.theoryTotal}</td>
+                        <td><span style="color:#27ae60; font-weight:bold;">${m.pracObt}</span> / ${m.pracTotal}</td>
+                        <td>${m.teacherName}</td>
+                        <td>
+                            <button onclick="approveExam('${doc.id}')" class="btn" style="background:#27ae60; padding:5px 10px; width:auto; font-size:12px;">Approve</button>
+                            <button onclick="deleteRecord('marks', '${doc.id}')" class="btn" style="background:#e74c3c; padding:5px 10px; width:auto; font-size:12px;">Reject</button>
+                        </td>
+                    </tr>`;
+                });
+                tbody.innerHTML = html === '' ? '<tr><td colspan="7" style="text-align: center; color:#2ecc71; font-weight:bold;">No pending results. All caught up! 🎉</td></tr>' : html;
+            } catch(e) { console.error(e); }
+        }
+
+        window.approveExam = async function(docId) {
+            if(!confirm("Approve and publish these marks? The student will see this on their Report Card.")) return;
+            try {
+                await updateDoc(doc(db, "marks", docId), { status: "Published", publishedAt: new Date() });
+                alert("Marks published successfully!");
+                loadPendingExams();
+            } catch(e) { alert("Error: " + e.message); }
+        }
 
         window.openNoticeModal = () => { document.getElementById('noticeModal').style.display = 'flex'; document.getElementById('nDate').value = new Date().toISOString().split('T')[0]; }
         window.closeNoticeModal = () => document.getElementById('noticeModal').style.display = 'none';
@@ -772,7 +984,7 @@
 
         window.generateReport = async function() { const tbody = document.getElementById('reportTableBody'); tbody.innerHTML = '<tr><td colspan="3">Processing...</td></tr>'; try { const snapshot = await getDocs(query(collection(db, "teacher_attendance"), where("date", ">=", document.getElementById('reportStartDate').value), where("date", "<=", document.getElementById('reportEndDate').value))); let html = ''; snapshot.forEach(doc => { const d = doc.data(); if(d.status === 'Absent' || d.status === 'Leave') { html += `<tr><td>${d.date}</td><td><strong>${d.teacherName}</strong></td><td><span class="${d.status==='Absent'?'badge-unpaid':'badge-leave'}">${d.status}</span></td></tr>`; } }); tbody.innerHTML = html === '' ? '<tr><td colspan="3" style="text-align:center; color:green;">All present! No absences.</td></tr>' : html; } catch (error) { tbody.innerHTML = '<tr><td colspan="3">Error loading.</td></tr>'; } }
         window.updateFinance = async function(collectionName, docId, fieldName, isPaid) { try { await updateDoc(doc(db, collectionName, docId), { [fieldName]: isPaid }); if(collectionName === 'students') loadStudents(); else loadTeachers(); } catch (error) { alert("Update failed"); } }
-        window.deleteRecord = async function(collectionName, docId) { if(confirm("Permanently delete this record?")) { try { await deleteDoc(doc(db, collectionName, docId)); if(collectionName === 'students') { loadStudents(); loadStudentAttendance(); loadDashboardStats(); } else if(collectionName === 'teachers') { loadTeachers(); loadDashboardStats(); } else if(collectionName === 'notices') loadNotices(); } catch (error) { alert("Delete Failed"); } } }
+        window.deleteRecord = async function(collectionName, docId) { if(confirm("Permanently delete this record?")) { try { await deleteDoc(doc(db, collectionName, docId)); if(collectionName === 'students') { loadStudents(); loadStudentAttendance(); loadDashboardStats(); } else if(collectionName === 'teachers') { loadTeachers(); loadDashboardStats(); } else if(collectionName === 'notices') loadNotices(); else if(collectionName === 'timetable') loadTimetableAdmin(); else if(collectionName === 'marks') loadPendingExams(); } catch (error) { alert("Delete Failed"); } } }
         window.addTeacher = async function(event) { event.preventDefault(); document.getElementById('tBtn').innerText = "Saving..."; try { await addDoc(collection(db, "teachers"), { name: document.getElementById('tName').value, subject: document.getElementById('tSubject').value, email: document.getElementById('tEmail').value.toLowerCase(), password: document.getElementById('tPassword').value, salaryPaid: false, dateAdded: new Date() }); document.getElementById('teacherForm').reset(); window.closeTeacherModal(); loadTeachers(); loadDashboardStats(); } catch (error) { alert(error.message); } finally { document.getElementById('tBtn').innerText = "Save Teacher"; } }
         window.addStudent = async function(event) { event.preventDefault(); document.getElementById('sBtn').innerText = "Saving..."; try { await addDoc(collection(db, "students"), { name: document.getElementById('sName').value, dob: document.getElementById('sDob').value, className: document.getElementById('sClass').value, section: document.getElementById('sSection').value, rollNumber: document.getElementById('sRoll').value, fatherName: document.getElementById('sFather').value, motherName: document.getElementById('sMother').value, mobile: document.getElementById('sMobile').value, email: document.getElementById('sEmail').value.toLowerCase(), password: document.getElementById('sPassword').value, permAddress: { vill: document.getElementById('sPermVill').value, po: document.getElementById('sPermPO').value, dist: document.getElementById('sPermDist').value, state: document.getElementById('sPermState').value, pin: document.getElementById('sPermPin').value }, presAddress: { vill: document.getElementById('sPresVill').value, po: document.getElementById('sPresPO').value, dist: document.getElementById('sPresDist').value, state: document.getElementById('sPresState').value, pin: document.getElementById('sPresPin').value }, feeRecords: {}, dateAdded: new Date() }); document.getElementById('studentForm').reset(); window.closeStudentModal(); loadStudents(); loadStudentAttendance(); loadDashboardStats(); } catch (error) { alert(error.message); } finally { document.getElementById('sBtn').innerText = "Save Student Record"; } }
     </script>
