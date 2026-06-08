@@ -7,7 +7,6 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f4f7f6; display: flex; }
         
-        /* Teacher Sidebar Theme */
         .sidebar { width: 250px; background-color: #34495e; color: white; height: 100vh; padding-top: 20px; position: fixed; overflow-y: auto; z-index: 100;}
         .sidebar h2 { text-align: center; color: #9b59b6; margin-bottom: 30px; }
         .sidebar h2 span { color: white; }
@@ -50,6 +49,14 @@
         .status-received { color: #27ae60; }
         .mark-input { width: 80px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
 
+        .notice-item { background: #fdfae6; padding: 15px; border-left: 4px solid #f1c40f; margin-bottom: 10px; border-radius: 4px; }
+        .notice-item h4 { margin: 0 0 5px 0; color: #d35400; }
+        .notice-item p { margin: 0; font-size: 13px; color: #555; line-height: 1.4; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white; display: inline-block; margin-left: 8px;}
+        .bg-success { background-color: #27ae60; }
+        .bg-danger { background-color: #e74c3c; }
+        .bg-info { background-color: #3498db; }
+
         @media (max-width: 768px) {
             body { flex-direction: column; }
             .sidebar { width: 100%; height: auto; position: relative; display: flex; flex-wrap: wrap; padding: 10px;}
@@ -65,20 +72,30 @@
         <h2>Teacher<span>Portal</span></h2>
         <a id="nav-dashboardSec" class="active-link" onclick="showSection('dashboardSec')">🏠 Dashboard</a>
         <a id="nav-uploadSec" onclick="showSection('uploadSec')">📂 Post Assignment</a>
-        <a id="nav-receiveSec" onclick="showSection('receiveSec')">📥 Receive Assignments</a>
-        <a id="nav-studentAttSec" onclick="showSection('studentAttSec')">📅 Attendance</a>
+        <a id="nav-receiveSec" onclick="showSection('receiveSec')">📥 Grade Assignments</a>
+        <a id="nav-noticeSec" onclick="showSection('noticeSec')">📢 Notice Board</a>
+        <a id="nav-leaveReqSec" onclick="showSection('leaveReqSec')">📩 Request Leave</a>
         <a href="main-website.html" class="logout-btn">Logout</a>
     </div>
 
     <div class="main-content">
         <div class="header">
-            <h1>Welcome, Teacher!</h1>
-            <p style="margin: 5px 0 0 0; color: #777;">Manage assignments, grading, and student attendance seamlessly.</p>
+            <h1 id="welcomeText">Welcome, Teacher!</h1>
+            <p style="margin: 5px 0 0 0; color: #777;">Manage assignments, grading, and your schedule seamlessly.</p>
         </div>
 
-        <div id="dashboardSec" class="section active box-container" style="text-align: center; padding: 40px 20px;">
-            <h2 style="color: #2c3e50;">Hello! Have a great day at school.</h2>
-            <p style="color: #666;">Please select an option from the menu to manage your class activities.</p>
+        <div id="dashboardSec" class="section active flex-row">
+            <div class="box-container" style="flex: 2; text-align: center; padding: 40px 20px;">
+                <h2 style="color: #2c3e50;">Hello! Have a great day at school.</h2>
+                <p style="color: #666;">Use the side menu to assign tasks, grade student work, view notices, or request leaves directly from the Admin.</p>
+            </div>
+            <div class="box-container" style="flex: 1; border-top: 4px solid #e74c3c;">
+                <h4 style="margin:0 0 10px 0; color: #e74c3c;">🚨 Recent Notices (Last 7 Days)</h4>
+                <div id="recentNoticesDiv">
+                    <p style="font-size:13px; color:#777;">Loading...</p>
+                </div>
+                <button onclick="document.getElementById('nav-noticeSec').click()" style="width:100%; background:none; border:1px solid #ccc; padding:5px; margin-top:10px; cursor:pointer;">View All Notices</button>
+            </div>
         </div>
 
         <div id="uploadSec" class="section box-container">
@@ -134,9 +151,30 @@
             <button class="btn-submit" onclick="saveReceivedStatus()" style="background-color: #2980b9; margin-top: 15px;">Update Status & Save</button>
         </div>
 
-        <div id="studentAttSec" class="section box-container" style="border-top: 4px solid #2ecc71;">
-            <h3>📅 Mark Student Attendance</h3>
-            </div>
+        <div id="noticeSec" class="section box-container">
+            <h3>📢 School Notice Board</h3>
+            <div id="noticeBoardDiv"><p style="text-align:center; color:#888; font-size:14px;">Loading notices...</p></div>
+        </div>
+
+        <div id="leaveReqSec" class="section box-container" style="border-top: 4px solid #f39c12;">
+            <h3>📩 Request Leave to Admin</h3>
+            <form id="leaveForm" onsubmit="submitLeaveRequest(event)">
+                <div class="form-group">
+                    <label>Select Date for Leave:</label>
+                    <input type="date" id="leaveDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Reason for Leave:</label>
+                    <textarea id="leaveReason" rows="3" required placeholder="E.g., Medical emergency, Personal work..."></textarea>
+                </div>
+                <button type="submit" class="btn-submit" id="leaveBtn" style="background-color: #f39c12;">Submit Request</button>
+            </form>
+            <h4 style="margin-top: 30px;">My Leave Request History</h4>
+            <table>
+                <thead><tr><th>Date Request</th><th>Reason</th><th>Admin Status</th></tr></thead>
+                <tbody id="myLeaveHistory"><tr><td colspan="3" style="text-align: center;">Loading...</td></tr></tbody>
+            </table>
+        </div>
 
     </div>
 
@@ -152,6 +190,14 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        const tName = localStorage.getItem("teacherName") || "Demo Teacher";
+
+        window.onload = function() {
+            document.getElementById("welcomeText").innerText = `Welcome, ${tName}!`;
+            loadNotices();
+            loadMyLeaves();
+        }
+
         window.showSection = function(sectionId) {
             document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
             document.querySelectorAll('.sidebar a').forEach(link => link.classList.remove('active-link'));
@@ -161,73 +207,140 @@
         }
 
         // ==========================================
-        // 1. RECEIVE ASSIGNMENTS LOGIC
+        // NOTICE BOARD LOGIC
         // ==========================================
-        
-        // Step 1: Load assignments for the selected class into Dropdown
+        window.loadNotices = async function() {
+            const noticeDiv = document.getElementById('noticeBoardDiv');
+            const recentDiv = document.getElementById('recentNoticesDiv');
+            const snapshot = await getDocs(collection(db, "notices"));
+            
+            noticeDiv.innerHTML = ''; recentDiv.innerHTML = '';
+            let noticesArray = [];
+            snapshot.forEach(doc => noticesArray.push({id: doc.id, ...doc.data()}));
+            noticesArray.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            const today = new Date();
+            let recentCount = 0;
+
+            noticesArray.forEach((n) => { 
+                // FIXED: Undefined Description uses n.description
+                let noticeHtml = `<div class="notice-item"><h4>${n.title} <small style="float:right; color:#777; font-size:11px;">${n.date}</small></h4><p>${n.description}</p></div>`;
+                noticeDiv.innerHTML += noticeHtml;
+
+                let noticeDate = new Date(n.date);
+                let diffTime = Math.abs(today - noticeDate);
+                let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                if(diffDays <= 7) {
+                    recentDiv.innerHTML += `<div style="border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 5px;"><strong>${n.title}</strong><br><small>${n.date}</small></div>`;
+                    recentCount++;
+                }
+            });
+            if(recentCount === 0) recentDiv.innerHTML = '<p style="font-size:13px; color:#777;">No new notices in the last 7 days.</p>';
+        }
+
+        // ==========================================
+        // LEAVE REQUEST LOGIC
+        // ==========================================
+        window.submitLeaveRequest = async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('leaveBtn'); btn.innerText = "Sending...";
+            const lDate = document.getElementById('leaveDate').value;
+            const lReason = document.getElementById('leaveReason').value;
+
+            try {
+                await addDoc(collection(db, "leave_requests"), {
+                    senderId: localStorage.getItem('teacherId') || 'unknown',
+                    senderName: tName,
+                    role: 'Teacher',
+                    date: lDate,
+                    reason: lReason,
+                    status: 'Pending',
+                    timestamp: new Date()
+                });
+                alert("Leave request sent successfully to Admin!");
+                document.getElementById('leaveForm').reset();
+                loadMyLeaves();
+            } catch(error) { alert("Error: " + error.message); } finally { btn.innerText = "Submit Request"; }
+        }
+
+        window.loadMyLeaves = async function() {
+            const tbody = document.getElementById('myLeaveHistory');
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Loading...</td></tr>';
+            try {
+                const q = query(collection(db, "leave_requests"), where("senderName", "==", tName));
+                const snap = await getDocs(q);
+                let html = '';
+                snap.forEach(doc => {
+                    const r = doc.data();
+                    let badgeColor = r.status === 'Approved' ? 'bg-success' : (r.status === 'Rejected' ? 'bg-danger' : 'bg-info');
+                    html += `<tr><td>${r.date}</td><td>${r.reason}</td><td><span class="badge ${badgeColor}">${r.status}</span></td></tr>`;
+                });
+                tbody.innerHTML = html === '' ? '<tr><td colspan="3" style="text-align:center;">No past requests found.</td></tr>' : html;
+            } catch(e) { console.error(e); }
+        }
+
+        // ==========================================
+        // ASSIGNMENTS LOGIC (UPLOAD & RECEIVE)
+        // ==========================================
+        window.uploadAssignment = async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('aBtn'); btn.innerText = "Posting...";
+            try {
+                await addDoc(collection(db, "assignments"), {
+                    title: document.getElementById('aTitle').value,
+                    description: document.getElementById('aDescription').value,
+                    className: document.getElementById('aClass').value,
+                    dueDate: document.getElementById('aDueDate').value,
+                    teacherName: tName,
+                    fileUrl: "#", // Assuming direct text based assignment for now
+                    timestamp: new Date()
+                });
+                alert("Assignment posted successfully!");
+                document.getElementById('assignmentForm').reset();
+            } catch(err) { alert(err.message); } finally { btn.innerText = "Post Assignment"; }
+        }
+
         window.loadAssignmentsForClass = async function() {
             const selectedClass = document.getElementById('receiveClass').value;
             const assignDropdown = document.getElementById('assignmentSelect');
             const tbody = document.getElementById('receiveTableBody');
             
-            if(!selectedClass) { 
-                assignDropdown.innerHTML = '<option value="">-- Select Class First --</option>';
-                tbody.innerHTML = '<tr><td colspan="4">Select a class and assignment.</td></tr>'; 
-                return; 
-            }
-
+            if(!selectedClass) { assignDropdown.innerHTML = '<option value="">-- Select Class First --</option>'; tbody.innerHTML = '<tr><td colspan="4">Select a class and assignment.</td></tr>'; return; }
             assignDropdown.innerHTML = '<option value="">Loading assignments...</option>';
             
             try {
                 const qAssign = query(collection(db, "assignments"), where("className", "==", selectedClass));
                 const assignSnap = await getDocs(qAssign);
-                
                 assignDropdown.innerHTML = '<option value="">-- Now Select an Assignment --</option>';
-                if(assignSnap.empty) {
-                    assignDropdown.innerHTML = '<option value="">No assignments found for this class</option>';
-                    return;
-                }
-
-                assignSnap.forEach(doc => {
-                    assignDropdown.innerHTML += `<option value="${doc.id}">${doc.data().title}</option>`;
-                });
+                if(assignSnap.empty) { assignDropdown.innerHTML = '<option value="">No assignments found for this class</option>'; return; }
+                assignSnap.forEach(doc => { assignDropdown.innerHTML += `<option value="${doc.id}">${doc.data().title}</option>`; });
             } catch(error) { console.error(error); }
         }
 
-        // Step 2: Load students and their current status when an Assignment is selected
         window.loadStudentsForAssignment = async function() {
             const selectedClass = document.getElementById('receiveClass').value;
             const assignmentId = document.getElementById('assignmentSelect').value;
             const tbody = document.getElementById('receiveTableBody');
 
             if(!assignmentId) return;
-
             tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Loading students...</td></tr>';
             
             try {
-                // Fetch Students
                 const qStudents = query(collection(db, "students"), where("className", "==", selectedClass));
                 const studentSnap = await getDocs(qStudents);
-                
-                // Fetch already saved statuses for this specific assignment
                 const qStatus = query(collection(db, "assignment_submissions"), where("assignmentId", "==", assignmentId));
                 const statusSnap = await getDocs(qStatus);
                 
                 let savedData = {};
-                statusSnap.forEach(doc => { 
-                    // Store existing status & marks by studentId
-                    savedData[doc.data().studentId] = { status: doc.data().status, marks: doc.data().marks }; 
-                });
+                statusSnap.forEach(doc => { savedData[doc.data().studentId] = { status: doc.data().status, marks: doc.data().marks }; });
 
                 if(studentSnap.empty) { tbody.innerHTML = '<tr><td colspan="4">No students found.</td></tr>'; return; }
                 
                 tbody.innerHTML = '';
                 studentSnap.forEach(doc => {
-                    const s = doc.data();
-                    const studentId = doc.id;
+                    const s = doc.data(); const studentId = doc.id;
                     const studentData = savedData[studentId] || { status: 'Pending', marks: '' };
-
-                    // Color coding for dropdown
                     const statusColor = studentData.status === 'Received' ? 'status-received' : 'status-pending';
 
                     tbody.innerHTML += `
@@ -247,7 +360,6 @@
             } catch(error) { console.error(error); }
         }
 
-        // Step 3: Save the statuses to Firebase
         window.saveReceivedStatus = async function() {
             const assignmentSelect = document.getElementById('assignmentSelect');
             const assignmentId = assignmentSelect.value;
@@ -264,21 +376,11 @@
                 const studentName = row.getAttribute('data-name');
                 const statusValue = row.querySelector('.status-select').value;
                 const marksObtained = row.querySelector('.mark-input').value;
-
-                // Unique Doc ID: studentId_assignmentId taaki duplicates na bane
                 const docId = `${studentId}_${assignmentId}`;
 
-                // Agar Teacher ne "Received" mark kiya hai ya koi marks diye hain, toh save karo
                 if(statusValue === 'Received' || marksObtained !== "") {
                     await setDoc(doc(db, "assignment_submissions", docId), {
-                        studentId: studentId,
-                        studentName: studentName,
-                        className: selectedClass,
-                        assignmentId: assignmentId,
-                        assignmentTitle: assignmentName,
-                        status: statusValue,
-                        marks: marksObtained,
-                        updatedAt: new Date()
+                        studentId: studentId, studentName: studentName, className: selectedClass, assignmentId: assignmentId, assignmentTitle: assignmentName, status: statusValue, marks: marksObtained, updatedAt: new Date()
                     });
                     savedCount++;
                 }
