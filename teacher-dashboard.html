@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Portal - School Dashboard</title>
+    <title>Teacher Portal - School360</title>
     <style>
         :root {
             --primary: #8e44ad;
@@ -25,7 +25,7 @@
         .mobile-header { display: none; background: var(--sidebar-bg); color: white; padding: 15px 20px; position: fixed; top: 0; left: 0; width: 100%; z-index: 998; box-sizing: border-box; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .mobile-header h2 { margin: 0; font-size: 20px; color: var(--primary-dark); }
         .mobile-header h2 span { color: white; }
-        .menu-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        .menu-btn { background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 0; margin: 0; }
 
         .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 998; }
         .sidebar-overlay.active { display: block; }
@@ -33,17 +33,15 @@
         .sidebar { width: 250px; background-color: var(--sidebar-bg); color: white; height: 100vh; padding-top: 20px; position: fixed; overflow-y: auto; transition: 0.3s; z-index: 1000; }
         .sidebar h2 { text-align: center; margin-bottom: 30px; font-size: 22px; padding: 0 10px; color: var(--primary-dark);}
         .sidebar h2 span { color: #ecf0f1; font-weight: normal; }
-        .sidebar a { display: block; color: white; padding: 12px 20px; text-decoration: none; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s; cursor: pointer; }
+        .sidebar a { display: block; color: white; padding: 12px 20px; text-decoration: none; font-size: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s; cursor: pointer; }
         .sidebar a:hover, .sidebar a.active-link { background-color: var(--primary-dark); padding-left: 20px; border-left: 4px solid var(--warning); }
-        .logout-btn { background-color: var(--danger) !important; text-align: center; margin: 20px; border-radius: 5px; border-bottom: none !important; color: white;}
+        .logout-btn { background-color: var(--danger) !important; text-align: center; margin: 20px; border-radius: 5px; border-bottom: none !important; color: white; border:none;}
         
-        .main-content { margin-left: 250px; padding: 20px 30px; width: calc(100% - 250px); box-sizing: border-box; transition: 0.3s; }
+        .main-content { margin-left: 250px; padding: 25px; width: calc(100% - 250px); box-sizing: border-box; transition: 0.3s; }
         
-        .header { background: var(--white); padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 25px; border-left: 5px solid var(--primary-dark); display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { margin: 0; color: var(--text-main); font-size: 22px; }
+        .header { background: var(--white); padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 25px; border-left: 5px solid var(--primary-dark); display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { margin: 0; color: var(--text-main); font-size: 24px; }
         
-        .menu-toggle { display: none; font-size: 24px; cursor: pointer; background: none; border: none; color: var(--text-main); margin-right: 15px; }
-
         .section { display: none; animation: fadeIn 0.4s ease-in-out; }
         .section.active { display: block; }
 
@@ -52,24 +50,23 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .box-container { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; overflow-x: auto;}
+        .box-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; overflow-x: auto;}
         .box-container h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px;}
         
         .form-group { margin-bottom: 15px; width: 100%;}
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; font-size: 14px;}
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: inherit; font-size: 14px;}
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; font-size: 13px;}
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: inherit; font-size: 14px;}
         
         .flex-row { display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;}
         .flex-row > div { flex: 1; min-width: 180px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
-        .btn-submit { background: var(--primary-dark); color: white; border: none; padding: 12px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s;}
+        .btn-submit { background: var(--primary-dark); color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s;}
         .btn-submit:hover { opacity: 0.9; }
         
-        .table-responsive { overflow-x: auto; width: 100%; }
         table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 15px; font-size: 14px; min-width: 600px;}
-        th { background-color: var(--bg); padding: 12px; border-bottom: 2px solid #ccc; color: var(--text-main); }
-        td { padding: 12px; border-bottom: 1px solid #eee; color: #555; vertical-align: middle;}
+        th { background-color: var(--bg); padding: 10px; border-bottom: 2px solid #ccc; color: var(--text-main); }
+        td { padding: 10px; border-bottom: 1px solid #eee; color: #555; vertical-align: middle;}
         
         .status-select { padding: 8px; border-radius: 4px; border: 1px solid #ccc; outline: none; font-weight: bold; font-family: inherit;}
         .status-pending { color: #e67e22; }
@@ -93,12 +90,11 @@
         @media (max-width: 850px) {
             .sidebar { transform: translateX(-100%); }
             .sidebar.active { transform: translateX(0); }
-            .main-content { margin-left: 0; padding: 20px; padding-top: 80px; width: 100%;}
+            .main-content { margin-left: 0; padding: 15px; padding-top: 80px; width: 100%;}
             .mobile-header { display: flex; }
         }
 
         @media (max-width: 600px) {
-            .header { align-items: flex-start; flex-direction: column; gap: 10px; }
             .flex-row > div, .grid-2 { width: 100%; min-width: 100%; grid-template-columns: 1fr;}
         }
     </style>
@@ -123,7 +119,7 @@
         <a id="nav-noticeSec" onclick="showSection('noticeSec')">📢 Notice Board</a>
         <a id="nav-leaveReqSec" onclick="showSection('leaveReqSec')">📩 Request Leave</a>
         <a id="nav-profileSec" onclick="showSection('profileSec')">👤 My Profile</a>
-        <a onclick="secureLogout()" class="logout-btn">Logout</a>
+        <a onclick="secureLogout()" class="logout-btn">Logout System</a>
     </div>
 
     <div class="main-content">
@@ -134,6 +130,7 @@
             </div>
         </div>
 
+        <!-- DASHBOARD -->
         <div id="dashboardSec" class="section active">
             <div class="grid-2">
                 <div class="box-container" style="border-top: 4px solid var(--danger);">
@@ -153,19 +150,17 @@
             </div>
         </div>
 
+        <!-- TIMETABLE -->
         <div id="timetableSec" class="section box-container" style="border-top: 4px solid var(--warning);">
             <h3>📅 View Class Timetable</h3>
             <p style="font-size:13px; color:#666; margin-top:0;">Official routine uploaded by the Administration.</p>
             <div class="form-group" style="max-width: 300px;">
                 <label>Filter by Class</label>
-                <select id="ttFilterClass" onchange="loadTimetableTeacher()">
+                <select id="ttFilterClass" class="dynamic-class-dropdown" onchange="loadTimetableTeacher()">
                     <option value="All">All Classes</option>
-                    <option value="Class 8">Class 8</option>
-                    <option value="Class 9">Class 9</option>
-                    <option value="Class 10">Class 10</option>
                 </select>
             </div>
-            <div class="table-responsive">
+            <div style="overflow-x: auto;">
                 <table>
                     <thead><tr><th>Class</th><th>Day</th><th>Time/Period</th><th>Subject</th><th>Teacher</th></tr></thead>
                     <tbody id="timetableBody"><tr><td colspan="5" style="text-align: center;">Loading...</td></tr></tbody>
@@ -173,6 +168,7 @@
             </div>
         </div>
 
+        <!-- EXAM MARKS UPLOAD (UPDATED WITH SECTION FILTER) -->
         <div id="examMarksSec" class="section box-container" style="border-top: 4px solid #8e44ad;">
             <h3>📝 Upload Exam Marks (For Admin Approval)</h3>
             <p style="font-size:13px; color:#666; margin-top:0;">Submit theory and practical marks here. Once approved by the Admin, it will reflect on the student's report card.</p>
@@ -181,20 +177,15 @@
                 <div class="flex-row" style="margin-bottom: 15px;">
                     <div class="form-group" style="margin:0;">
                         <label>Select Class</label>
-                        <select id="emClass" onchange="loadStudentsForMarks()" required>
+                        <select id="emClass" class="dynamic-class-dropdown" onchange="loadStudentsForMarks()" required>
                             <option value="">-- Select Class --</option>
-                            <option value="Class 8">Class 8</option>
-                            <option value="Class 9">Class 9</option>
-                            <option value="Class 10">Class 10</option>
                         </select>
                     </div>
                     <div class="form-group" style="margin:0;">
                         <label>Select Section</label>
                         <select id="emSection" onchange="loadStudentsForMarks()">
                             <option value="All">All Sections</option>
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="N/A">N/A</option>
+                            <!-- Sections will be auto populated based on class -->
                         </select>
                     </div>
                     <div class="form-group" style="margin:0;">
@@ -229,6 +220,7 @@
             </form>
         </div>
 
+        <!-- CLASS ATTENDANCE -->
         <div id="classAttSec" class="section box-container" style="border-top: 4px solid var(--info);">
             <h3>🏫 Mark Subject / Class Attendance</h3>
             <p style="font-size:13px; color:#666; margin-top:0; margin-bottom: 20px;">Marking attendance here will directly reflect in the student's dashboard under "Class Attendance".</p>
@@ -236,19 +228,14 @@
             <div class="flex-row" style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid #eee; margin-bottom:20px;">
                 <div class="form-group" style="margin:0;">
                     <label>Class</label>
-                    <select id="attClass">
-                        <option value="Class 8">Class 8</option>
-                        <option value="Class 9">Class 9</option>
-                        <option value="Class 10">Class 10</option>
+                    <select id="attClass" class="dynamic-class-dropdown" onchange="updateSectionDropdown('attClass', 'attSection')">
+                        <option value="">-- Select Class --</option>
                     </select>
                 </div>
                 <div class="form-group" style="margin:0;">
                     <label>Section</label>
                     <select id="attSection">
                         <option value="All">All / Combined</option>
-                        <option value="A">A</option>
-                        <option value="B">B</option>
-                        <option value="N/A">N/A</option>
                     </select>
                 </div>
                 <div class="form-group" style="margin:0;">
@@ -264,7 +251,7 @@
                 </div>
             </div>
 
-            <div class="table-responsive">
+            <div style="overflow-x: auto;">
                 <table>
                     <thead><tr><th>Roll No</th><th>Student Name</th><th>Section</th><th>Attendance Status</th></tr></thead>
                     <tbody id="classAttTableBody">
@@ -278,31 +265,30 @@
             </div>
         </div>
 
-        <div id="uploadSec" class="section box-container">
+        <!-- POST ASSIGNMENT -->
+        <div id="uploadSec" class="section box-container" style="border-top: 4px solid var(--success);">
             <h3>📂 Post New Assignment / Homework</h3>
             <form id="assignmentForm" onsubmit="uploadAssignment(event)">
                 <div class="form-group"><label>Assignment Title</label><input type="text" id="aTitle" required placeholder="E.g. Chapter 4 Math Equations"></div>
                 <div class="form-group"><label>Instructions & Description</label><textarea id="aDescription" rows="4" required placeholder="Provide clear instructions..."></textarea></div>
                 <div class="flex-row">
                     <div class="form-group"><label>Target Class</label>
-                        <select id="aClass" required><option value="Class 8">Class 8</option><option value="Class 9">Class 9</option><option value="Class 10">Class 10</option></select>
+                        <select id="aClass" class="dynamic-class-dropdown" required><option value="">-- Select Class --</option></select>
                     </div>
                     <div class="form-group"><label>Due Date</label><input type="date" id="aDueDate" required></div>
                 </div>
-                <button type="submit" class="btn-submit" id="aBtn">Post Assignment</button>
+                <button type="submit" class="btn-submit" id="aBtn" style="background-color: var(--success);">Post Assignment</button>
             </form>
         </div>
 
-        <div id="receiveSec" class="section box-container" style="border-top: 4px solid var(--info);">
+        <!-- GRADE ASSIGNMENTS -->
+        <div id="receiveSec" class="section box-container" style="border-top: 4px solid var(--primary-dark);">
             <h3>📥 Grade Student Assignments</h3>
             <div class="flex-row" style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid #eee; margin-bottom: 20px;">
                 <div class="form-group" style="margin:0;">
                     <label>Step 1: Select Class</label>
-                    <select id="receiveClass" onchange="loadAssignmentsForClass()">
+                    <select id="receiveClass" class="dynamic-class-dropdown" onchange="loadAssignmentsForClass()">
                         <option value="">-- Choose Class --</option>
-                        <option value="Class 8">Class 8</option>
-                        <option value="Class 9">Class 9</option>
-                        <option value="Class 10">Class 10</option>
                     </select>
                 </div>
                 <div class="form-group" style="margin:0;">
@@ -313,7 +299,7 @@
                 </div>
             </div>
             
-            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+            <div style="max-height: 400px; overflow-y: auto;">
                 <table>
                     <thead>
                         <tr>
@@ -329,16 +315,18 @@
                 </table>
             </div>
             <div style="margin-top: 20px; text-align:right;">
-                <button class="btn-submit" onclick="saveReceivedStatus()" style="background-color: var(--info); width:auto; padding: 12px 30px;">Update Grades & Save</button>
+                <button class="btn-submit" onclick="saveReceivedStatus()" style="background-color: var(--primary-dark); width:auto; padding: 12px 30px;">Update Grades & Save</button>
             </div>
         </div>
 
-        <div id="noticeSec" class="section box-container">
+        <!-- NOTICE BOARD -->
+        <div id="noticeSec" class="section box-container" style="border-top: 4px solid var(--info);">
             <h3>📢 Complete School Notice Board</h3>
             <div id="noticeBoardDiv"><p style="text-align:center; color:#888; font-size:14px;">Loading notices...</p></div>
         </div>
 
-        <div id="leaveReqSec" class="section box-container" style="border-top: 4px solid var(--warning);">
+        <!-- LEAVE REQUESTS -->
+        <div id="leaveReqSec" class="section box-container" style="border-top: 4px solid var(--danger);">
             <h3>📩 Request Leave to Admin</h3>
             <form id="leaveForm" onsubmit="submitLeaveRequest(event)">
                 <div class="form-group">
@@ -349,16 +337,19 @@
                     <label>Reason / Description for Leave:</label>
                     <textarea id="leaveReason" rows="3" required placeholder="E.g., Medical emergency, Personal work..."></textarea>
                 </div>
-                <button type="submit" class="btn-submit" id="leaveBtn" style="background-color: var(--warning); color:#333;">Submit Request to Admin</button>
+                <button type="submit" class="btn-submit" id="leaveBtn" style="background-color: var(--danger);">Submit Request to Admin</button>
             </form>
             
             <h4 style="margin-top: 40px; border-bottom:2px solid #eee; padding-bottom:10px;">My Leave Request History</h4>
-            <table>
-                <thead><tr><th>Date Request</th><th>Reason</th><th>Admin Status</th></tr></thead>
-                <tbody id="myLeaveHistory"><tr><td colspan="3" style="text-align: center;">Loading...</td></tr></tbody>
-            </table>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead><tr><th>Date Request</th><th>Reason</th><th>Admin Status</th></tr></thead>
+                    <tbody id="myLeaveHistory"><tr><td colspan="3" style="text-align: center;">Loading...</td></tr></tbody>
+                </table>
+            </div>
         </div>
 
+        <!-- MY PROFILE -->
         <div id="profileSec" class="section box-container" style="border-top: 4px solid var(--sidebar-bg);">
             <h3>👤 My Profile & Settings</h3>
             <div class="grid-2">
@@ -374,16 +365,24 @@
 
     </div>
 
+    <!-- JAVASCRIPT LOGIC (Fully Uncompressed & Connected) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, getDoc, query, where, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyDg4HlG4M9lgqYSjV-fdqKacN94QNgfvOY", authDomain: "school360-9c832.firebaseapp.com", projectId: "school360-9c832" };
+        const firebaseConfig = { 
+            apiKey: "AIzaSyDg4HlG4M9lgqYSjV-fdqKacN94QNgfvOY", 
+            authDomain: "school360-9c832.firebaseapp.com", 
+            projectId: "school360-9c832" 
+        };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // Teacher Session Data
         const tName = localStorage.getItem("teacherName") || "Teacher";
         const tId = localStorage.getItem("teacherId") || "unknown_teacher";
+
+        window.classesList = [];
 
         window.onload = async function() {
             document.getElementById("welcomeText").innerText = `Welcome, ${tName}!`;
@@ -391,18 +390,24 @@
             document.getElementById('profName').value = tName;
             document.getElementById('profId').value = tId;
 
-            await loadSchoolSettings();
-            loadNotices();
-            loadMyLeaves();
-            loadTimetableTeacher();
+            try {
+                await loadSchoolSettings();
+                await fetchDynamicClasses();
+                loadNotices();
+                loadMyLeaves();
+                loadTimetableTeacher();
+            } catch(e) {
+                console.error("Initialization Error:", e);
+            }
         }
 
-        window.showSection = function(sectionId) {
+        // --- UI & NAVIGATION ---
+        window.switchTab = function(sectionId) {
             document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
             document.querySelectorAll('.sidebar a').forEach(link => link.classList.remove('active-link'));
+            
             document.getElementById(sectionId).classList.add('active');
-            const activeNav = document.getElementById('nav-' + sectionId);
-            if(activeNav) activeNav.classList.add('active-link');
+            event.target.classList.add('active-link');
 
             if(window.innerWidth <= 850) {
                 document.getElementById('sidebar').classList.remove('active');
@@ -415,8 +420,12 @@
             document.querySelector('.sidebar-overlay').classList.toggle('active');
         }
 
-        window.secureLogout = function() { localStorage.clear(); window.location.href = "main-website.html"; }
+        window.secureLogout = function() { 
+            localStorage.clear(); 
+            window.location.href = "main-website.html"; 
+        }
 
+        // --- GLOBAL SETTINGS & DYNAMIC CLASSES ---
         window.loadSchoolSettings = async function() {
             try {
                 const docSnap = await getDoc(doc(db, "settings", "general"));
@@ -429,13 +438,49 @@
             } catch(e) { console.error("Settings load error", e); }
         }
 
+        window.fetchDynamicClasses = async function() {
+            try {
+                const snap = await getDocs(collection(db, "classes"));
+                window.classesList = []; 
+                snap.forEach(doc => window.classesList.push({ id: doc.id, ...doc.data() }));
+                
+                document.querySelectorAll('.dynamic-class-dropdown').forEach(dd => {
+                    let html = dd.id.includes('Filter') ? '<option value="All">All Classes</option>' : '<option value="">-- Select Class --</option>';
+                    window.classesList.forEach(c => { html += `<option value="${c.className}">${c.className}</option>`; });
+                    dd.innerHTML = html;
+                });
+            } catch(error) { console.error("Fetch Classes Error:", error); }
+        }
+
+        window.updateSectionDropdown = function(classDropdownId, sectionDropdownId) {
+            const selectedClass = document.getElementById(classDropdownId).value;
+            const secDropdown = document.getElementById(sectionDropdownId);
+            
+            let classObj = window.classesList.find(c => c.className === selectedClass);
+            secDropdown.innerHTML = '<option value="All">All / Combined</option>';
+            
+            if(classObj && classObj.sections) {
+                classObj.sections.forEach(s => {
+                    if(s && s !== 'N/A' && s.trim() !== '') {
+                        secDropdown.innerHTML += `<option value="${s.trim()}">${s.trim()}</option>`;
+                    }
+                });
+            }
+        }
+
+        // --- PROFILE SETTINGS ---
         window.changeTeacherPassword = async function(e) {
             e.preventDefault();
             const newPass = document.getElementById('newPass').value;
             if(tId === 'unknown_teacher') { alert("Cannot change password for demo account."); return; }
-            try { await updateDoc(doc(db, "teachers", tId), { password: newPass }); alert("Password updated successfully!"); document.getElementById('newPass').value = ''; } catch(err) { alert("Error: " + err.message); }
+            try { 
+                await updateDoc(doc(db, "teachers", tId), { password: newPass }); 
+                alert("Password updated successfully!"); 
+                document.getElementById('newPass').value = ''; 
+            } catch(err) { alert("Error: " + err.message); }
         }
 
+        // --- TIMETABLE ---
         window.loadTimetableTeacher = async function() {
             const tbody = document.getElementById('timetableBody');
             const filterClass = document.getElementById('ttFilterClass').value;
@@ -445,12 +490,15 @@
                 if(filterClass !== 'All') { q = query(collection(db, "timetable"), where("className", "==", filterClass)); }
                 const snap = await getDocs(q);
                 let html = '';
-                snap.forEach(doc => { const t = doc.data(); html += `<tr><td><strong>${t.className}</strong></td><td>${t.day}</td><td>${t.time}</td><td>${t.subject}</td><td>${t.teacher}</td></tr>`; });
+                snap.forEach(doc => { 
+                    const t = doc.data(); 
+                    html += `<tr><td><strong>${t.className}</strong></td><td>${t.day}</td><td>${t.time}</td><td>${t.subject}</td><td>${t.teacher}</td></tr>`; 
+                });
                 tbody.innerHTML = html === '' ? '<tr><td colspan="5" style="text-align: center;">No timetable data found.</td></tr>' : html;
             } catch(e) { console.error(e); }
         }
 
-        /* EXAM MARKS UPLOAD LOGIC */
+        // --- EXAM MARKS UPLOAD ---
         window.loadStudentsForMarks = async function() {
             const cls = document.getElementById('emClass').value;
             const sec = document.getElementById('emSection').value;
@@ -458,6 +506,11 @@
             studentSelect.innerHTML = '<option value="">Loading...</option>';
 
             if(!cls) { studentSelect.innerHTML = '<option value="">-- Select Class First --</option>'; return; }
+
+            // Auto-update section dropdown if class changed
+            if(event.target.id === 'emClass') {
+                updateSectionDropdown('emClass', 'emSection');
+            }
 
             try {
                 const qStudents = query(collection(db, "students"), where("className", "==", cls));
@@ -468,12 +521,15 @@
                 
                 snap.forEach(doc => {
                     const s = doc.data();
-                    if(sec === 'All' || s.section === sec) {
+                    if(s.status === 'Inactive') return; // Hide TC students
+                    
+                    const selectedSec = document.getElementById('emSection').value;
+                    if(selectedSec === 'All' || s.section === selectedSec) {
                         studentSelect.innerHTML += `<option value="${doc.id}">${s.rollNumber} - ${s.name}</option>`;
                         studentsFound = true;
                     }
                 });
-                if(!studentsFound) studentSelect.innerHTML = '<option value="">No students in this Class/Section</option>';
+                if(!studentsFound) studentSelect.innerHTML = '<option value="">No active students in this Class/Section</option>';
             } catch(e) { console.error(e); }
         }
 
@@ -487,16 +543,27 @@
             
             try {
                 await addDoc(collection(db, "marks"), {
-                    studentId: sId, studentName: sName, className: cls, examName: examName,
-                    theoryTotal: document.getElementById('emTheoryTotal').value, theoryObt: document.getElementById('emTheoryObt').value,
-                    pracTotal: document.getElementById('emPracTotal').value, pracObt: document.getElementById('emPracObt').value,
-                    teacherId: tId, teacherName: tName, status: "Pending", timestamp: new Date()
+                    studentId: sId, 
+                    studentName: sName, 
+                    className: cls, 
+                    examName: examName,
+                    theoryTotal: document.getElementById('emTheoryTotal').value, 
+                    theoryObt: document.getElementById('emTheoryObt').value,
+                    pracTotal: document.getElementById('emPracTotal').value, 
+                    pracObt: document.getElementById('emPracObt').value,
+                    teacherId: tId, 
+                    teacherName: tName, 
+                    status: "Pending", 
+                    timestamp: new Date()
                 });
                 alert("Marks submitted successfully! Waiting for Admin approval.");
-                document.getElementById('emStudent').value = ''; document.getElementById('emTheoryObt').value = ''; document.getElementById('emPracObt').value = '';
+                document.getElementById('emStudent').value = ''; 
+                document.getElementById('emTheoryObt').value = ''; 
+                document.getElementById('emPracObt').value = '';
             } catch(err) { alert("Error: " + err.message); } finally { btn.innerText = "Submit Marks for Approval"; }
         }
 
+        // --- CLASS ATTENDANCE ---
         window.loadedClassStudents = [];
 
         window.loadClassAttendanceStudents = async function() {
@@ -507,21 +574,33 @@
             const tbody = document.getElementById('classAttTableBody');
             const saveBtn = document.getElementById('saveClassAttBtn');
 
+            if(!cls) { alert("Please select Class!"); return; }
             if(!subject) { alert("Please enter the Subject/Period Name first!"); return; }
+            
             tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Loading students...</td></tr>';
             saveBtn.style.display = 'none';
 
             try {
                 let qStudents = query(collection(db, "students"), where("className", "==", cls));
                 const studentSnap = await getDocs(qStudents);
+                
                 const qAtt = query(collection(db, "class_attendance"), where("teacherId", "==", tId), where("date", "==", date), where("subject", "==", subject));
                 const attSnap = await getDocs(qAtt);
-                let existingAtt = {}; attSnap.forEach(doc => { existingAtt[doc.data().studentId] = doc.data().status; });
+                let existingAtt = {}; 
+                attSnap.forEach(doc => { existingAtt[doc.data().studentId] = doc.data().status; });
 
                 window.loadedClassStudents = [];
-                studentSnap.forEach(doc => { const s = doc.data(); s.id = doc.id; if(sec === 'All' || s.section === sec) window.loadedClassStudents.push(s); });
+                studentSnap.forEach(doc => { 
+                    const s = doc.data(); s.id = doc.id; 
+                    if(s.status === 'Inactive') return;
+                    if(sec === 'All' || s.section === sec) window.loadedClassStudents.push(s); 
+                });
 
-                if(window.loadedClassStudents.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No students found in this Class/Section.</td></tr>'; return; }
+                if(window.loadedClassStudents.length === 0) { 
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No students found in this Class/Section.</td></tr>'; 
+                    return; 
+                }
+                
                 tbody.innerHTML = '';
                 window.loadedClassStudents.forEach(s => {
                     let currentStatus = existingAtt[s.id] || 'Present';
@@ -547,9 +626,13 @@
                 const status = sel.value; const docId = `${sId}_${tId}_${date}_${subject.replace(/\s+/g, '_')}`;
                 promises.push(setDoc(doc(db, "class_attendance", docId), { studentId: sId, studentName: sName, className: sClass, section: sSec, teacherId: tId, teacherName: tName, subject: subject, date: date, status: status, timestamp: new Date() }));
             });
-            try { await Promise.all(promises); alert(`✅ Class Attendance for "${subject}" saved successfully!`); } catch(e) { alert("Error saving: " + e.message); } finally { btn.innerText = "💾 Save Class Attendance"; }
+            try { 
+                await Promise.all(promises); 
+                alert(`✅ Class Attendance for "${subject}" saved successfully!`); 
+            } catch(e) { alert("Error saving: " + e.message); } finally { btn.innerText = "💾 Save Class Attendance"; }
         }
 
+        // --- NOTICES ---
         window.loadNotices = async function() {
             const noticeDiv = document.getElementById('noticeBoardDiv');
             const recentDiv = document.getElementById('recentNoticesDiv');
@@ -565,12 +648,46 @@
                 noticesArray.forEach((n) => { 
                     noticeDiv.innerHTML += `<div class="notice-item"><h4>${n.title} <small style="float:right; color:#777; font-size:11px;">${n.date}</small></h4><p>${n.description}</p></div>`;
                     let diffDays = Math.ceil(Math.abs(today - new Date(n.date)) / (1000 * 60 * 60 * 24));
-                    if(diffDays <= 7) { recentDiv.innerHTML += `<div style="border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 8px;"><strong style="color:#d35400;">${n.title}</strong><br><small style="color:#666;">Posted: ${n.date}</small></div>`; recentCount++; }
+                    if(diffDays <= 7) { 
+                        recentDiv.innerHTML += `<div style="border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 8px;"><strong style="color:#d35400;">${n.title}</strong><br><small style="color:#666;">Posted: ${n.date}</small></div>`; 
+                        recentCount++; 
+                    }
                 });
                 if(recentCount === 0) recentDiv.innerHTML = '<p style="font-size:13px; color:#777;">No new notices in the last 7 days.</p>';
             } catch(e) { console.error("Notices Error:", e); }
         }
 
+        // --- LEAVE REQUESTS ---
+        window.submitLeaveRequest = async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('leaveBtn'); btn.innerText = "Sending Request...";
+            try {
+                await addDoc(collection(db, "leave_requests"), { senderId: tId, senderName: tName, role: 'Teacher', date: document.getElementById('leaveDate').value, reason: document.getElementById('leaveReason').value, status: 'Pending', timestamp: new Date() });
+                alert("Leave request sent successfully to the Admin!");
+                document.getElementById('leaveForm').reset();
+                loadMyLeaves();
+            } catch(error) { alert("Error: " + error.message); } finally { btn.innerText = "Submit Request to Admin"; }
+        }
+
+        window.loadMyLeaves = async function() {
+            const tbody = document.getElementById('myLeaveHistory');
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Loading...</td></tr>';
+            try {
+                const q = query(collection(db, "leave_requests"), where("senderId", "==", tId));
+                const snap = await getDocs(q);
+                let html = ''; let leaves = [];
+                snap.forEach(doc => leaves.push(doc.data()));
+                leaves.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+                leaves.forEach(r => {
+                    let badgeColor = r.status === 'Approved' ? 'bg-success' : (r.status === 'Rejected' ? 'bg-danger' : 'bg-info');
+                    html += `<tr><td><strong>${r.date}</strong></td><td>${r.reason}</td><td><span class="badge ${badgeColor}">${r.status}</span></td></tr>`;
+                });
+                tbody.innerHTML = html === '' ? '<tr><td colspan="3" style="text-align:center; color:#888;">No past requests found.</td></tr>' : html;
+            } catch(e) { console.error(e); }
+        }
+
+        // --- ASSIGNMENTS ---
         window.uploadAssignment = async function(e) {
             e.preventDefault();
             const btn = document.getElementById('aBtn'); btn.innerText = "Posting...";
@@ -598,6 +715,7 @@
             const selectedClass = document.getElementById('receiveClass').value;
             const assignmentId = document.getElementById('assignmentSelect').value;
             const tbody = document.getElementById('receiveTableBody');
+
             if(!assignmentId) return;
             tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Loading students...</td></tr>';
             try {
@@ -608,12 +726,20 @@
                 let savedData = {}; statusSnap.forEach(doc => { savedData[doc.data().studentId] = { status: doc.data().status, marks: doc.data().marks }; });
 
                 if(studentSnap.empty) { tbody.innerHTML = '<tr><td colspan="4">No students found in this class.</td></tr>'; return; }
+                
                 tbody.innerHTML = '';
                 studentSnap.forEach(doc => {
                     const s = doc.data(); const studentId = doc.id;
+                    if(s.status === 'Inactive') return; // Hide TC students
                     const studentData = savedData[studentId] || { status: 'Pending', marks: '' };
                     const statusColor = studentData.status === 'Received' ? 'status-received' : 'status-pending';
-                    tbody.innerHTML += `<tr class="student-row" data-id="${studentId}" data-name="${s.name}"><td><strong>${s.rollNumber}</strong></td><td>${s.name}</td><td><select class="status-select ${statusColor}" onchange="this.className='status-select ' + (this.value==='Received'?'status-received':'status-pending')"><option value="Pending" ${studentData.status === 'Pending' ? 'selected' : ''}>⏳ Pending</option><option value="Received" ${studentData.status === 'Received' ? 'selected' : ''}>✅ Received</option></select></td><td><input type="number" class="mark-input" placeholder="E.g. 10" value="${studentData.marks}"></td></tr>`;
+                    tbody.innerHTML += `
+                        <tr class="student-row" data-id="${studentId}" data-name="${s.name}">
+                            <td><strong>${s.rollNumber}</strong></td><td>${s.name}</td>
+                            <td><select class="status-select ${statusColor}" onchange="this.className='status-select ' + (this.value==='Received'?'status-received':'status-pending')"><option value="Pending" ${studentData.status === 'Pending' ? 'selected' : ''}>⏳ Pending</option><option value="Received" ${studentData.status === 'Received' ? 'selected' : ''}>✅ Received</option></select></td>
+                            <td><input type="number" class="mark-input" placeholder="E.g. 10" value="${studentData.marks}"></td>
+                        </tr>
+                    `;
                 });
             } catch(error) { console.error(error); tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color:red;">Error loading data.</td></tr>'; }
         }
@@ -635,7 +761,7 @@
                     savedCount++;
                 }
             }
-            alert(`Success! Updated status for ${savedCount} students. Students will see this in their dashboards.`);
+            alert(`Success! Updated status for ${savedCount} students.`);
         }
     </script>
 </body>
