@@ -111,7 +111,7 @@
         .portal-section.active-section { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .box-container { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10 rgba(0,0,0,0.05); margin-bottom: 20px; overflow-x: auto;}
+        .box-container { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; overflow-x: auto;}
         .box-container h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; }
 
         .notice-item { background: #fdfae6; padding: 15px; border-left: 4px solid var(--warning); margin-bottom: 10px; border-radius: 4px; }
@@ -149,8 +149,14 @@
         @media (max-width: 850px) {
             .sidebar { transform: translateX(-100%); }
             .sidebar.active { transform: translateX(0); }
-            .main-content { margin-left: 0; padding: 15px; padding-top: 80px; width: 100%;}
+            .main-content { margin-left: 0; padding: 20px; padding-top: 80px; width: 100%;}
             .mobile-header { display: flex; }
+        }
+
+        @media (max-width: 600px) {
+            .header { align-items: flex-start; flex-direction: column; gap: 10px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .grid-2 { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -181,6 +187,7 @@
     </div>
 
     <div class="main-content">
+        
         <div class="header">
             <div>
                 <h1 id="welcomeText">Welcome, Student!</h1>
@@ -240,7 +247,7 @@
                 <p style="font-size:13px; color:#666; margin-top:0;">Your weekly routine uploaded by the school administration.</p>
                 <table>
                     <thead><tr><th>Day</th><th>Time/Period</th><th>Subject</th><th>Teacher</th></tr></thead>
-                    <tbody id="timetableBody"><tr><td colspan="4" style="text-align: center;">Loading...</td></tr></tbody>
+                    <tbody id="timetableBody"><tr><td colspan="4" style="text-align: center;">Loading routine...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -319,7 +326,7 @@
             </div>
         </div>
 
-        <!-- 8. DETAILED COMPREHENSIVE REPORT CARD -->
+        <!-- 8. REPORT CARD -->
         <div id="marksSec" class="portal-section">
             <div class="box-container" style="border-top: 4px solid #8e44ad;">
                 <h3>📝 My Personal Report Card / Results</h3>
@@ -405,12 +412,13 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Fetching local cache data safely
+        // Fetching cached user context safely
         const sName = localStorage.getItem("studentName") || "Demo Student"; 
         const sClass = localStorage.getItem("studentClass") || "10th";
         const sId = localStorage.getItem("studentId") || "unknown";
 
-        window.academicStartMonth = 3; // Default April configuration
+        window.academicStartMonth = 3; // Default April setup
+        window.feeStructureMap = {};
 
         // Core Loader Lifecycle
         window.onload = async function() {
@@ -419,6 +427,7 @@
             
             try {
                 await loadSchoolSettings();
+                await loadLocalFeeStructures(); // FETCH STRUCTURE FIRST TO PREVENT DUES STALLING
                 
                 loadMyAssignments(sClass, sId); 
                 loadTodayAttendance(); 
@@ -430,11 +439,11 @@
                 loadMyLeaves();
                 loadTimetableStudent(sClass);
             } catch(e) {
-                console.error("Lifecycle runtime failure:", e);
+                console.error("Lifecycle initialization failure:", e);
             }
         }
 
-        // Section Toggler Core Routing
+        // Section Routing Management Fix
         window.showSection = function(sectionId, element) {
             document.querySelectorAll('.portal-section').forEach(sec => sec.classList.remove('active-section'));
             document.getElementById(sectionId).classList.add('active-section');
@@ -457,7 +466,7 @@
             window.location.href = "main-website.html"; 
         }
 
-        // Global Variable Sync
+        // Fetch configuration parameters from database settings context
         window.loadSchoolSettings = async function() {
             try {
                 const docSnap = await getDoc(doc(db, "settings", "general"));
@@ -470,7 +479,15 @@
             } catch(e) { console.error(e); }
         }
 
-        // Profile Password Update Logic
+        // Cache local fee structures to pull dynamic dynamic totals correctly
+        window.loadLocalFeeStructures = async function() {
+            try {
+                const snap = await getDocs(collection(db, "fee_structures"));
+                snap.forEach(doc => { window.feeStructureMap[doc.id] = doc.data(); });
+            } catch(e) { console.error("Fee map loader error:", e); }
+        }
+
+        // Profile Password Update Action
         window.changeStudentPassword = async function(e) {
             e.preventDefault();
             const newPass = document.getElementById('newPass').value;
@@ -482,7 +499,7 @@
             } catch(err) { alert(err.message); }
         }
 
-        // Timetable Rendering Pipeline
+        // Timetable Rendering Interface
         window.loadTimetableStudent = async function(studentClass) {
             const tbody = document.getElementById('timetableBody');
             tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Loading routine...</td></tr>';
@@ -498,7 +515,7 @@
             } catch(e) { console.error(e); }
         }
 
-        // Dynamic Fee Dues Pipeline (Synced with Add-More Admin Setup)
+        // Dynamic Fee Ledger Render Sync (CRASH FIX: Stops loading stall)
         window.loadFees = async function(studentName) {
             const tbody = document.getElementById('feesTableBody');
             try {
@@ -514,7 +531,7 @@
                     
                     document.getElementById('profClass').value = `${s.className} - Section ${s.section || 'N/A'}`;
 
-                    // Fetch total fee expected from Admin structure map fallback loop
+                    // Fetch total expected amount dynamically from mapping array
                     const cFee = window.feeStructureMap && window.feeStructureMap[s.className] ? window.feeStructureMap[s.className].total : 0;
                     
                     const monthsArray = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -537,7 +554,7 @@
             } catch(error) { console.error(error); }
         }
 
-        // Marks Card Integration
+        // Marks Card Parser
         window.loadMyMarks = async function(studentId) {
             const tbody = document.getElementById('marksTableBody');
             try {
@@ -554,7 +571,7 @@
             } catch(err) { console.error(err); }
         }
 
-        // Assignments Tracker
+        // Homework Tracker Integration
         window.loadMyAssignments = async function(studentClass, studentId) {
             const tbody = document.getElementById('assignmentTableBody');
             try {
@@ -573,7 +590,7 @@
             } catch(error) { console.error(error); }
         }
 
-        // Attendance Calculators
+        // Core Attendance Processing Engines
         window.loadTodayAttendance = async function() {
             const todayStr = new Date().toISOString().split('T')[0]; const todayCard = document.getElementById('statTodayAttendance');
             try {
@@ -618,7 +635,7 @@
             } catch(error) { console.error(error); }
         }
 
-        // Announcement Streams
+        // Announcement Board
         window.loadNotices = async function() {
             const noticeDiv = document.getElementById('noticeBoardDiv'); const recentDiv = document.getElementById('recentNoticesDiv');
             try {
@@ -635,11 +652,10 @@
             } catch(e) { console.error(e); }
         }
 
-        // Leave Requests
+        // Leave Requests Automation Pipeline
         window.submitLeaveRequest = async function(e) {
             e.preventDefault(); const btn = document.getElementById('leaveBtn'); btn.innerText = "Sending...";
             try { 
-                // Fetch section info directly
                 const sDoc = await getDoc(doc(db, "students", sId));
                 const currentSec = sDoc.exists() ? sDoc.data().section : 'All';
                 
