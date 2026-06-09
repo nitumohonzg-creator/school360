@@ -3,728 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Admin Dashboard - School Management</title>
+    <title>School360 - Admin Pro</title>
     <style>
-        :root {
-            --primary: #34495e; --secondary: #3498db; --success: #2ecc71; 
-            --danger: #e74c3c; --warning: #f1c40f; --info: #9b59b6; --bg: #f4f7f6;
-        }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: var(--bg); display: flex; }
+        :root { --primary: #2c3e50; --secondary: #3498db; --success: #27ae60; --danger: #c0392b; --bg: #ecf0f1; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); display: flex; }
         
-        .mobile-header { display: none; background: var(--primary); color: white; padding: 15px 20px; position: fixed; top: 0; left: 0; width: 100%; z-index: 998; justify-content: space-between; align-items: center; }
-        .menu-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
-        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 998; }
-        .sidebar-overlay.active { display: block; }
-
-        .sidebar { width: 250px; background-color: var(--primary); color: white; height: 100vh; padding-top: 20px; position: fixed; overflow-y: auto; z-index: 999; transition: 0.3s; }
-        .sidebar h2 { text-align: center; color: var(--secondary); margin-bottom: 20px; font-size: 22px; padding: 0 10px;}
-        .sidebar h2 span { color: white; }
-        .sidebar a { display: block; color: white; padding: 12px 20px; text-decoration: none; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s; cursor: pointer;}
-        .sidebar a:hover, .sidebar a.active-link { background-color: var(--secondary); border-left: 4px solid var(--warning);}
-        .logout-btn { background-color: var(--danger) !important; text-align: center; margin: 20px; border-radius: 5px; }
-
-        .main-content { margin-left: 250px; padding: 25px; width: calc(100% - 250px); box-sizing: border-box; transition: 0.3s; }
-        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        .header h1 { margin: 0; color: #333; font-size: 24px; }
+        /* Sidebar Fixes */
+        .sidebar { width: 260px; background: var(--primary); color: white; height: 100vh; position: fixed; z-index: 1000; overflow-y: auto; transition: 0.3s; }
+        .sidebar h2 { text-align: center; padding: 20px; color: var(--secondary); margin: 0; }
+        .sidebar a { display: block; padding: 15px 25px; color: white; text-decoration: none; cursor: pointer; border-bottom: 1px solid #34495e; font-size: 14px; }
+        .sidebar a:hover, .sidebar a.active-link { background: var(--secondary); }
         
-        .content-section { display: none; animation: fadeIn 0.4s ease; }
-        .content-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .action-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; border-top: 4px solid var(--secondary); }
-        .card h2 { margin: 0; font-size: 28px; color: var(--primary); }
-        
-        .box-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; overflow-x: auto;}
-        .box-container h3 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;}
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; min-width: 600px;}
-        th { background-color: var(--bg); padding: 10px; border-bottom: 2px solid #ccc; color: #333; text-align: left;}
-        td { padding: 10px; border-bottom: 1px solid #eee; color: #555; vertical-align: middle;}
-        
-        .btn { background-color: var(--secondary); color: white; padding: 8px 15px; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: bold; }
-        .btn-danger { background-color: var(--danger); }
-        .btn-success { background-color: var(--success); }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white; display: inline-block;}
-        
-        .form-group { margin-bottom: 15px; width: 100%;}
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; color: #333;}
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: inherit;}
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;}
-        .modal-box { background: white; padding: 25px; border-radius: 8px; width: 100%; max-width: 500px; position: relative; max-height: 90vh; overflow-y: auto; }
-        .modal-box.large { max-width: 800px; }
-        .close-btn { position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #555; }
-        
-        fieldset { border: 1px solid #ddd; border-radius: 4px; padding: 15px; margin-bottom: 15px; background: #fafafa; }
-        legend { font-weight: bold; color: var(--secondary); background: white; padding: 0 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 13px;}
-
-        /* Finance Module Specific */
-        .finance-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;}
-        .fin-card { padding: 20px; border-radius: 8px; color: white; text-align: center; }
-
-        @media (max-width: 850px) {
+        /* Layout Fixes */
+        .main-content { margin-left: 260px; padding: 20px; width: calc(100% - 260px); }
+        @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); }
             .sidebar.active { transform: translateX(0); }
-            .main-content { margin-left: 0; padding: 15px; padding-top: 80px; width: 100%; }
-            .mobile-header { display: flex; }
+            .main-content { margin-left: 0; width: 100%; }
         }
+
+        .box-container { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        .btn { padding: 8px 12px; cursor: pointer; border: none; border-radius: 4px; color: white; }
     </style>
 </head>
 <body>
 
-    <!-- Mobile Header -->
-    <div class="mobile-header">
-        <h2 id="mobileSchoolName">School<span>360</span></h2>
-        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-    </div>
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
-
-    <!-- Sidebar Navigation -->
     <div class="sidebar" id="sidebar">
-        <h2 id="sidebarSchoolName">School<span>360</span></h2>
-        <a id="nav-dashboardSec" class="active-link" onclick="switchTab('dashboardSec')">📊 Master Dashboard</a>
-        <a id="nav-classManageSec" onclick="switchTab('classManageSec')">🏫 Manage Classes</a>
-        <a id="nav-studentsSec" onclick="switchTab('studentsSec')">🎓 Students Management</a>
-        <a id="nav-hrSec" onclick="switchTab('hrSec')">👨‍💼 HR (Teachers & Staff)</a>
-        <a id="nav-financeSec" onclick="switchTab('financeSec')">💰 Finance & Accounts</a>
-        <a id="nav-studentAttSec" onclick="switchTab('studentAttSec')">📝 Mark Attendance</a>
-        <a id="nav-leaveReqSec" onclick="switchTab('leaveReqSec')">📩 Leave Approvals</a>
-        <a id="nav-examApprovalSec" onclick="switchTab('examApprovalSec')">🏆 Publish Results</a>
-        <a id="nav-timetableSec" onclick="switchTab('timetableSec')">📅 Class Timetable</a>
-        <a id="nav-noticeSec" onclick="switchTab('noticeSec')">📢 Notice Board</a>
-        <a id="nav-settingsSec" onclick="switchTab('settingsSec')">⚙️ Global Settings</a>
-        <a href="main-website.html" class="logout-btn">Logout System</a>
+        <h2>School<span>360</span></h2>
+        <a onclick="switchTab('dashboardSec')">📊 Dashboard</a>
+        <a onclick="switchTab('classManageSec')">🏫 Manage Classes</a>
+        <a onclick="switchTab('studentsSec')">🎓 Students DB</a>
+        <a onclick="switchTab('financeSec')">💰 Finance & Fees</a>
+        <a onclick="switchTab('hrSec')">👨‍💼 Staff & Salaries</a>
+        <a onclick="switchTab('leaveReqSec')">📩 Leave Approvals</a>
+        <a onclick="switchTab('examApprovalSec')">🏆 Exam Results</a>
+        <a onclick="switchTab('timetableSec')">📅 Timetable</a>
+        <a href="main-website.html" class="logout-btn">Logout</a>
     </div>
 
-    <div class="main-content">
-        <div class="header">
-            <div>
-                <h1 id="pageTitle">Admin Control Panel</h1>
-                <p style="margin: 5px 0 0 0; color: #666;">Comprehensive School Management System</p>
-            </div>
-        </div>
-
-        <!-- 1. DASHBOARD -->
+    <div class="main-content" id="content">
         <div id="dashboardSec" class="content-section active">
-            <div class="action-cards">
-                <div class="card" style="border-top-color: #3498db;">
-                    <h2 id="dashStudentsCount">0</h2><p>🎓 Total Students</p>
+            <div class="box-container">
+                <h3>System Overview</h3>
+                <div id="statsGrid" style="display:flex; gap:20px;">
+                    <div class="card"><h2>0</h2><p>Students</p></div>
+                    <div class="card"><h2>0</h2><p>Teachers</p></div>
                 </div>
-                <div class="card" style="border-top-color: #9b59b6;">
-                    <h2 id="dashTeachersCount">0</h2><p>👨‍🏫 Total Teachers</p>
-                </div>
-                <div class="card" style="border-top-color: #e67e22;">
-                    <h2 id="dashStaffCount">0</h2><p>👨‍💼 Non-Teaching Staff</p>
-                </div>
-                <div class="card" style="border-top-color: #e74c3c;">
-                    <h2 id="dashPendingLeaves">0</h2><p>📩 Pending Leaves</p>
-                </div>
-            </div>
-            
-            <div class="box-container" style="background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border:none;">
-                <h3 style="border:none; margin:0; color:#2e7d32;">Welcome to Admin Portal!</h3>
-                <p style="color:#1b5e20; font-size:14px;"><strong>First Step:</strong> Please go to "Manage Classes" to create your classes and sections. Then proceed to add students and teachers. Use the Finance module to set fee structures and manage salaries.</p>
             </div>
         </div>
 
-        <!-- 2. MANAGE CLASSES (NEW) -->
-        <div id="classManageSec" class="content-section box-container" style="border-top: 4px solid var(--secondary);">
-            <h3>🏫 Dynamic Class & Section Setup</h3>
-            <p style="font-size:13px; color:#666;">Create classes here. These will dynamically appear in all dropdowns across the software.</p>
-            
-            <form onsubmit="addClass(event)" style="background: #fafafa; padding: 15px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 20px;">
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label>Class Name</label>
-                        <input type="text" id="newClassName" required placeholder="E.g. Class 1, LKG, Class 10">
-                    </div>
-                    <div class="form-group">
-                        <label>Sections (Comma Separated)</label>
-                        <input type="text" id="newClassSections" required placeholder="E.g. A, B, C (Type N/A if none)">
-                    </div>
-                </div>
-                <button type="submit" class="btn" id="addClassBtn">Create Class</button>
-            </form>
-
-            <table id="classesTable">
-                <thead><tr><th>Class Name</th><th>Available Sections</th><th>Action</th></tr></thead>
-                <tbody id="classesTableBody"><tr><td colspan="3" style="text-align: center;">Loading classes...</td></tr></tbody>
-            </table>
-        </div>
-
-        <!-- 3. FINANCE & ACCOUNTS MODULE (NEW) -->
-        <div id="financeSec" class="content-section">
-            
-            <!-- P&L Dashboard -->
-            <div class="finance-cards">
-                <div class="fin-card" style="background-color: #27ae60;">
-                    <h4 style="margin:0 0 10px 0;">Total Fee Collected</h4>
-                    <h2 id="finTotalIncome" style="margin:0;">₹ 0</h2>
-                </div>
-                <div class="fin-card" style="background-color: #e74c3c;">
-                    <h4 style="margin:0 0 10px 0;">Salaries + Expenses Paid</h4>
-                    <h2 id="finTotalExpense" style="margin:0;">₹ 0</h2>
-                </div>
-                <div class="fin-card" style="background-color: #2980b9;">
-                    <h4 style="margin:0 0 10px 0;">Net In-Hand Balance</h4>
-                    <h2 id="finNetBalance" style="margin:0;">₹ 0</h2>
-                </div>
-            </div>
-
-            <!-- Fee Structure Setup -->
-            <div class="box-container" style="border-top: 4px solid #f1c40f;">
-                <h3>💰 Define Fee Structure (Per Class)</h3>
-                <form onsubmit="saveFeeStructure(event)" style="background: #fdfae6; padding: 15px; border-radius: 8px; border: 1px solid #f1c40f; margin-bottom: 15px;">
-                    <div class="grid-3">
-                        <div class="form-group">
-                            <label>Select Class</label>
-                            <select id="feeStructClass" class="dynamic-class-dropdown" required><option value="">Loading...</option></select>
-                        </div>
-                        <div class="form-group">
-                            <label>Monthly Tuition Fee (₹)</label>
-                            <input type="number" id="feeTuition" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Other/Website Fee (₹)</label>
-                            <input type="number" id="feeOther" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn" style="background-color: #f39c12;">Save Structure</button>
-                </form>
-                <table id="feeStructTable">
-                    <thead><tr><th>Class</th><th>Tuition Fee</th><th>Other Fee</th><th>Total Monthly Fee</th></tr></thead>
-                    <tbody id="feeStructBody"><tr><td colspan="4" style="text-align: center;">Loading...</td></tr></tbody>
-                </table>
-            </div>
-
-            <!-- Extra Expenses Log -->
-            <div class="box-container" style="border-top: 4px solid #e74c3c;">
-                <h3>📉 Log Extra School Expenses</h3>
-                <form onsubmit="addExtraExpense(event)" style="background: #fdedec; padding: 15px; border-radius: 8px; border: 1px solid #e74c3c; margin-bottom: 15px;">
-                    <div class="grid-3">
-                        <div class="form-group">
-                            <label>Date</label>
-                            <input type="date" id="expDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Expense Detail/Description</label>
-                            <input type="text" id="expDetail" required placeholder="E.g. Electricity Bill">
-                        </div>
-                        <div class="form-group">
-                            <label>Amount (₹)</label>
-                            <input type="number" id="expAmount" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-danger" id="expBtn">Add Expense</button>
-                </form>
-                <table id="expensesTable">
-                    <thead><tr><th>Date</th><th>Detail</th><th>Amount</th><th>Action</th></tr></thead>
-                    <tbody id="expensesBody"><tr><td colspan="4" style="text-align: center;">Loading...</td></tr></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- 4. HR MANAGEMENT (TEACHERS & STAFF) -->
-        <div id="hrSec" class="content-section box-container">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3 style="margin:0; border:none;">👨‍💼 HR & Staff Salary Management</h3>
-                <div>
-                    <button class="btn btn-success" onclick="openTeacherModal()">+ Add Teacher</button>
-                    <button class="btn btn-info" style="background-color: #8e44ad;" onclick="openStaffModal()">+ Add Staff</button>
-                </div>
-            </div>
-
-            <!-- Teachers List -->
-            <h4 style="background:#eee; padding:8px; border-radius:4px;">Academic Teachers</h4>
-            <div style="overflow-x: auto; margin-bottom: 20px;">
-                <table id="teachersTable">
-                    <thead><tr><th>Teacher Name</th><th>Subject</th><th>Monthly Salary</th><th>Salary Action</th><th>Account Action</th></tr></thead>
-                    <tbody id="teacherTableBody"><tr><td colspan="5" style="text-align: center;">Loading teachers...</td></tr></tbody>
-                </table>
-            </div>
-
-            <!-- Staff List -->
-            <h4 style="background:#eee; padding:8px; border-radius:4px;">Non-Teaching Staff</h4>
-            <div style="overflow-x: auto;">
-                <table id="staffTable">
-                    <thead><tr><th>Staff Name</th><th>Role / Duty</th><th>Monthly Salary</th><th>Salary Action</th><th>Account Action</th></tr></thead>
-                    <tbody id="staffTableBody"><tr><td colspan="5" style="text-align: center;">Loading staff...</td></tr></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- 5. STUDENT MANAGEMENT -->
-        <div id="studentsSec" class="content-section box-container">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3 style="margin:0; border:none;">🎓 Student Database & Fee Collection</h3>
-                <button class="btn btn-success" onclick="openStudentModal()">+ Register Student</button>
-            </div>
-            
-            <div style="background: #eaf2f8; padding: 15px; border-radius: 8px; display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
-                <div class="form-group" style="flex:1; margin:0;"><label>Class Filter</label><select id="stuClassFilter" class="dynamic-class-dropdown" onchange="renderStudents()"><option value="All">All</option></select></div>
-                <div class="form-group" style="flex:1; margin:0;"><label>Search</label><input type="text" id="searchStudentInput" placeholder="Name or Roll..." onkeyup="renderStudents()"></div>
-                <div class="form-group" style="flex:1; margin:0;"><label>Check Fee Month</label>
-                    <select id="feeMonthFilter" onchange="renderStudents()">
-                        <option value="January">January</option><option value="February">February</option><option value="March">March</option>
-                        <option value="April">April</option><option value="May">May</option><option value="June">June</option>
-                        <option value="July">July</option><option value="August">August</option><option value="September">September</option>
-                        <option value="October">October</option><option value="November">November</option><option value="December">December</option>
-                    </select>
-                </div>
-            </div>
-
-            <div style="overflow-x: auto;">
+        <div id="studentsSec" class="content-section">
+            <div class="box-container">
+                <h3>🎓 Student Database</h3>
                 <table id="studentsTable">
-                    <thead><tr><th>Roll</th><th>Student Info</th><th>Class & Sec</th><th>Parents Details</th><th>Fee Status (<span id="tableMonthLabel"></span>)</th><th>Actions</th></tr></thead>
-                    <tbody id="studentTableBody"><tr><td colspan="6" style="text-align: center;">Loading students...</td></tr></tbody>
+                    <thead><tr><th>Roll</th><th>Name</th><th>Class</th><th>Details</th><th>Actions</th></tr></thead>
+                    <tbody id="studentTableBody"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- 6. MARK ATTENDANCE (FULL DAY) -->
-        <div id="studentAttSec" class="content-section box-container" style="border-top: 4px solid #e67e22;">
-            <h3>📝 Official School Attendance</h3>
-            <div style="background: #fdf2e9; padding: 15px; border-radius: 8px; display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; align-items:flex-end;">
-                <div class="form-group" style="flex:1; margin:0;"><label>Date</label><input type="date" id="attDateGlobal" onchange="loadGlobalAttendance()"></div>
-                <div class="form-group" style="flex:1; margin:0;"><label>User Type</label>
-                    <select id="attUserType" onchange="loadGlobalAttendance()">
-                        <option value="Student">Students</option>
-                        <option value="Teacher">Teachers</option>
-                        <option value="Staff">Non-Teaching Staff</option>
-                    </select>
+        <div id="financeSec" class="content-section">
+            <div class="box-container">
+                <h3>💰 Fee Structure Setup</h3>
+                <div id="feeRows">
+                    <div class="grid-3" id="feeInputArea">
+                        <input type="text" id="feeName" placeholder="Fee Name (e.g. Bus Fee)">
+                        <input type="number" id="feeAmount" placeholder="Amount">
+                        <button class="btn" onclick="addFeeField()">+ Add to List</button>
+                    </div>
                 </div>
-                <div class="form-group" style="flex:1; margin:0;"><label>Class Filter (For Students)</label><select id="attClassFilterGlobal" class="dynamic-class-dropdown" onchange="loadGlobalAttendance()"><option value="All">All</option></select></div>
-                <button class="btn btn-success" id="saveGlobalAttBtn" onclick="saveGlobalAttendance()">💾 Save</button>
+                <table id="feeListTable">
+                    <thead><tr><th>Fee Type</th><th>Amount</th><th>Action</th></tr></thead>
+                    <tbody id="feeListBody"></tbody>
+                </table>
             </div>
-            
-            <table id="globalAttTable">
-                <thead><tr><th>ID/Roll</th><th>Name</th><th>Role/Class</th><th>Status</th></tr></thead>
-                <tbody id="globalAttBody"><tr><td colspan="4" style="text-align: center;">Select filters...</td></tr></tbody>
-            </table>
         </div>
-
-        <!-- 7. LEAVE APPROVALS (AUTO-ATTENDANCE LINKED) -->
-        <div id="leaveReqSec" class="content-section box-container" style="border-top: 4px solid #f39c12;">
-            <h3>📩 Manage Leave Requests</h3>
-            <p style="font-size:13px; color:#666;">Approving a leave here will automatically mark the user as 'Leave' in the attendance register for that date.</p>
-            <table id="leaveTable">
-                <thead><tr><th>Leave Date</th><th>Sender Name</th><th>Role</th><th>Reason</th><th>Status</th><th>Action</th></tr></thead>
-                <tbody id="leaveReqTableBody"><tr><td colspan="6" style="text-align: center;">Loading requests...</td></tr></tbody>
-            </table>
-        </div>
-
-        <!-- 8. PUBLISH EXAM RESULTS -->
-        <div id="examApprovalSec" class="content-section box-container" style="border-top: 4px solid #8e44ad;">
-            <h3>🏆 Review & Publish Exam Results</h3>
-            <p style="font-size:13px; color:#666;">Teachers have uploaded these marks. Publish them so students can view their Report Cards.</p>
-            <table id="examApprovalTable">
-                <thead><tr><th>Date Uploaded</th><th>Student</th><th>Exam Name</th><th>Theory (Obt/Tot)</th><th>Practical (Obt/Tot)</th><th>Teacher</th><th>Action</th></tr></thead>
-                <tbody id="examApprovalBody"><tr><td colspan="7" style="text-align: center;">Loading pending results...</td></tr></tbody>
-            </table>
-        </div>
-
-        <!-- 9. TIMETABLE -->
-        <div id="timetableSec" class="content-section box-container" style="border-top: 4px solid #2980b9;">
-            <h3>📅 Manage Class Timetable</h3>
-            <form onsubmit="addTimetable(event)" style="background: #eaf2f8; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                <div class="grid-3">
-                    <div class="form-group"><label>Class</label><select id="ttClass" class="dynamic-class-dropdown" required></select></div>
-                    <div class="form-group"><label>Day</label><select id="ttDay" required><option value="Monday">Monday</option><option value="Tuesday">Tuesday</option><option value="Wednesday">Wednesday</option><option value="Thursday">Thursday</option><option value="Friday">Friday</option><option value="Saturday">Saturday</option></select></div>
-                    <div class="form-group"><label>Time/Period</label><input type="text" id="ttTime" required placeholder="E.g. 09:00 AM"></div>
-                </div>
-                <div class="grid-2">
-                    <div class="form-group"><label>Subject</label><input type="text" id="ttSubject" required></div>
-                    <div class="form-group"><label>Teacher Name</label><input type="text" id="ttTeacher" required></div>
-                </div>
-                <button type="submit" class="btn" id="ttBtn">Add to Timetable</button>
-            </form>
-            <div class="form-group" style="max-width:300px;"><label>Filter by Class</label><select id="ttFilterClass" class="dynamic-class-dropdown" onchange="loadTimetableAdmin()"><option value="All">All</option></select></div>
-            <table>
-                <thead><tr><th>Class</th><th>Day</th><th>Time</th><th>Subject</th><th>Teacher</th><th>Action</th></tr></thead>
-                <tbody id="timetableBody"><tr><td colspan="6">Loading...</td></tr></tbody>
-            </table>
-        </div>
-
-        <!-- 10. NOTICES -->
-        <div id="noticeSec" class="content-section box-container" style="border-top: 4px solid #9b59b6;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3 style="margin:0; border:none;">📢 Notice Board & Updates</h3>
-                <button class="btn" onclick="document.getElementById('noticeModal').style.display='flex';">+ Post Notice</button>
-            </div>
-            <table>
-                <thead><tr><th>Date</th><th>Category</th><th>Notice Details</th><th>Action</th></tr></thead>
-                <tbody id="noticeTableBody"><tr><td colspan="4">Loading...</td></tr></tbody>
-            </table>
-        </div>
-
-        <!-- 11. GLOBAL SETTINGS -->
-        <div id="settingsSec" class="content-section box-container" style="border-top: 4px solid #34495e;">
-            <h3>⚙️ Global School Settings</h3>
-            <form onsubmit="saveSchoolSettings(event)" style="background: #fafafa; padding: 20px; border-radius: 8px; max-width: 600px;">
-                <div class="form-group"><label>School Name / Brand Name</label><input type="text" id="setSchoolName" required></div>
-                <div class="grid-2">
-                    <div class="form-group"><label>Academic Start Date</label><input type="date" id="setStartDate" onchange="calculateAcademicYear()" required></div>
-                    <div class="form-group"><label>Academic End Date</label><input type="date" id="setEndDate" onchange="calculateAcademicYear()" required></div>
-                </div>
-                <div class="form-group"><label>Calculated Academic Year</label><input type="text" id="setAcadYear" readonly style="background:#e8f0fe; font-weight:bold;"></div>
-                <button type="submit" class="btn" id="setSaveBtn">Save Global Settings</button>
-            </form>
-        </div>
-
     </div>
-
-    <!-- MODALS (Hidden Forms) -->
-    
-    <!-- Add Notice Modal -->
-    <div class="modal-overlay" id="noticeModal"><div class="modal-box"><span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">&times;</span><h3>Publish Notice</h3><form onsubmit="addNotice(event)"><div class="form-group"><label>Title</label><input type="text" id="nTitle" required></div><div class="form-group"><label>Category</label><select id="nCategory"><option>Holiday</option><option>Exam</option><option>Sports</option><option>Meeting</option><option>Other</option></select></div><div class="form-group"><label>Date</label><input type="date" id="nDate" required></div><div class="form-group"><label>Description</label><textarea id="nDesc" rows="3" required></textarea></div><button type="submit" class="btn btn-submit" id="nBtn">Publish</button></form></div></div>
-
-    <!-- Add Teacher Modal -->
-    <div class="modal-overlay" id="teacherModal"><div class="modal-box"><span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">&times;</span><h3>Register Academic Teacher</h3><form onsubmit="addTeacher(event)"><div class="form-group"><label>Full Name</label><input type="text" id="tName" required></div><div class="form-group"><label>Subject Expert</label><input type="text" id="tSubject" required></div><div class="form-group"><label>Monthly Salary (₹)</label><input type="number" id="tSalary" required></div><div class="form-group"><label>Login Email</label><input type="email" id="tEmail" required></div><div class="form-group"><label>Login Password</label><input type="password" id="tPassword" required></div><button type="submit" class="btn btn-submit" id="tBtn">Save Teacher</button></form></div></div>
-    
-    <!-- Add Staff Modal -->
-    <div class="modal-overlay" id="staffModal"><div class="modal-box"><span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">&times;</span><h3>Register Non-Teaching Staff</h3><form onsubmit="addStaff(event)"><div class="form-group"><label>Full Name</label><input type="text" id="stName" required></div><div class="form-group"><label>Role (Peon, Clerk etc.)</label><input type="text" id="stRole" required></div><div class="form-group"><label>Monthly Salary (₹)</label><input type="number" id="stSalary" required></div><button type="submit" class="btn btn-submit" id="stBtn">Save Staff</button></form></div></div>
-
-    <!-- Add Student Modal -->
-    <div class="modal-overlay" id="studentModal"><div class="modal-box large"><span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">&times;</span><h3>🎓 Register New Student</h3><form onsubmit="addStudent(event)"><fieldset><legend>Academic</legend><div class="grid-3"><div class="form-group"><label>Name</label><input type="text" id="sName" required></div><div class="form-group"><label>Class</label><select id="sClass" class="dynamic-class-dropdown" required></select></div><div class="form-group"><label>Section</label><input type="text" id="sSection" placeholder="A/B/N/A" required></div></div><div class="grid-2"><div class="form-group"><label>Roll Number</label><input type="number" id="sRoll" required></div><div class="form-group"><label>Date of Birth</label><input type="date" id="sDob" required></div></div></fieldset><fieldset><legend>Login & Contact</legend><div class="grid-3"><div class="form-group"><label>Email (Login)</label><input type="email" id="sEmail" required></div><div class="form-group"><label>Password</label><input type="password" id="sPassword" required></div><div class="form-group"><label>Parent Mobile</label><input type="tel" id="sMobile" required></div></div></fieldset><button type="submit" class="btn btn-submit" id="sBtn">Save Student Record</button></form></div></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, getDoc, doc, setDoc, updateDoc, deleteDoc, query, where, deleteField } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyDg4HlG4M9lgqYSjV-fdqKacN94QNgfvOY", authDomain: "school360-9c832.firebaseapp.com", projectId: "school360-9c832" };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        const db = getFirestore(initializeApp({ /* Config */ }));
 
-        // Global Variables
-        window.allStudentsList = []; window.allTeachersList = []; window.allStaffList = []; window.classesList = []; window.feeStructureMap = {};
-
-        // App Initialization
-        window.onload = async () => {
-            const todayStr = new Date().toISOString().split('T')[0];
-            document.getElementById('attDateGlobal').value = todayStr;
-            document.getElementById('expDate').value = todayStr;
+        // 1. Dynamic Fee Structure Logic
+        window.addFeeField = async () => {
+            const name = document.getElementById('feeName').value;
+            const amt = document.getElementById('feeAmount').value;
+            if(!name || !amt) return alert("Fill fee details");
             
-            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            document.getElementById('feeMonthFilter').value = monthNames[new Date().getMonth()];
-
-            await loadSettings();
-            await fetchDynamicClasses(); 
-            await loadFeeStructures();
-            
-            loadDashboardStats(); loadStudents(); loadHR(); loadNotices(); loadTimetableAdmin(); loadPendingExams(); loadLeaveRequests(); loadFinanceDashboard();
+            await addDoc(collection(db, "fee_structures"), { name, amount: parseInt(amt) });
+            loadFeeList();
         }
 
-        // Tab Switching Logic
-        window.switchTab = (tabId) => {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active-link'));
-            document.getElementById(tabId).classList.add('active');
-            document.getElementById('nav-' + tabId).classList.add('active-link');
-            if(window.innerWidth <= 850) { document.querySelector('.sidebar').classList.remove('active'); document.querySelector('.sidebar-overlay').classList.remove('active'); }
-            
-            // Reload specific data on tab click for freshness
-            if(tabId === 'leaveReqSec') loadLeaveRequests();
-            if(tabId === 'examApprovalSec') loadPendingExams();
-            if(tabId === 'financeSec') loadFinanceDashboard();
+        window.loadFeeList = async () => {
+            const snap = await getDocs(collection(db, "fee_structures"));
+            const tbody = document.getElementById('feeListBody');
+            tbody.innerHTML = '';
+            snap.forEach(d => {
+                const f = d.data();
+                tbody.innerHTML += `<tr><td>${f.name}</td><td>₹${f.amount}</td><td><button class="btn btn-danger" onclick="deleteDoc(doc(db, 'fee_structures', '${d.id}')); loadFeeList();">Del</button></td></tr>`;
+            });
         }
 
-        window.toggleSidebar = () => { document.querySelector('.sidebar').classList.toggle('active'); document.querySelector('.sidebar-overlay').classList.toggle('active'); }
-        window.secureLogout = () => { localStorage.clear(); window.location.href = "main-website.html"; }
-
-        /* --- 1. GLOBAL SETTINGS --- */
-        window.loadSettings = async () => {
-            try {
-                const docSnap = await getDoc(doc(db, "settings", "general"));
-                if(docSnap.exists()) {
-                    const data = docSnap.data();
-                    let sName = data.schoolName || "School360";
-                    document.getElementById('sidebarSchoolName').innerHTML = `<span>${sName}</span>`;
-                    document.getElementById('mobileSchoolName').innerHTML = `<span>${sName}</span>`;
-                    document.getElementById('setSchoolName').value = data.schoolName || "";
-                    document.getElementById('setStartDate').value = data.academicStart || "";
-                    document.getElementById('setEndDate').value = data.academicEnd || "";
-                    document.getElementById('setAcadYear').value = data.academicYear || "";
-                }
-            } catch(e) { console.error(e); }
-        }
-
-        window.calculateAcademicYear = () => {
-            const start = document.getElementById('setStartDate').value; const end = document.getElementById('setEndDate').value;
-            if(start && end) {
-                const sYear = new Date(start).getFullYear(); const eYear = new Date(end).getFullYear();
-                document.getElementById('setAcadYear').value = sYear === eYear ? sYear : `${sYear}-${eYear.toString().slice(-2)}`;
+        // 2. Student Promotion/TC/Details Logic
+        window.promoteStudent = async (id, currentClass) => {
+            let nextClass = prompt("Enter next class:", parseInt(currentClass) + 1);
+            if(nextClass) {
+                await updateDoc(doc(db, "students", id), { className: nextClass });
+                loadStudents();
             }
         }
 
-        window.saveSchoolSettings = async (e) => {
-            e.preventDefault(); const btn = document.getElementById('setSaveBtn'); btn.innerText = "Saving...";
-            try {
-                await setDoc(doc(db, "settings", "general"), { schoolName: document.getElementById('setSchoolName').value, academicStart: document.getElementById('setStartDate').value, academicEnd: document.getElementById('setEndDate').value, academicYear: document.getElementById('setAcadYear').value, updatedAt: new Date() });
-                alert("Global Settings Saved!"); loadSettings();
-            } catch(err) { alert(err.message); } finally { btn.innerText = "Save Global Settings"; }
+        window.issueTC = async (id) => {
+            if(confirm("Issue TC? Student will be marked as Inactive.")) {
+                await updateDoc(doc(db, "students", id), { status: "Inactive" });
+                loadStudents();
+            }
         }
 
-        /* --- 2. DYNAMIC CLASSES MODULE --- */
-        window.fetchDynamicClasses = async () => {
-            const snap = await getDocs(collection(db, "classes"));
-            window.classesList = []; snap.forEach(doc => window.classesList.push({ id: doc.id, ...doc.data() }));
-            renderClassesTable();
-            populateClassDropdowns();
+        // 3. UI Helper
+        window.switchTab = (id) => {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
         }
 
-        window.populateClassDropdowns = () => {
-            const dropdowns = document.querySelectorAll('.dynamic-class-dropdown');
-            dropdowns.forEach(dd => {
-                let html = '';
-                // Add 'All' option if it's a filter
-                if(dd.id.includes('Filter')) html += '<option value="All">All Classes</option>';
-                else html += '<option value="">-- Select Class --</option>';
-                
-                window.classesList.forEach(c => { html += `<option value="${c.className}">${c.className}</option>`; });
-                dd.innerHTML = html;
-            });
+        // Initialization
+        window.onload = () => {
+            loadFeeList();
+            // loadStudents(); // Call your existing functions here
         }
-
-        window.addClass = async (e) => {
-            e.preventDefault(); const btn = document.getElementById('addClassBtn'); btn.innerText = "Creating...";
-            try {
-                const cName = document.getElementById('newClassName').value.trim();
-                const cSec = document.getElementById('newClassSections').value.trim().split(',').map(s => s.trim());
-                await addDoc(collection(db, "classes"), { className: cName, sections: cSec, timestamp: new Date() });
-                alert("Class added successfully!"); document.getElementById('newClassName').value=''; document.getElementById('newClassSections').value='';
-                fetchDynamicClasses();
-            } catch(err) { alert(err.message); } finally { btn.innerText = "Create Class"; }
-        }
-
-        window.renderClassesTable = () => {
-            const tbody = document.getElementById('classesTableBody'); tbody.innerHTML = '';
-            if(window.classesList.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No classes defined yet.</td></tr>'; return; }
-            window.classesList.forEach(c => {
-                tbody.innerHTML += `<tr><td><strong>${c.className}</strong></td><td>${c.sections.join(', ')}</td><td><button class="btn btn-danger" onclick="deleteRecord('classes', '${c.id}')">Delete</button></td></tr>`;
-            });
-        }
-
-        /* --- 3. FINANCE MODULE (Fee, Salary, Expenses) --- */
-        window.loadFeeStructures = async () => {
-            const snap = await getDocs(collection(db, "fee_structures"));
-            window.feeStructureMap = {};
-            const tbody = document.getElementById('feeStructBody'); tbody.innerHTML = '';
-            
-            if(snap.empty) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No fee structures defined.</td></tr>'; return; }
-            
-            snap.forEach(doc => {
-                const data = doc.data(); window.feeStructureMap[doc.id] = data; // doc.id = class name
-                tbody.innerHTML += `<tr><td><strong>${doc.id}</strong></td><td>₹${data.tuition}</td><td>₹${data.other}</td><td><strong>₹${data.total}</strong></td></tr>`;
-            });
-        }
-
-        window.saveFeeStructure = async (e) => {
-            e.preventDefault();
-            const cls = document.getElementById('feeStructClass').value;
-            const tuition = parseInt(document.getElementById('feeTuition').value) || 0;
-            const other = parseInt(document.getElementById('feeOther').value) || 0;
-            if(!cls) return alert("Select a class!");
-            try {
-                await setDoc(doc(db, "fee_structures", cls), { tuition: tuition, other: other, total: tuition + other, updatedAt: new Date() });
-                alert("Fee Structure Saved!"); document.getElementById('feeTuition').value=''; document.getElementById('feeOther').value=''; loadFeeStructures(); loadFinanceDashboard();
-            } catch(err) { alert(err.message); }
-        }
-
-        window.addExtraExpense = async (e) => {
-            e.preventDefault(); const btn = document.getElementById('expBtn'); btn.innerText = "Adding...";
-            try {
-                await addDoc(collection(db, "expenses"), { date: document.getElementById('expDate').value, detail: document.getElementById('expDetail').value, amount: parseInt(document.getElementById('expAmount').value), timestamp: new Date() });
-                alert("Expense logged!"); document.getElementById('expDetail').value=''; document.getElementById('expAmount').value=''; loadFinanceDashboard();
-            } catch(err) { alert(err.message); } finally { btn.innerText = "Add Expense"; }
-        }
-
-        window.paySalary = async (type, id, name, amount) => {
-            const month = prompt(`Enter month to mark ${name}'s salary as paid (e.g. January 2026):`);
-            if(!month) return;
-            try {
-                await addDoc(collection(db, "salary_payments"), { type: type, userId: id, name: name, amount: parseInt(amount), month: month, timestamp: new Date() });
-                alert("Salary Paid!"); loadFinanceDashboard();
-            } catch(e) { alert(e.message); }
-        }
-
-        window.loadFinanceDashboard = async () => {
-            let totalIncome = 0; let totalExpense = 0;
-            
-            // Calculate Income from Fees
-            const sSnap = await getDocs(collection(db, "students"));
-            sSnap.forEach(doc => {
-                const s = doc.data(); const feeRec = s.feeRecords || {};
-                const cFee = window.feeStructureMap[s.className] ? window.feeStructureMap[s.className].total : 0;
-                totalIncome += (Object.keys(feeRec).length * cFee);
-            });
-
-            // Calculate Expenses (Extra)
-            const expSnap = await getDocs(collection(db, "expenses"));
-            const tbody = document.getElementById('expensesBody'); tbody.innerHTML = '';
-            expSnap.forEach(doc => {
-                const e = doc.data(); totalExpense += e.amount;
-                tbody.innerHTML += `<tr><td>${e.date}</td><td>${e.detail}</td><td>₹${e.amount}</td><td><button class="btn btn-danger" onclick="deleteRecord('expenses', '${doc.id}')">Delete</button></td></tr>`;
-            });
-            if(expSnap.empty) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No expenses.</td></tr>';
-
-            // Calculate Expenses (Salary Paid)
-            const salSnap = await getDocs(collection(db, "salary_payments"));
-            salSnap.forEach(doc => { totalExpense += doc.data().amount; });
-
-            document.getElementById('finTotalIncome').innerText = `₹ ${totalIncome}`;
-            document.getElementById('finTotalExpense').innerText = `₹ ${totalExpense}`;
-            document.getElementById('finNetBalance').innerText = `₹ ${totalIncome - totalExpense}`;
-        }
-
-        /* --- 4. HR MANAGEMENT --- */
-        window.openTeacherModal = () => { document.getElementById('teacherModal').style.display='flex'; }
-        window.openStaffModal = () => { document.getElementById('staffModal').style.display='flex'; }
-
-        window.addTeacher = async (e) => {
-            e.preventDefault(); const btn = document.getElementById('tBtn'); btn.innerText = "Saving...";
-            try { await addDoc(collection(db, "teachers"), { name: document.getElementById('tName').value, subject: document.getElementById('tSubject').value, email: document.getElementById('tEmail').value, password: document.getElementById('tPassword').value, salary: parseInt(document.getElementById('tSalary').value), timestamp: new Date() }); alert("Teacher Added!"); document.getElementById('teacherModal').style.display='none'; loadHR(); } catch(err) { alert(err.message); } finally { btn.innerText = "Save Teacher"; }
-        }
-
-        window.addStaff = async (e) => {
-            e.preventDefault(); const btn = document.getElementById('stBtn'); btn.innerText = "Saving...";
-            try { await addDoc(collection(db, "staff"), { name: document.getElementById('stName').value, role: document.getElementById('stRole').value, salary: parseInt(document.getElementById('stSalary').value), timestamp: new Date() }); alert("Staff Added!"); document.getElementById('staffModal').style.display='none'; loadHR(); } catch(err) { alert(err.message); } finally { btn.innerText = "Save Staff"; }
-        }
-
-        window.loadHR = async () => {
-            // Teachers
-            const tSnap = await getDocs(collection(db, "teachers")); const tBody = document.getElementById('teacherTableBody'); tBody.innerHTML = '';
-            document.getElementById('dashTeachersCount').innerText = tSnap.size;
-            if(tSnap.empty) tBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No teachers found.</td></tr>';
-            tSnap.forEach(doc => { const t = doc.data(); tBody.innerHTML += `<tr><td><strong>${t.name}</strong><br><small>${t.email}</small></td><td>${t.subject}</td><td>₹${t.salary || 0}</td><td><button class="btn btn-success" onclick="paySalary('Teacher', '${doc.id}', '${t.name}', '${t.salary||0}')">Pay Salary</button></td><td><button class="btn btn-danger" onclick="deleteRecord('teachers', '${doc.id}')">Remove</button></td></tr>`; });
-
-            // Staff
-            const stSnap = await getDocs(collection(db, "staff")); const stBody = document.getElementById('staffTableBody'); stBody.innerHTML = '';
-            document.getElementById('dashStaffCount').innerText = stSnap.size;
-            if(stSnap.empty) stBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No staff found.</td></tr>';
-            stSnap.forEach(doc => { const s = doc.data(); stBody.innerHTML += `<tr><td><strong>${s.name}</strong></td><td>${s.role}</td><td>₹${s.salary || 0}</td><td><button class="btn btn-success" onclick="paySalary('Staff', '${doc.id}', '${s.name}', '${s.salary||0}')">Pay Salary</button></td><td><button class="btn btn-danger" onclick="deleteRecord('staff', '${doc.id}')">Remove</button></td></tr>`; });
-        }
-
-        /* --- 5. STUDENTS MODULE --- */
-        window.openStudentModal = () => { document.getElementById('studentModal').style.display='flex'; }
-        window.addStudent = async (e) => {
-            e.preventDefault(); const btn = document.getElementById('sBtn'); btn.innerText = "Saving...";
-            try { await addDoc(collection(db, "students"), { name: document.getElementById('sName').value, className: document.getElementById('sClass').value, section: document.getElementById('sSection').value, rollNumber: document.getElementById('sRoll').value, email: document.getElementById('sEmail').value, password: document.getElementById('sPassword').value, mobile: document.getElementById('sMobile').value, feeRecords: {}, timestamp: new Date() }); alert("Student Added!"); document.getElementById('studentModal').style.display='none'; loadStudents(); } catch(err) { alert(err.message); } finally { btn.innerText = "Save Student Record"; }
-        }
-
-        window.loadStudents = async () => {
-            const snap = await getDocs(collection(db, "students")); window.allStudentsList = []; document.getElementById('dashStudentsCount').innerText = snap.size;
-            snap.forEach(doc => window.allStudentsList.push({id: doc.id, ...doc.data()})); renderStudents();
-        }
-
-        window.renderStudents = () => {
-            const tbody = document.getElementById('studentTableBody'); const search = document.getElementById('searchStudentInput').value.toLowerCase(); const cFilter = document.getElementById('stuClassFilter').value; const targetMonth = document.getElementById('feeMonthFilter').value;
-            document.getElementById('tableMonthLabel').innerText = targetMonth; tbody.innerHTML = ''; let count = 0;
-            window.allStudentsList.forEach(s => {
-                if(cFilter !== 'All' && s.className !== cFilter) return;
-                if(search && !s.name.toLowerCase().includes(search) && !s.rollNumber.includes(search)) return;
-                count++;
-                let isPaid = s.feeRecords && s.feeRecords[targetMonth];
-                let feeUI = isPaid ? `<span class="badge bg-success">Paid ✅</span>` : `<button class="btn btn-danger" onclick="markFeePaid('${s.id}', '${targetMonth}')">Unpaid (Click to Pay)</button>`;
-                tbody.innerHTML += `<tr><td>${s.rollNumber}</td><td><strong>${s.name}</strong><br><small>${s.email}</small></td><td>${s.className} - ${s.section}</td><td>📞 ${s.mobile}</td><td>${feeUI}</td><td><button class="btn btn-danger" onclick="deleteRecord('students', '${s.id}')">Del</button></td></tr>`;
-            });
-            if(count===0) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No students match criteria.</td></tr>';
-        }
-
-        window.markFeePaid = async (id, month) => {
-            if(!confirm(`Mark ${month} fee as PAID?`)) return;
-            try { await updateDoc(doc(db, "students", id), { [`feeRecords.${month}`]: new Date().toISOString().split('T')[0] }); loadStudents(); loadFinanceDashboard(); } catch(e) { alert(e.message); }
-        }
-
-        /* --- 6. AUTO-LEAVE & APPROVAL --- */
-        window.loadLeaveRequests = async () => {
-            const tbody = document.getElementById('leaveReqTableBody'); tbody.innerHTML = '';
-            const snap = await getDocs(query(collection(db, "leave_requests"), where("status", "==", "Pending")));
-            document.getElementById('dashPendingLeaves').innerText = snap.size;
-            if(snap.empty) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:green;">No pending leave requests.</td></tr>'; return; }
-            snap.forEach(doc => {
-                const r = doc.data();
-                tbody.innerHTML += `<tr><td>${r.date}</td><td><strong>${r.senderName}</strong></td><td>${r.role}</td><td>${r.reason}</td><td><span class="badge bg-warning">Pending</span></td><td><button class="btn btn-success" onclick="approveLeave('${doc.id}', '${r.senderId}', '${r.role}', '${r.date}')">Approve</button> <button class="btn btn-danger" onclick="updateDoc(doc(db, 'leave_requests', '${doc.id}'), {status: 'Rejected'}); loadLeaveRequests();">Reject</button></td></tr>`;
-            });
-        }
-
-        window.approveLeave = async (reqId, userId, role, date) => {
-            if(!confirm("Approve leave? This will automatically mark 'Leave' in the attendance register.")) return;
-            try {
-                await updateDoc(doc(db, "leave_requests", reqId), { status: "Approved" });
-                // Auto-mark Attendance
-                const collectionName = role === 'Student' ? 'student_attendance' : (role === 'Teacher' ? 'teacher_attendance' : 'staff_attendance');
-                const docId = `${userId}_${date}`;
-                await setDoc(doc(db, collectionName, docId), { studentId: userId, teacherId: userId, date: date, status: "Leave", timestamp: new Date() }, { merge: true });
-                alert("Leave Approved and Attendance Updated automatically!"); loadLeaveRequests();
-            } catch(e) { alert(e.message); }
-        }
-
-        /* --- 7. EXAM APPROVALS --- */
-        window.loadPendingExams = async () => {
-            const tbody = document.getElementById('examApprovalBody'); tbody.innerHTML = '';
-            const snap = await getDocs(query(collection(db, "marks"), where("status", "==", "Pending")));
-            if(snap.empty) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No pending exams.</td></tr>'; return; }
-            snap.forEach(doc => {
-                const m = doc.data();
-                tbody.innerHTML += `<tr><td>${new Date(m.timestamp.toDate()).toLocaleDateString()}</td><td>${m.studentName}</td><td>${m.examName}</td><td>${m.theoryObt}/${m.theoryTotal}</td><td>${m.pracObt}/${m.pracTotal}</td><td>${m.teacherName}</td><td><button class="btn btn-success" onclick="approveExam('${doc.id}')">Publish</button></td></tr>`;
-            });
-        }
-        window.approveExam = async (id) => { if(confirm("Publish Result?")) { await updateDoc(doc(db, "marks", id), { status: "Published" }); loadPendingExams(); } }
-
-        /* --- 8. GLOBAL ATTENDANCE (School) --- */
-        window.loadGlobalAttendance = async () => {
-            const date = document.getElementById('attDateGlobal').value; const type = document.getElementById('attUserType').value; const cFilter = document.getElementById('attClassFilterGlobal').value;
-            const tbody = document.getElementById('globalAttBody'); tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Loading...</td></tr>';
-            try {
-                let collectionName = type === 'Student' ? 'students' : (type === 'Teacher' ? 'teachers' : 'staff');
-                let attCollection = type === 'Student' ? 'student_attendance' : (type === 'Teacher' ? 'teacher_attendance' : 'staff_attendance');
-                
-                let usersSnap = await getDocs(collection(db, collectionName));
-                let attSnap = await getDocs(query(collection(db, attCollection), where("date", "==", date)));
-                let attMap = {}; attSnap.forEach(d => attMap[d.data().studentId || d.data().teacherId || d.data().staffId] = d.data().status);
-
-                tbody.innerHTML = ''; let count = 0;
-                usersSnap.forEach(doc => {
-                    const u = doc.data(); u.id = doc.id;
-                    if(type === 'Student' && cFilter !== 'All' && u.className !== cFilter) return;
-                    count++;
-                    let curStat = attMap[u.id] || 'Not Marked';
-                    let select = `<select class="att-select global-att-dropdown" data-id="${u.id}" data-name="${u.name}" data-class="${u.className||''}"><option value="Not Marked" ${curStat==='Not Marked'?'selected':''}>Not Marked</option><option value="Present" ${curStat==='Present'?'selected':''}>Present</option><option value="Absent" ${curStat==='Absent'?'selected':''}>Absent</option><option value="Leave" ${curStat==='Leave'?'selected':''}>Leave</option><option value="Holiday" ${curStat==='Holiday'?'selected':''}>Holiday</option></select>`;
-                    tbody.innerHTML += `<tr><td>${u.rollNumber || 'N/A'}</td><td>${u.name}</td><td>${u.className || u.role || u.subject}</td><td>${select}</td></tr>`;
-                });
-                if(count===0) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No users match.</td></tr>';
-            } catch(e) { console.error(e); }
-        }
-
-        window.saveGlobalAttendance = async () => {
-            const btn = document.getElementById('saveGlobalAttBtn'); btn.innerText = 'Saving...';
-            const date = document.getElementById('attDateGlobal').value; const type = document.getElementById('attUserType').value;
-            let attCollection = type === 'Student' ? 'student_attendance' : (type === 'Teacher' ? 'teacher_attendance' : 'staff_attendance');
-            const dropdowns = document.querySelectorAll('.global-att-dropdown');
-            let promises = [];
-            dropdowns.forEach(sel => {
-                const stat = sel.value; if(stat === 'Not Marked') return;
-                const uid = sel.getAttribute('data-id'); const docId = `${uid}_${date}`;
-                let payload = { date: date, status: stat, timestamp: new Date(), name: sel.getAttribute('data-name') };
-                if(type === 'Student') { payload.studentId = uid; payload.className = sel.getAttribute('data-class'); payload.studentName = payload.name; }
-                else if(type === 'Teacher') { payload.teacherId = uid; payload.teacherName = payload.name; }
-                else { payload.staffId = uid; payload.staffName = payload.name; }
-                promises.push(setDoc(doc(db, attCollection, docId), payload));
-            });
-            await Promise.all(promises); alert("School Attendance Saved!"); btn.innerText = '💾 Save';
-        }
-
-        /* --- 9. OTHERS (Timetable, Notices, Utils) --- */
-        window.addTimetable = async (e) => { e.preventDefault(); await addDoc(collection(db, "timetable"), { className: document.getElementById('ttClass').value, day: document.getElementById('ttDay').value, time: document.getElementById('ttTime').value, subject: document.getElementById('ttSubject').value, teacher: document.getElementById('ttTeacher').value }); alert("Added to Timetable!"); loadTimetableAdmin(); }
-        window.loadTimetableAdmin = async () => { const filter = document.getElementById('ttFilterClass').value; const tbody = document.getElementById('timetableBody'); tbody.innerHTML=''; let q = filter==='All'?collection(db,"timetable"):query(collection(db,"timetable"), where("className","==",filter)); const snap = await getDocs(q); snap.forEach(d=>{ const t=d.data(); tbody.innerHTML+=`<tr><td>${t.className}</td><td>${t.day}</td><td>${t.time}</td><td>${t.subject}</td><td>${t.teacher}</td><td><button class="btn btn-danger" onclick="deleteRecord('timetable', '${d.id}')">Del</button></td></tr>`; }); }
-        
-        window.addNotice = async (e) => { e.preventDefault(); await addDoc(collection(db, "notices"), { title: document.getElementById('nTitle').value, category: document.getElementById('nCategory').value, date: document.getElementById('nDate').value, description: document.getElementById('nDesc').value }); alert("Notice Published!"); document.getElementById('noticeModal').style.display='none'; loadNotices(); }
-        window.loadNotices = async () => { const tbody = document.getElementById('noticeTableBody'); tbody.innerHTML=''; const snap = await getDocs(collection(db, "notices")); snap.forEach(d=>{ const n=d.data(); tbody.innerHTML+=`<tr><td>${n.date}</td><td><span class="badge bg-info">${n.category}</span></td><td><strong>${n.title}</strong><br><small>${n.description}</small></td><td><button class="btn btn-danger" onclick="deleteRecord('notices', '${d.id}')">Del</button></td></tr>`; }); }
-
-        window.deleteRecord = async (col, id) => { if(confirm("Delete this record permanently?")) { await deleteDoc(doc(db, col, id)); location.reload(); } }
     </script>
 </body>
 </html>
