@@ -62,7 +62,6 @@
         </div>
     </div>
 
-    <!-- Naya Multi-Role Login Modal -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-box">
             <span class="close-btn" onclick="closeLoginModal()">&times;</span>
@@ -87,8 +86,7 @@
         <a href="super-admin.html" style="color: #ccc; text-decoration: none; font-size: 12px;">Super Admin</a>
     </div>
 
-    <!-- Nayi Firebase Logic -->
-        <script type="module">
+    <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -110,7 +108,7 @@
         window.openLoginModal = () => document.getElementById('loginModal').style.display = 'flex';
         window.closeLoginModal = () => document.getElementById('loginModal').style.display = 'none';
 
-        // MULTI-ROLE LOGIN LOGIC (UPDATED WITH LOCALSTORAGE)
+        // MULTI-ROLE LOGIN LOGIC (FULLY SYNCED WITH DASHBOARDS)
         window.loginUser = async function(event) {
             event.preventDefault();
             const roleCollection = document.getElementById('loginRole').value;
@@ -124,25 +122,31 @@
                 const querySnapshot = await getDocs(q);
 
                 if (!querySnapshot.empty) {
-                    alert("Login Successful! Redirecting...");
-                    
                     const userDoc = querySnapshot.docs[0];
                     const userData = userDoc.data();
                     
-                    // Browser ki memory mein login user ki details save karna
+                    // Clear previous session completely before setting new one
+                    localStorage.clear();
+                    
+                    // Basic details
                     localStorage.setItem("userRole", roleCollection);
                     localStorage.setItem("userEmail", email);
                     
+                    // Role-specific routing and data saving
                     if(roleCollection === "students") {
                         localStorage.setItem("studentName", userData.name);
                         localStorage.setItem("studentClass", userData.className);
                         localStorage.setItem("studentId", userDoc.id);
+                        window.location.href = "Student-dashboard.html"; // Ensure casing matches your repo files exactly!
+                    } 
+                    else if (roleCollection === "teachers") {
+                        localStorage.setItem("teacherName", userData.name);
+                        localStorage.setItem("teacherId", userDoc.id);
+                        window.location.href = "Teacher-dashboard.html";
+                    } 
+                    else if (roleCollection === "schools") {
+                        window.location.href = "Index.html";
                     }
-
-                    // Role ke hisaab se dashboard par bhejna
-                    if(roleCollection === "schools") window.location.href = "index.html";
-                    else if(roleCollection === "teachers") window.location.href = "teacher-dashboard.html";
-                    else if(roleCollection === "students") window.location.href = "student-dashboard.html";
                     
                 } else {
                     alert("Galat Email ya Password! Ya phir aapne galat Role select kiya hai.");
@@ -166,7 +170,7 @@
 
             try {
                 await addDoc(collection(db, "schools"), { schoolName: school, adminName: admin, email: email, password: password, dateRegistered: new Date() });
-                alert(`Success! Aapka data Firebase mein save ho gaya!`);
+                alert(`Success! Aapka account ban chuka hai. Ab aap login kar sakte hain.`);
                 document.getElementById('schoolRegistrationForm').reset();
                 window.closeModal();
                 submitBtn.innerText = "Create School Account";
@@ -176,6 +180,5 @@
             }
         }
     </script>
-
 </body>
 </html>
