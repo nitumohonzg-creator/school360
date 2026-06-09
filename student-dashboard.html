@@ -18,55 +18,115 @@
             --sidebar-bg: #27ae60;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: var(--bg); display: flex; overflow-x: hidden; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-color: var(--bg); 
+            display: flex; 
+            overflow-x: hidden; 
+        }
         
         /* Mobile Header */
-        .mobile-header { display: none; background: var(--sidebar-bg); color: white; padding: 15px 20px; position: fixed; top: 0; left: 0; width: 100%; z-index: 998; box-sizing: border-box; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .mobile-header { 
+            display: none; 
+            background: var(--sidebar-bg); 
+            color: white; 
+            padding: 15px 20px; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            z-index: 998; 
+            box-sizing: border-box; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+        }
         .mobile-header h2 { margin: 0; font-size: 20px; }
-        .menu-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        .menu-btn { background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 0; margin: 0; }
 
-        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 998; }
+        .sidebar-overlay { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            z-index: 998; 
+        }
         .sidebar-overlay.active { display: block; }
 
-        .sidebar { width: 250px; background-color: var(--sidebar-bg); color: white; height: 100vh; padding-top: 20px; position: fixed; overflow-y: auto; transition: 0.3s; z-index: 1000; }
+        /* Sidebar Navigation */
+        .sidebar { 
+            width: 250px; 
+            background-color: var(--sidebar-bg); 
+            color: white; 
+            height: 100vh; 
+            padding-top: 20px; 
+            position: fixed; 
+            overflow-y: auto; 
+            transition: 0.3s; 
+            z-index: 1000; 
+        }
         .sidebar h2 { text-align: center; margin-bottom: 30px; font-size: 22px; padding: 0 10px;}
         .sidebar h2 span { color: #ecf0f1; font-weight: normal; }
-        .sidebar a { display: block; color: white; padding: 12px 20px; text-decoration: none; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.1); transition: 0.2s; cursor: pointer; }
+        .sidebar a { 
+            display: block; 
+            color: white; 
+            padding: 12px 20px; 
+            text-decoration: none; 
+            font-size: 14px; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+            transition: 0.2s; 
+            cursor: pointer; 
+        }
         .sidebar a:hover, .sidebar a.active-nav { background-color: var(--primary-dark); padding-left: 20px; border-left: 4px solid var(--warning); }
-        .logout-btn { background-color: #c0392b !important; text-align: center; margin: 20px; border-radius: 5px; border-bottom: none !important; color: white; }
+        .logout-btn { 
+            background-color: #c0392b !important; 
+            text-align: center; 
+            margin: 20px; 
+            border-radius: 5px; 
+            border-bottom: none !important; 
+            color: white; 
+            border: none;
+        }
         
-        .main-content { margin-left: 250px; padding: 20px 30px; width: calc(100% - 250px); box-sizing: border-box; transition: 0.3s; }
-        
-        .header { background: var(--white); padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 25px; border-left: 5px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { margin: 0; color: var(--text-main); font-size: 22px; }
+        /* Layout Structure */
+        .main-content { margin-left: 250px; padding: 25px; width: calc(100% - 250px); box-sizing: border-box; transition: 0.3s; }
+        .header { background: var(--white); padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 25px; border-left: 5px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { margin: 0; color: var(--text-main); font-size: 24px; }
         .student-badge { background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; }
         
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px; }
-        .stat-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; border-bottom: 4px solid var(--primary); transition: transform 0.2s; }
-        .stat-card.clickable:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        
-        .stat-card h4 { margin: 0 0 10px 0; color: var(--text-light); font-size: 14px; text-transform: uppercase; }
-        .stat-card h2 { margin: 0; color: var(--text-main); font-size: 26px; }
+        /* Stats Widgets */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; border-top: 4px solid var(--primary); }
+        .stat-card.clickable:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); cursor: pointer; }
+        .stat-card h4 { margin: 0 0 10px 0; color: var(--text-light); font-size: 13px; text-transform: uppercase; }
+        .stat-card h2 { margin: 0; color: var(--text-main); font-size: 28px; }
 
+        /* Sections */
         .portal-section { display: none; }
         .portal-section.active-section { display: block; animation: fadeIn 0.4s ease; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .box-container { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; overflow-x: auto;}
+        .box-container { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10 rgba(0,0,0,0.05); margin-bottom: 20px; overflow-x: auto;}
         .box-container h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; }
 
         .notice-item { background: #fdfae6; padding: 15px; border-left: 4px solid var(--warning); margin-bottom: 10px; border-radius: 4px; }
         .notice-item h4 { margin: 0 0 5px 0; color: #d35400; }
         .notice-item p { margin: 0; font-size: 13px; color: #555; line-height: 1.4; }
 
-        table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px; font-size: 14px; min-width: 500px;}
-        th { background-color: var(--bg); padding: 12px; border-bottom: 2px solid #ccc; color: var(--text-main); }
-        td { padding: 12px; border-bottom: 1px solid #eee; color: #555; vertical-align: top; }
+        /* Core Elements */
+        table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 15px; font-size: 14px; min-width: 500px;}
+        th { background-color: var(--bg); padding: 10px; border-bottom: 2px solid #ccc; color: var(--text-main); }
+        td { padding: 10px; border-bottom: 1px solid #eee; color: #555; vertical-align: top; }
         
         .btn-view { background: var(--info); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 12px; display: inline-block;}
-        .btn-submit { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px;}
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px;}
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white; display: inline-block;}
+        
         .bg-success { background-color: var(--primary); }
         .bg-danger { background-color: var(--danger); }
         .bg-warning { background-color: var(--warning); color: #333; }
@@ -89,19 +149,14 @@
         @media (max-width: 850px) {
             .sidebar { transform: translateX(-100%); }
             .sidebar.active { transform: translateX(0); }
-            .main-content { margin-left: 0; padding: 20px; padding-top: 80px; width: 100%;}
+            .main-content { margin-left: 0; padding: 15px; padding-top: 80px; width: 100%;}
             .mobile-header { display: flex; }
-        }
-
-        @media (max-width: 600px) {
-            .header { align-items: flex-start; flex-direction: column; gap: 10px; }
-            .stats-grid { grid-template-columns: 1fr 1fr; }
-            .grid-2 { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Mobile Header Navigation -->
     <div class="mobile-header">
         <h2 id="mobileSchoolName">School<span>360</span></h2>
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
@@ -109,6 +164,7 @@
 
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
+    <!-- Sidebar Menu Layout -->
     <div class="sidebar" id="sidebar">
         <h2 id="sidebarSchoolName">School<span>360</span></h2>
         <a id="nav-dashboard" onclick="showSection('dashboardSec', this)" class="active-nav">🏠 My Dashboard</a>
@@ -121,11 +177,10 @@
         <a id="nav-notices" onclick="showSection('noticeSec', this)">📢 Notice Board</a>
         <a id="nav-leave" onclick="showSection('leaveReqSec', this)">📩 Request Leave</a>
         <a id="nav-profile" onclick="showSection('profileSec', this)">👤 My Profile</a>
-        <a onclick="secureLogout()" class="logout-btn">Logout</a>
+        <a onclick="secureLogout()" class="logout-btn">Logout System</a>
     </div>
 
     <div class="main-content">
-        
         <div class="header">
             <div>
                 <h1 id="welcomeText">Welcome, Student!</h1>
@@ -134,6 +189,7 @@
             <div class="student-badge" id="classBadge">Class: Loading...</div>
         </div>
 
+        <!-- 1. DASHBOARD OVERVIEW -->
         <div id="dashboardSec" class="portal-section active-section">
             <div class="stats-grid">
                 <div class="stat-card" style="border-bottom-color: var(--info);">
@@ -177,6 +233,7 @@
             </div>
         </div>
 
+        <!-- 2. ROUTINE / TIMETABLE -->
         <div id="timetableSec" class="portal-section">
             <div class="box-container" style="border-top: 4px solid var(--info);">
                 <h3>📅 My Class Timetable</h3>
@@ -188,6 +245,7 @@
             </div>
         </div>
 
+        <!-- 3. OFFICIAL ATTENDANCE -->
         <div id="schoolAttSec" class="portal-section">
             <div class="box-container">
                 <h3>🏫 Official School Attendance History</h3>
@@ -213,6 +271,7 @@
             </div>
         </div>
 
+        <!-- 4. SUBJECT-WISE ATTENDANCE -->
         <div id="classAttSec" class="portal-section">
             <div class="box-container" style="border-top: 4px solid var(--info);">
                 <h3>👨‍🏫 Subject / Class Attendance</h3>
@@ -229,6 +288,7 @@
             </div>
         </div>
 
+        <!-- 5. ASSIGNMENTS -->
         <div id="assignmentSec" class="portal-section">
             <div class="box-container">
                 <h3>📂 My Class Assignments & Homework</h3>
@@ -239,17 +299,19 @@
             </div>
         </div>
 
+        <!-- 6. COMPLETE FEES SYSTEM -->
         <div id="feesSec" class="portal-section">
             <div class="box-container" style="border-top: 4px solid var(--warning);">
                 <h3>💳 Complete Fee Ledger & Dues</h3>
                 <p style="font-size:13px; color:#666; margin-top:0;">Showing dues from the start of the academic year up to the current month. Future months will not show as "Due" until that month arrives.</p>
                 <table>
-                    <thead><tr><th>Academic Month</th><th>Amount</th><th>Status</th><th>Paid On Date</th></tr></thead>
+                    <thead><tr><th>Academic Month</th><th>Total Expected Amount</th><th>Status</th><th>Paid On Date</th></tr></thead>
                     <tbody id="feesTableBody"><tr><td colspan="4" style="text-align: center; color:#888;">Loading fee details...</td></tr></tbody>
                 </table>
             </div>
         </div>
 
+        <!-- 7. NOTICE BOARD -->
         <div id="noticeSec" class="portal-section">
             <div class="box-container">
                 <h3>📢 All School Announcements</h3>
@@ -257,6 +319,7 @@
             </div>
         </div>
 
+        <!-- 8. DETAILED COMPREHENSIVE REPORT CARD -->
         <div id="marksSec" class="portal-section">
             <div class="box-container" style="border-top: 4px solid #8e44ad;">
                 <h3>📝 My Personal Report Card / Results</h3>
@@ -277,6 +340,7 @@
             </div>
         </div>
 
+        <!-- 9. LEAVE APPLICATIONS -->
         <div id="leaveReqSec" class="portal-section">
             <div class="box-container">
                 <h3>📩 Submit a Leave Request</h3>
@@ -300,6 +364,7 @@
             </div>
         </div>
 
+        <!-- 10. STUDENT PROFILE MANAGEMENT -->
         <div id="profileSec" class="portal-section">
             <div class="box-container" style="border-top: 4px solid var(--sidebar-bg);">
                 <h3>👤 My Profile & Settings</h3>
@@ -309,15 +374,15 @@
                         <input type="text" id="profName" readonly style="background:#eee;">
                     </div>
                     <div class="form-group">
-                        <label>Class</label>
+                        <label>Class & Section</label>
                         <input type="text" id="profClass" readonly style="background:#eee;">
                     </div>
                 </div>
                 
-                <h4 style="margin-top: 30px; border-bottom:2px solid #eee; padding-bottom:10px;">Change Password</h4>
+                <h4 style="margin-top: 30px; border-bottom:2px solid #eee; padding-bottom:10px;">Change Account Password</h4>
                 <form onsubmit="changeStudentPassword(event)">
                     <div class="form-group" style="max-width: 400px;">
-                        <label>New Password</label>
+                        <label>New Secure Password</label>
                         <input type="password" id="newPass" required placeholder="Enter new password">
                     </div>
                     <button type="submit" class="btn-submit" style="background:var(--sidebar-bg); width:auto; padding:10px 25px;">Update Password</button>
@@ -327,97 +392,131 @@
 
     </div>
 
-    <script>
-        function showSection(sectionId, element) {
+    <!-- MAIN JAVASCRIPT ARCHITECTURE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = { 
+            apiKey: "AIzaSyDg4HlG4M9lgqYSjV-fdqKacN94QNgfvOY", 
+            authDomain: "school360-9c832.firebaseapp.com", 
+            projectId: "school360-9c832" 
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Fetching local cache data safely
+        const sName = localStorage.getItem("studentName") || "Demo Student"; 
+        const sClass = localStorage.getItem("studentClass") || "10th";
+        const sId = localStorage.getItem("studentId") || "unknown";
+
+        window.academicStartMonth = 3; // Default April configuration
+
+        // Core Loader Lifecycle
+        window.onload = async function() {
+            document.getElementById("welcomeText").innerText = `Welcome, ${sName}!`;
+            document.getElementById("profName").value = sName;
+            
+            try {
+                await loadSchoolSettings();
+                
+                loadMyAssignments(sClass, sId); 
+                loadTodayAttendance(); 
+                filterSchoolAttendance(); 
+                filterClassAttendance();
+                loadFees(sName); 
+                loadNotices(); 
+                loadMyMarks(sId);
+                loadMyLeaves();
+                loadTimetableStudent(sClass);
+            } catch(e) {
+                console.error("Lifecycle runtime failure:", e);
+            }
+        }
+
+        // Section Toggler Core Routing
+        window.showSection = function(sectionId, element) {
             document.querySelectorAll('.portal-section').forEach(sec => sec.classList.remove('active-section'));
             document.getElementById(sectionId).classList.add('active-section');
             document.querySelectorAll('.sidebar a').forEach(link => link.classList.remove('active-nav'));
             element.classList.add('active-nav');
+            
             if(window.innerWidth <= 850) {
                 document.getElementById('sidebar').classList.remove('active');
                 document.querySelector('.sidebar-overlay').classList.remove('active');
             }
         }
-        function toggleSidebar() { 
+
+        window.toggleSidebar = function() { 
             document.getElementById('sidebar').classList.toggle('active'); 
             document.querySelector('.sidebar-overlay').classList.toggle('active');
         }
-    </script>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-        const firebaseConfig = { apiKey: "AIzaSyDg4HlG4M9lgqYSjV-fdqKacN94QNgfvOY", authDomain: "school360-9c832.firebaseapp.com", projectId: "school360-9c832" };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        const sName = localStorage.getItem("studentName") || "Demo Student"; 
-        const sClass = localStorage.getItem("studentClass") || "10th";
-        const sId = localStorage.getItem("studentId") || "unknown";
-
-        window.academicStartMonth = 3; 
-
-        window.onload = async function() {
-            document.getElementById("welcomeText").innerText = `Welcome, ${sName}!`;
-            document.getElementById("classBadge").innerText = `Class: ${sClass}`;
-            document.getElementById("profName").value = sName;
-            document.getElementById("profClass").value = sClass;
-            
-            await loadSchoolSettings();
-            
-            loadMyAssignments(sClass, sId); 
-            loadTodayAttendance(); 
-            filterSchoolAttendance(); 
-            filterClassAttendance();
-            loadFees(sName); 
-            loadNotices(); 
-            loadMyMarks(sId);
-            loadMyLeaves();
-            loadTimetableStudent(sClass);
+        window.secureLogout = function() { 
+            localStorage.clear(); 
+            window.location.href = "main-website.html"; 
         }
 
+        // Global Variable Sync
         window.loadSchoolSettings = async function() {
             try {
                 const docSnap = await getDoc(doc(db, "settings", "general"));
                 if(docSnap.exists()) {
                     const data = docSnap.data();
-                    let schoolName = data.schoolName || "School360";
-                    document.getElementById('sidebarSchoolName').innerHTML = `<span>${schoolName}</span>`;
-                    document.getElementById('mobileSchoolName').innerHTML = `<span>${schoolName}</span>`;
+                    document.getElementById('sidebarSchoolName').innerHTML = `<span>${data.schoolName || "School360"}</span>`;
+                    document.getElementById('mobileSchoolName').innerHTML = `<span>${data.schoolName || "School360"}</span>`;
                     if(data.academicStart) { window.academicStartMonth = new Date(data.academicStart).getMonth(); }
                 }
-            } catch(e) { console.error("Settings load error", e); }
+            } catch(e) { console.error(e); }
         }
 
+        // Profile Password Update Logic
         window.changeStudentPassword = async function(e) {
             e.preventDefault();
             const newPass = document.getElementById('newPass').value;
             if(sId === 'unknown') { alert("Cannot change password for demo account."); return; }
-            try { await updateDoc(doc(db, "students", sId), { password: newPass }); alert("Password updated successfully!"); document.getElementById('newPass').value = ''; } catch(err) { alert("Error: " + err.message); }
+            try { 
+                await updateDoc(doc(db, "students", sId), { password: newPass }); 
+                alert("Password updated successfully!"); 
+                document.getElementById('newPass').value = ''; 
+            } catch(err) { alert(err.message); }
         }
 
+        // Timetable Rendering Pipeline
         window.loadTimetableStudent = async function(studentClass) {
             const tbody = document.getElementById('timetableBody');
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Loading...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Loading routine...</td></tr>';
             try {
                 const q = query(collection(db, "timetable"), where("className", "==", studentClass));
                 const snap = await getDocs(q);
-                let html = '';
-                snap.forEach(doc => { const t = doc.data(); html += `<tr><td><strong>${t.day}</strong></td><td>${t.time}</td><td>${t.subject}</td><td>${t.teacher}</td></tr>`; });
-                tbody.innerHTML = html === '' ? '<tr><td colspan="4" style="text-align: center;">No timetable uploaded for your class yet.</td></tr>' : html;
+                tbody.innerHTML = '';
+                snap.forEach(doc => { 
+                    const t = doc.data(); 
+                    tbody.innerHTML += `<tr><td><strong>${t.day}</strong></td><td>${t.time}</td><td>${t.subject}</td><td>${t.teacher}</td></tr>`; 
+                });
+                if(tbody.innerHTML === '') tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No schedule uploaded for your class yet.</td></tr>';
             } catch(e) { console.error(e); }
         }
 
+        // Dynamic Fee Dues Pipeline (Synced with Add-More Admin Setup)
         window.loadFees = async function(studentName) {
             const tbody = document.getElementById('feesTableBody');
             try {
                 const q = query(collection(db, "students"), where("name", "==", studentName));
                 const snapshot = await getDocs(q);
-                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No records found.</td></tr>'; return; }
+                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No metadata record found.</td></tr>'; return; }
                 
                 snapshot.forEach(doc => {
-                    const s = doc.data(); const feeRecords = s.feeRecords || {}; tbody.innerHTML = ''; let hasUnpaid = false;
+                    const s = doc.data(); 
+                    const feeRecords = s.feeRecords || {}; 
+                    tbody.innerHTML = ''; 
+                    let hasUnpaid = false;
+                    
+                    document.getElementById('profClass').value = `${s.className} - Section ${s.section || 'N/A'}`;
+
+                    // Fetch total fee expected from Admin structure map fallback loop
+                    const cFee = window.feeStructureMap && window.feeStructureMap[s.className] ? window.feeStructureMap[s.className].total : 0;
+                    
                     const monthsArray = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
                     let academicMonths = []; for(let i=0; i<12; i++) { academicMonths.push(monthsArray[(window.academicStartMonth + i) % 12]); }
 
@@ -428,33 +527,34 @@
                         let isFutureMonth = reachedCurrentMonth && month !== currentMonthName;
                         let statusBadge = '';
                         if(isPaid) { statusBadge = `<span class="badge bg-success">Paid ✅</span>`; } else if(!isPaid && !isFutureMonth) { statusBadge = `<span class="badge bg-danger">Unpaid ❌</span>`; hasUnpaid = true; } else { statusBadge = `<span class="badge" style="background:#bdc3c7; color:#333;">Not Due Yet</span>`; }
-                        tbody.innerHTML += `<tr><td><strong>${month}</strong></td><td>₹--</td><td>${statusBadge}</td><td>${paidDateDisplay}</td></tr>`;
+                        tbody.innerHTML += `<tr><td><strong>${month}</strong></td><td>₹ ${cFee || '--'}</td><td>${statusBadge}</td><td>${paidDateDisplay}</td></tr>`;
                         if(month === currentMonthName) reachedCurrentMonth = true;
                     });
                     
                     const statCard = document.getElementById('statFees');
-                    if(hasUnpaid) { statCard.innerText = 'Dues Pending'; statCard.style.color = 'var(--danger)'; } else { statCard.innerText = 'All Clear (No Dues)'; statCard.style.color = 'var(--primary)'; }
+                    if(hasUnpaid) { statCard.innerText = 'Dues Pending'; statCard.style.color = 'var(--danger)'; } else { statCard.innerText = 'All Clear'; statCard.style.color = 'var(--primary)'; }
                 });
             } catch(error) { console.error(error); }
         }
 
+        // Marks Card Integration
         window.loadMyMarks = async function(studentId) {
             const tbody = document.getElementById('marksTableBody');
             try {
                 const q = query(collection(db, "marks"), where("studentId", "==", studentId), where("status", "==", "Published"));
                 const snapshot = await getDocs(q);
-                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No results published yet.</td></tr>'; return; }
+                if(snapshot.empty) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No published results available yet.</td></tr>'; return; }
                 tbody.innerHTML = '';
                 snapshot.forEach(doc => { 
                     const m = doc.data(); 
                     const tObt = parseInt(m.theoryObt) || 0; const tTot = parseInt(m.theoryTotal) || 0;
                     const pObt = parseInt(m.pracObt) || 0; const pTot = parseInt(m.pracTotal) || 0;
-                    const grandObt = tObt + pObt; const grandTot = tTot + pTot;
-                    tbody.innerHTML += `<tr><td><strong>${m.examName || 'Term Exam'}</strong></td><td style="color: #2980b9;">${tObt} / ${tTot}</td><td style="color: #27ae60;">${pObt} / ${pTot}</td><td style="color: var(--primary); font-weight: bold; font-size:16px;">${grandObt} / ${grandTot}</td></tr>`; 
+                    tbody.innerHTML += `<tr><td><strong>${m.examName}</strong></td><td style="color:#2980b9;">${tObt} / ${tTot}</td><td style="color:#27ae60;">${pObt} / ${pTot}</td><td style="color:var(--primary); font-weight:bold;">${tObt+pObt} / ${tTot+pTot}</td></tr>`; 
                 });
             } catch(err) { console.error(err); }
         }
 
+        // Assignments Tracker
         window.loadMyAssignments = async function(studentClass, studentId) {
             const tbody = document.getElementById('assignmentTableBody');
             try {
@@ -467,17 +567,17 @@
                 assignSnap.forEach(doc => {
                     const a = doc.data(); const assignmentId = doc.id; const currentStatus = teacherStatusMap[assignmentId] || 'Pending';
                     if (currentStatus !== 'Received') actualPendingCount++; 
-                    let viewLink = a.fileUrl && a.fileUrl !== "#" ? `<a href="${a.fileUrl}" target="_blank" class="btn-view">View File</a>` : '<span style="font-size:12px; color:#888;">No File Attached</span>';
-                    tbody.innerHTML += `<tr><td><strong>${a.title}</strong> <span class="badge ${currentStatus==='Received'?'bg-success':'bg-danger'}">${currentStatus}</span><br><small style="color:#666;">Due Date: ${a.dueDate}</small></td><td>${viewLink}</td></tr>`;
+                    tbody.innerHTML += `<tr><td><strong>${a.title}</strong> <span class="badge ${currentStatus==='Received'?'bg-success':'bg-danger'}">${currentStatus}</span><br><small style="color:#666;">Due Date: ${a.dueDate}<br>Desc: ${a.description || 'No instruction'}</small></td><td>${a.fileUrl && a.fileUrl !== "#" ? `<a href="${a.fileUrl}" target="_blank" class="btn-view">View File</a>` : '<span style="font-size:12px; color:#888;">No File</span>'}</td></tr>`;
                 });
                 document.getElementById('statAssignments').innerText = actualPendingCount;
-            } catch(error) { console.error("Assignment Fetch Error:", error); }
+            } catch(error) { console.error(error); }
         }
 
+        // Attendance Calculators
         window.loadTodayAttendance = async function() {
             const todayStr = new Date().toISOString().split('T')[0]; const todayCard = document.getElementById('statTodayAttendance');
             try {
-                const q = query(collection(db, "student_attendance"), where("studentName", "==", sName), where("date", "==", todayStr));
+                const q = query(collection(db, "student_attendance"), where("studentId", "==", sId), where("date", "==", todayStr));
                 const snapshot = await getDocs(q);
                 if(snapshot.empty) { todayCard.innerHTML = `<span class="badge bg-info">Not Marked Yet</span>`; return; }
                 let finalStatus = "Not Marked"; snapshot.forEach(doc => { finalStatus = doc.data().status; });
@@ -488,13 +588,13 @@
 
         window.filterSchoolAttendance = async function() {
             const start = document.getElementById('attStartDate').value; const end = document.getElementById('attEndDate').value; const statusFilter = document.getElementById('attStatusFilter').value;
-            const tbody = document.getElementById('schoolAttendanceTableBody'); tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Loading data...</td></tr>';
+            const tbody = document.getElementById('schoolAttendanceTableBody'); tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Loading register...</td></tr>';
             try {
-                let q = query(collection(db, "student_attendance"), where("studentName", "==", sName));
-                if(start && end) q = query(collection(db, "student_attendance"), where("studentName", "==", sName), where("date", ">=", start), where("date", "<=", end));
+                let q = query(collection(db, "student_attendance"), where("studentId", "==", sId));
+                if(start && end) q = query(collection(db, "student_attendance"), where("studentId", "==", sId), where("date", ">=", start), where("date", "<=", end));
                 const snapshot = await getDocs(q); let totalDays = 0; let presentDays = 0; tbody.innerHTML = ''; let records = [];
                 snapshot.forEach(doc => records.push(doc.data())); records.sort((a, b) => new Date(b.date) - new Date(a.date)); 
-                if(records.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No attendance records found.</td></tr>'; return; }
+                if(records.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No records found.</td></tr>'; return; }
                 records.forEach(att => {
                     if(statusFilter !== 'All') { if(statusFilter === 'Leave' && att.status !== 'Leave' && att.status !== 'Half Day') return; if(statusFilter !== 'Leave' && att.status !== statusFilter) return; }
                     if(att.status !== 'Not Marked' && att.status !== 'Holiday') totalDays++; if(att.status === 'Present') presentDays++;
@@ -502,41 +602,50 @@
                     tbody.innerHTML += `<tr><td><strong>${att.date}</strong></td><td>${att.className}</td><td><span class="badge ${badgeClass}">${att.status}</span></td></tr>`;
                 });
                 if(totalDays > 0) { document.getElementById('statAttendance').innerText = Math.round((presentDays / totalDays) * 100) + '%'; } else { document.getElementById('statAttendance').innerText = '--%'; }
-            } catch(error) { console.error(error); tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:red;">Error loading records.</td></tr>';}
+            } catch(error) { console.error(error); }
         }
 
         window.filterClassAttendance = async function() {
             const start = document.getElementById('cAttStartDate').value; const end = document.getElementById('cAttEndDate').value;
-            const tbody = document.getElementById('classAttendanceTableBody'); tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Loading class records...</td></tr>';
+            const tbody = document.getElementById('classAttendanceTableBody'); tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Loading data...</td></tr>';
             try {
-                let q = query(collection(db, "class_attendance"), where("studentName", "==", sName));
-                if(start && end) q = query(collection(db, "class_attendance"), where("studentName", "==", sName), where("date", ">=", start), where("date", "<=", end));
+                let q = query(collection(db, "class_attendance"), where("studentId", "==", sId));
+                if(start && end) q = query(collection(db, "class_attendance"), where("studentId", "==", sId), where("date", ">=", start), where("date", "<=", end));
                 const snapshot = await getDocs(q); tbody.innerHTML = ''; let records = [];
                 snapshot.forEach(doc => records.push(doc.data())); records.sort((a, b) => new Date(b.date) - new Date(a.date));
-                if(records.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No class-specific attendance records found yet.</td></tr>'; return; }
-                records.forEach(att => { let badgeClass = 'bg-success'; if(att.status === 'Absent') badgeClass = 'bg-danger'; if(att.status === 'Leave') badgeClass = 'bg-leave'; tbody.innerHTML += `<tr><td><strong>${att.date}</strong></td><td>${att.teacherName || 'Unknown Teacher'}</td><td>${att.subject || 'N/A'}</td><td><span class="badge ${badgeClass}">${att.status}</span></td></tr>`; });
-            } catch(error) { console.error(error); tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#888;">Class attendance database not linked or empty.</td></tr>'; }
+                if(records.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No records found.</td></tr>'; return; }
+                records.forEach(att => { let badgeClass = 'bg-success'; if(att.status === 'Absent') badgeClass = 'bg-danger'; if(att.status === 'Leave') badgeClass = 'bg-leave'; tbody.innerHTML += `<tr><td><strong>${att.date}</strong></td><td>${att.teacherName}</td><td>${att.subject}</td><td><span class="badge ${badgeClass}">${att.status}</span></td></tr>`; });
+            } catch(error) { console.error(error); }
         }
 
+        // Announcement Streams
         window.loadNotices = async function() {
             const noticeDiv = document.getElementById('noticeBoardDiv'); const recentDiv = document.getElementById('recentNoticesDiv');
             try {
                 const snapshot = await getDocs(collection(db, "notices")); noticeDiv.innerHTML = ''; recentDiv.innerHTML = ''; let noticesArray = [];
                 snapshot.forEach(doc => noticesArray.push({id: doc.id, ...doc.data()})); noticesArray.sort((a, b) => new Date(b.date) - new Date(a.date));
                 const today = new Date(); let recentCount = 0;
-                if(noticesArray.length === 0) { noticeDiv.innerHTML = '<p style="text-align:center; color:#888;">No notices available.</p>'; }
+                if(noticesArray.length === 0) { noticeDiv.innerHTML = '<p style="text-align:center; color:#888;">No notices.</p>'; }
                 noticesArray.forEach((n) => { 
                     noticeDiv.innerHTML += `<div class="notice-item"><h4>${n.title} <small style="float:right; color:#777; font-size:11px;">${n.date}</small></h4><p>${n.description}</p></div>`;
                     let diffDays = Math.ceil(Math.abs(today - new Date(n.date)) / (1000 * 60 * 60 * 24));
                     if(diffDays <= 7) { recentDiv.innerHTML += `<div style="border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 8px;"><strong style="color:#d35400;">${n.title}</strong><br><small style="color:#666;">Posted: ${n.date}</small></div>`; recentCount++; }
                 });
-                if(recentCount === 0) recentDiv.innerHTML = '<p style="font-size:13px; color:#777;">No new notices in the last 7 days.</p>';
-            } catch(e) { console.error("Notices Error:", e); noticeDiv.innerHTML = '<p style="text-align:center; color:red;">Failed to load notices.</p>'; }
+                if(recentCount === 0) recentDiv.innerHTML = '<p style="font-size:13px; color:#777;">No new updates.</p>';
+            } catch(e) { console.error(e); }
         }
 
+        // Leave Requests
         window.submitLeaveRequest = async function(e) {
-            e.preventDefault(); const btn = document.getElementById('leaveBtn'); btn.innerText = "Sending Request...";
-            try { await addDoc(collection(db, "leave_requests"), { senderId: sId, senderName: sName, role: 'Student', className: sClass, date: document.getElementById('leaveDate').value, reason: document.getElementById('leaveReason').value, status: 'Pending', timestamp: new Date() }); alert("Leave request sent successfully to the Admin!"); document.getElementById('leaveForm').reset(); loadMyLeaves(); } catch(error) { alert("Error: " + error.message); } finally { btn.innerText = "Send Leave Request to Admin"; }
+            e.preventDefault(); const btn = document.getElementById('leaveBtn'); btn.innerText = "Sending...";
+            try { 
+                // Fetch section info directly
+                const sDoc = await getDoc(doc(db, "students", sId));
+                const currentSec = sDoc.exists() ? sDoc.data().section : 'All';
+                
+                await addDoc(collection(db, "leave_requests"), { senderId: sId, senderName: sName, role: 'Student', className: sClass, section: currentSec, date: document.getElementById('leaveDate').value, reason: document.getElementById('leaveReason').value, status: 'Pending', timestamp: new Date() }); 
+                alert("Leave request sent successfully!"); document.getElementById('leaveForm').reset(); loadMyLeaves(); 
+            } catch(error) { alert(error.message); } finally { btn.innerText = "Send Leave Request to Admin"; }
         }
 
         window.loadMyLeaves = async function() {
