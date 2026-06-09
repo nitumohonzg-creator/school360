@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School360 - Central Website</title>
+    <title>School360 - Central Platform</title>
     <style>
         /* CSS Styling */
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f9fbfe; color: #333; }
@@ -12,23 +12,30 @@
         .navbar h1 span { color: #3498db; }
         .nav-links { display: flex; gap: 20px; align-items: center; }
         .nav-links a { text-decoration: none; color: #2c3e50; font-weight: 500; }
-        .btn-login { border: 2px solid #3498db; padding: 8px 20px; border-radius: 5px; color: #3498db; font-weight: bold; background: white; cursor: pointer; }
-        .btn-register { background-color: #3498db; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; }
+        .btn-login { border: 2px solid #3498db; padding: 8px 20px; border-radius: 5px; color: #3498db; font-weight: bold; background: white; cursor: pointer; transition: 0.2s;}
+        .btn-login:hover { background: #3498db; color: white; }
+        .btn-register { background-color: #3498db; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; transition: 0.2s; }
+        .btn-register:hover { background: #2980b9; }
+        
         .hero { text-align: center; padding: 100px 20px; background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); color: white; }
         .hero h2 { font-size: 48px; margin-bottom: 10px; }
-        .hero p { font-size: 20px; margin-bottom: 30px; opacity: 0.9; }
+        .hero p { font-size: 20px; margin-bottom: 30px; opacity: 0.9; max-width: 700px; margin-left: auto; margin-right: auto;}
         .hero-btn { background-color: white; color: #2c3e50; padding: 15px 30px; font-size: 18px; font-weight: bold; border-radius: 30px; text-decoration: none; display: inline-block; cursor: pointer; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: 0.3s; }
-        .features { display: flex; justify-content: center; gap: 30px; padding: 60px 50px; max-width: 1200px; margin: auto; }
-        .feature-box { background: white; padding: 30px; border-radius: 10px; text-align: center; flex: 1; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-bottom: 4px solid #3498db; }
+        .hero-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+        
+        .features { display: flex; justify-content: center; gap: 30px; padding: 60px 50px; max-width: 1200px; margin: auto; flex-wrap: wrap; }
+        .feature-box { background: white; padding: 30px; border-radius: 10px; text-align: center; flex: 1; min-width: 250px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-bottom: 4px solid #3498db; }
         
         /* Modal Styling */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-box { background: white; padding: 40px; border-radius: 10px; width: 400px; position: relative; }
-        .close-btn { position: absolute; top: 15px; right: 15px; font-size: 20px; cursor: pointer; color: #888; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        .submit-btn { width: 100%; background: #3498db; color: white; border: none; padding: 12px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .modal-box { background: white; padding: 40px; border-radius: 10px; width: 100%; max-width: 450px; position: relative; box-sizing: border-box; max-height: 90vh; overflow-y: auto;}
+        .close-btn { position: absolute; top: 15px; right: 15px; font-size: 24px; cursor: pointer; color: #888; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px;}
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: inherit;}
+        .form-group small { color: #777; font-size: 12px; display: block; margin-top: 4px; }
+        .submit-btn { width: 100%; background: #3498db; color: white; border: none; padding: 14px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; transition: 0.2s;}
+        .submit-btn:hover { background: #2980b9; }
     </style>
 </head>
 <body>
@@ -36,27 +43,60 @@
     <nav class="navbar">
         <h1>School<span>360</span></h1>
         <div class="nav-links">
-            <a href="#">Home</a>
-            <button class="btn-login" onclick="openLoginModal()">Login</button>
+            <button class="btn-login" onclick="openLoginModal()">Admin Login</button>
             <button class="btn-register" onclick="openModal()">Register School</button>
         </div>
     </nav>
 
     <header class="hero">
-        <h2>Smart ERP for Modern Schools</h2>
-        <p>Ek centralized platform jahan se aap apne teachers, students aur classes ko easily manage kar sakte hain.</p>
-        <button class="hero-btn" onclick="openModal()">Start Your Free Trial</button>
+        <h2>Launch Your School's Digital Infrastructure Today</h2>
+        <p>Register your school to get a customized public website link. Manage students, staff, attendance, and fees all from one powerful centralized platform.</p>
+        <button class="hero-btn" onclick="openModal()">Create School Account</button>
     </header>
+
+    <div class="features">
+        <div class="feature-box">
+            <h3 style="color:#2c3e50;">Custom Website</h3>
+            <p style="color:#666;">Get a unique URL for your school instantly. Students and teachers log in directly from your personalized portal.</p>
+        </div>
+        <div class="feature-box">
+            <h3 style="color:#2c3e50;">Cloud ERP</h3>
+            <p style="color:#666;">Manage dynamic fee structures, staff salaries, timetables, and automated leave approvals smoothly.</p>
+        </div>
+        <div class="feature-box">
+            <h3 style="color:#2c3e50;">Smart Tracking</h3>
+            <p style="color:#666;">Detailed report cards, dual attendance tracking, and pending dues alerts powered by advanced analytics.</p>
+        </div>
+    </div>
 
     <div class="modal-overlay" id="registerModal">
         <div class="modal-box">
             <span class="close-btn" onclick="closeModal()">&times;</span>
-            <h3 style="text-align:center; margin-top:0;">Register Your School</h3>
+            <h3 style="text-align:center; margin-top:0; color:#2c3e50;">Register Your School</h3>
+            <p style="text-align:center; font-size:13px; color:#666; margin-bottom:20px;">Join School360 and get your custom portal instantly.</p>
+            
             <form id="schoolRegistrationForm" onsubmit="registerSchool(event)">
-                <div class="form-group"><label>School Name</label><input type="text" id="schoolName" required></div>
-                <div class="form-group"><label>Admin Name</label><input type="text" id="adminName" required></div>
-                <div class="form-group"><label>Admin Email</label><input type="email" id="email" required></div>
-                <div class="form-group"><label>Create Password</label><input type="password" id="password" required></div>
+                <div class="form-group">
+                    <label>School Name</label>
+                    <input type="text" id="schoolName" placeholder="E.g. Delhi Public School" required>
+                </div>
+                <div class="form-group">
+                    <label>School Unique ID (For Custom URL)</label>
+                    <input type="text" id="schoolId" placeholder="E.g. dps-delhi" required>
+                    <small>No spaces. This will be your link: .../public-site.html?school=<strong>your-id</strong></small>
+                </div>
+                <div class="form-group">
+                    <label>Admin Name</label>
+                    <input type="text" id="adminName" placeholder="Principal / Owner Name" required>
+                </div>
+                <div class="form-group">
+                    <label>Admin Email (Login ID)</label>
+                    <input type="email" id="email" placeholder="school@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Create Password</label>
+                    <input type="password" id="password" required>
+                </div>
                 <button type="submit" class="submit-btn" id="regBtn">Create School Account</button>
             </form>
         </div>
@@ -65,25 +105,19 @@
     <div class="modal-overlay" id="loginModal">
         <div class="modal-box">
             <span class="close-btn" onclick="closeLoginModal()">&times;</span>
-            <h3 style="text-align:center; margin-top:0;">Secure Login</h3>
+            <h3 style="text-align:center; margin-top:0; color:#2c3e50;">School Admin Login</h3>
+            <p style="text-align:center; font-size:13px; color:#666; margin-bottom:20px;">Teachers and Students must log in from their school's public website.</p>
+            
             <form id="schoolLoginForm" onsubmit="loginUser(event)">
-                <div class="form-group">
-                    <label>Login As (Role)</label>
-                    <select id="loginRole" required>
-                        <option value="schools">School Admin / Principal</option>
-                        <option value="teachers">Teacher</option>
-                        <option value="students">Student</option>
-                    </select>
-                </div>
-                <div class="form-group"><label>Email ID</label><input type="email" id="loginEmail" required></div>
+                <div class="form-group"><label>Admin Email ID</label><input type="email" id="loginEmail" required></div>
                 <div class="form-group"><label>Password</label><input type="password" id="loginPassword" required></div>
-                <button type="submit" class="submit-btn" id="logBtn">Login to Dashboard</button>
+                <button type="submit" class="submit-btn" id="logBtn">Login to Control Panel</button>
             </form>
         </div>
     </div>
 
     <div style="text-align: center; padding: 20px;">
-        <a href="super-admin.html" style="color: #ccc; text-decoration: none; font-size: 12px;">Super Admin</a>
+        <a href="super-admin.html" style="color: #ccc; text-decoration: none; font-size: 12px;">Super Admin Access</a>
     </div>
 
     <script type="module">
@@ -108,69 +142,81 @@
         window.openLoginModal = () => document.getElementById('loginModal').style.display = 'flex';
         window.closeLoginModal = () => document.getElementById('loginModal').style.display = 'none';
 
-        // MULTI-ROLE LOGIN LOGIC (FULLY SYNCED WITH DASHBOARDS)
+        // ONLY ADMIN LOGIN LOGIC
         window.loginUser = async function(event) {
             event.preventDefault();
-            const roleCollection = document.getElementById('loginRole').value;
             const email = document.getElementById('loginEmail').value.toLowerCase();
             const pass = document.getElementById('loginPassword').value;
             const logBtn = document.getElementById('logBtn');
-            logBtn.innerText = "Checking Credentials...";
+            logBtn.innerText = "Authenticating...";
 
             try {
-                const q = query(collection(db, roleCollection), where("email", "==", email), where("password", "==", pass));
+                // Check in "schools" collection
+                const q = query(collection(db, "schools"), where("email", "==", email), where("password", "==", pass));
                 const querySnapshot = await getDocs(q);
 
                 if (!querySnapshot.empty) {
                     const userDoc = querySnapshot.docs[0];
                     const userData = userDoc.data();
                     
-                    // Clear previous session completely before setting new one
                     localStorage.clear();
-                    
-                    // Basic details
-                    localStorage.setItem("userRole", roleCollection);
+                    localStorage.setItem("userRole", "schools");
                     localStorage.setItem("userEmail", email);
+                    localStorage.setItem("activeSchoolId", userData.schoolId); // The unique SaaS ID
+                    localStorage.setItem("schoolName", userData.schoolName);
                     
-                    // Role-specific routing and data saving
-                    if(roleCollection === "students") {
-                        localStorage.setItem("studentName", userData.name);
-                        localStorage.setItem("studentClass", userData.className);
-                        localStorage.setItem("studentId", userDoc.id);
-                        window.location.href = "Student-dashboard.html"; // Ensure casing matches your repo files exactly!
-                    } 
-                    else if (roleCollection === "teachers") {
-                        localStorage.setItem("teacherName", userData.name);
-                        localStorage.setItem("teacherId", userDoc.id);
-                        window.location.href = "Teacher-dashboard.html";
-                    } 
-                    else if (roleCollection === "schools") {
-                        window.location.href = "index.html";
-                    }
+                    // Redirect to Admin Panel
+                    window.location.href = "index.html"; 
                     
                 } else {
-                    alert("Galat Email ya Password! Ya phir aapne galat Role select kiya hai.");
-                    logBtn.innerText = "Login to Dashboard";
+                    alert("Invalid Admin Email or Password!");
+                    logBtn.innerText = "Login to Control Panel";
                 }
             } catch (error) {
                 alert("Error: " + error.message);
-                logBtn.innerText = "Login to Dashboard";
+                logBtn.innerText = "Login to Control Panel";
             }
         }
         
-        // Register Admin Logic
+        // REGISTER NEW SCHOOL (SaaS MODEL)
         window.registerSchool = async function(event) {
             event.preventDefault(); 
             const school = document.getElementById('schoolName').value;
             const admin = document.getElementById('adminName').value;
             const email = document.getElementById('email').value.toLowerCase();
             const password = document.getElementById('password').value; 
+            
+            // Format ID: lowercase, replace spaces with hyphens, remove special chars
+            let rawId = document.getElementById('schoolId').value;
+            const formattedSchoolId = rawId.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/\s+/g, '-');
+            
             const submitBtn = document.getElementById('regBtn');
-            submitBtn.innerText = "Please Wait...";
+            submitBtn.innerText = "Creating Infrastructure...";
 
             try {
-                await addDoc(collection(db, "schools"), { schoolName: school, adminName: admin, email: email, password: password, dateRegistered: new Date() });
-                alert(`Success! Aapka account ban chuka hai. Ab aap login kar sakte hain.`);
+                // Check if School ID already exists (Basic safeguard)
+                const q = query(collection(db, "schools"), where("schoolId", "==", formattedSchoolId));
+                const snap = await getDocs(q);
+                
+                if(!snap.empty) {
+                    alert("This School Unique ID is already taken. Please choose another one.");
+                    submitBtn.innerText = "Create School Account";
+                    return;
+                }
+
+                await addDoc(collection(db, "schools"), { 
+                    schoolName: school, 
+                    schoolId: formattedSchoolId, 
+                    adminName: admin, 
+                    email: email, 
+                    password: password, 
+                    dateRegistered: new Date() 
+                });
+                
+                const customLink = `${window.location.origin}/public-site.html?school=${formattedSchoolId}`;
+                
+                alert(`Success! Your school is registered.\n\nYour Custom Website Link for Students/Teachers is:\n${customLink}\n\nYou can now log in as Admin.`);
+                
                 document.getElementById('schoolRegistrationForm').reset();
                 window.closeModal();
                 submitBtn.innerText = "Create School Account";
