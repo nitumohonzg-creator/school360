@@ -907,6 +907,9 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // GLOBAL VARIABLE FOR CLASSES (Bug fix)
+        window.schoolClassesData = {};
+
         // ==========================================
         // 1. SAAS SECURITY & INIT
         // ==========================================
@@ -968,7 +971,6 @@
         // 3. ADD DATA (SAVE WITH SCHOOL ID TAG)
         // ==========================================
 
-        // --- Save Class ---
         window.addClass = async function(event) {
             event.preventDefault();
             try {
@@ -983,7 +985,6 @@
             } catch(e) { alert("Error: " + e.message); }
         }
 
-        // --- Save Student ---
         window.saveStudent = async function(event) {
             event.preventDefault();
             const btn = document.getElementById('sBtn');
@@ -1008,7 +1009,6 @@
             btn.innerText = "💾 Save Student Record";
         }
 
-        // --- Save Teacher ---
         window.saveTeacher = async function(event) {
             event.preventDefault();
             const btn = document.getElementById('tBtn');
@@ -1032,7 +1032,6 @@
             btn.innerText = "💾 Save Teacher Record";
         }
 
-        // --- Save Staff ---
         window.saveStaff = async function(event) {
             event.preventDefault();
             try {
@@ -1050,6 +1049,31 @@
         }
 
         // ==========================================
+        // DYNAMIC SECTIONS FIX
+        // ==========================================
+        window.updateDynamicSections = function(classDropdownId, sectionDropdownId) {
+            const selectedClass = document.getElementById(classDropdownId).value;
+            const sectionDropdown = document.getElementById(sectionDropdownId);
+            
+            sectionDropdown.innerHTML = '<option value="">--Select Section--</option>';
+
+            if (selectedClass && window.schoolClassesData[selectedClass]) {
+                const sections = window.schoolClassesData[selectedClass].split(',');
+                
+                sections.forEach(sec => {
+                    const cleanSec = sec.trim();
+                    if (cleanSec && cleanSec.toLowerCase() !== 'n/a') {
+                        sectionDropdown.innerHTML += `<option value="${cleanSec}">${cleanSec}</option>`;
+                    }
+                });
+                
+                if (sectionDropdown.options.length === 1) {
+                    sectionDropdown.innerHTML += `<option value="A">A</option><option value="N/A">N/A</option>`;
+                }
+            }
+        }
+
+        // ==========================================
         // 4. LOAD DATA (FILTER BY SCHOOL ID)
         // ==========================================
 
@@ -1059,15 +1083,17 @@
                 const snap = await getDocs(q);
                 let tableHtml = "", dropdownHtml = "<option value=''>Select Class</option>";
                 
+                window.schoolClassesData = {}; 
+                
                 snap.forEach(doc => {
                     const data = doc.data();
+                    window.schoolClassesData[data.className] = data.sections; 
                     tableHtml += `<tr><td>${data.className}</td><td>${data.sections}</td><td><button class='btn btn-danger'>Del</button></td></tr>`;
                     dropdownHtml += `<option value="${data.className}">${data.className}</option>`;
                 });
                 
                 document.getElementById('classesTableBody').innerHTML = tableHtml || "<tr><td colspan='3'>No classes found.</td></tr>";
                 
-                // Update dropdowns
                 document.querySelectorAll('.dynamic-class-dropdown').forEach(select => {
                     select.innerHTML = dropdownHtml;
                 });
@@ -1196,6 +1222,21 @@
             } catch(e) { alert("Error: " + e.message); }
             btn.innerText = "🌍 Publish to Public Website";
         }
+
+        // ==========================================
+        // PLACEHOLDER FUNCTIONS FOR MISSING UI BUTTONS
+        // ==========================================
+        window.renderStudents = () => {};
+        window.saveDynamicFeeStructure = (e) => { e.preventDefault(); alert("Fees module coming soon!"); };
+        window.addFeeRow = () => {};
+        window.addExtraExpense = (e) => { e.preventDefault(); };
+        window.loadGlobalAttendance = () => {};
+        window.saveGlobalAttendance = () => {};
+        window.addTimetable = (e) => { e.preventDefault(); };
+        window.loadTimetableAdmin = () => {};
+        window.addNotice = (e) => { e.preventDefault(); alert("Notice feature coming soon!"); document.getElementById('noticeModal').style.display='none';};
+        window.calculateAcademicYear = () => {};
+        window.saveSchoolSettings = (e) => { e.preventDefault(); };
 
     </script>
 
