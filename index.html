@@ -891,692 +891,280 @@
             </form>
         </div>
     </div>
-
-    <script type="module">
+        <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, getDoc, doc, setDoc, updateDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, query, where, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // Your Firebase Configuration
-        const firebaseConfig = { 
-            apiKey: "AIzaSyDg4HlG4M9lgqYSjV-fdqKacN94QNgfvOY", 
-            authDomain: "school360-9c832.firebaseapp.com", 
-            projectId: "school360-9c832" 
+        const firebaseConfig = {
+            apiKey: "AIzaSyDg4HlG4M9lgqYSjV-fdqKacN94QNgfvOY",
+            authDomain: "school360-9c832.firebaseapp.com",
+            projectId: "school360-9c832",
+            storageBucket: "school360-9c832.firebasestorage.app",
+            messagingSenderId: "923777949473",
+            appId: "1:923777949473:web:f90a784d9d5609a1616860"
         };
+
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Global Variables
-        window.allStudentsList = []; 
-        window.allTeachersList = []; 
-        window.allStaffList = []; 
-        window.classesList = []; 
-        window.feeStructureMap = {};
-        window.academicStartMonth = 3; // Default to April
+        // ==========================================
+        // 1. SAAS SECURITY & INIT
+        // ==========================================
+        const activeSchoolId = localStorage.getItem("activeSchoolId");
+        const userRole = localStorage.getItem("userRole");
 
-        // ---------------------------------------------------------
-        // INITIALIZATION
-        // ---------------------------------------------------------
-        window.onload = async () => {
-            const todayStr = new Date().toISOString().split('T')[0];
-            document.getElementById('attDateGlobal').value = todayStr;
-            document.getElementById('expDate').value = todayStr;
-            document.getElementById('nDate').value = todayStr;
-            
-            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            document.getElementById('feeMonthFilter').value = monthNames[new Date().getMonth()];
-
-            try {
-                await loadSettings();
-                await fetchDynamicClasses(); 
-                await loadFeeStructures();
-                
-                await loadDashboardStats(); 
-                await loadStudents(); 
-                await loadHR(); 
-                await loadFinanceDashboard();
-                loadNotices();
-                loadTimetableAdmin();
-                loadPendingExams();
-                loadLeaveRequests();
-                await loadWebsiteProfile();
-            } catch(e) { console.error("Load Error:", e); }
+        if (!activeSchoolId || userRole !== "schools") {
+            alert("Security Alert: Session expired. Please login again.");
+            window.location.href = "main-website.html"; 
         }
 
-        // ---------------------------------------------------------
-        // UI & NAVIGATION
-        // ---------------------------------------------------------
+        window.onload = () => {
+            const sName = localStorage.getItem("schoolName");
+            if(sName) {
+                document.getElementById("sidebarSchoolName").innerHTML = `${sName}`;
+                document.getElementById("mobileSchoolName").innerHTML = `${sName}`;
+            }
+            loadClasses();
+            loadStudents();
+            loadTeachers();
+        };
+
+        // ==========================================
+        // 2. UI CONTROL FUNCTIONS (TABS & MODALS)
+        // ==========================================
+        window.toggleSidebar = () => {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.querySelector('.sidebar-overlay').classList.toggle('active');
+        };
+
         window.switchTab = (tabId) => {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active-link'));
-            
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.sidebar a').forEach(el => el.classList.remove('active-link'));
             document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active-link');
-            
-            if(window.innerWidth <= 850) { 
-                document.querySelector('.sidebar').classList.remove('active'); 
-                document.querySelector('.sidebar-overlay').classList.remove('active'); 
-            }
-            
-            // Reload specifics
-            if(tabId === 'leaveReqSec') loadLeaveRequests();
-            if(tabId === 'examApprovalSec') loadPendingExams();
-            if(tabId === 'financeSec') loadFinanceDashboard();
-            if(tabId === 'hrSec') loadHR();
-            if(tabId === 'websiteSec') loadWebsiteProfile();
-        }
+            document.getElementById('nav-' + tabId).classList.add('active-link');
+            if(window.innerWidth <= 850) toggleSidebar(); // Close sidebar on mobile
+        };
 
-        window.toggleSidebar = () => { 
-            document.querySelector('.sidebar').classList.toggle('active'); 
-            document.querySelector('.sidebar-overlay').classList.toggle('active'); 
-        }
+        window.openStudentModal = () => document.getElementById('studentModal').style.display='flex';
+        window.openTeacherModal = () => document.getElementById('teacherModal').style.display='flex';
+        window.openStaffModal = () => document.getElementById('staffModal').style.display='flex';
 
-        window.secureLogout = () => { localStorage.clear(); window.location.href = "main-website.html"; }
-
-        // ---------------------------------------------------------
-        // 1. DASHBOARD & SETTINGS
-        // ---------------------------------------------------------
-        window.loadDashboardStats = async () => {
-            try {
-                const tSnap = await getDocs(collection(db, "teachers")); document.getElementById('dashTeachersCount').innerText = tSnap.size;
-                const sSnap = await getDocs(collection(db, "students")); document.getElementById('dashStudentsCount').innerText = sSnap.size;
-                const stSnap = await getDocs(collection(db, "staff")); document.getElementById('dashStaffCount').innerText = stSnap.size;
-                const lSnap = await getDocs(query(collection(db, "leave_requests"), where("status", "==", "Pending"))); document.getElementById('dashPendingLeaves').innerText = lSnap.size;
-            } catch(e) { console.error(e); }
-        }
-
-        window.loadSettings = async () => {
-            try {
-                const docSnap = await getDoc(doc(db, "settings", "general"));
-                if(docSnap.exists()) {
-                    const data = docSnap.data();
-                    document.getElementById('sidebarSchoolName').innerHTML = `<span>${data.schoolName || "School360"}</span>`;
-                    document.getElementById('mobileSchoolName').innerHTML = `<span>${data.schoolName || "School360"}</span>`;
-                    document.getElementById('setSchoolName').value = data.schoolName || "";
-                    document.getElementById('setStartDate').value = data.academicStart || "";
-                    document.getElementById('setEndDate').value = data.academicEnd || "";
-                    document.getElementById('setAcadYear').value = data.academicYear || "";
-                    if(data.academicStart) window.academicStartMonth = new Date(data.academicStart).getMonth();
-                }
-            } catch(e) { console.error(e); }
-        }
-
-        window.calculateAcademicYear = () => {
-            const start = document.getElementById('setStartDate').value; const end = document.getElementById('setEndDate').value;
-            if(start && end) {
-                const sYear = new Date(start).getFullYear(); const eYear = new Date(end).getFullYear();
-                document.getElementById('setAcadYear').value = sYear === eYear ? sYear : `${sYear}-${eYear.toString().slice(-2)}`;
-            }
-        }
-
-        window.saveSchoolSettings = async (e) => {
-            e.preventDefault(); 
-            const btn = document.getElementById('setSaveBtn'); btn.innerText = "Saving...";
-            try {
-                await setDoc(doc(db, "settings", "general"), { schoolName: document.getElementById('setSchoolName').value, academicStart: document.getElementById('setStartDate').value, academicEnd: document.getElementById('setEndDate').value, academicYear: document.getElementById('setAcadYear').value });
-                alert("Settings Saved!"); loadSettings();
-            } catch(e) { alert(e.message); } finally { btn.innerText = "Save Global Settings"; }
-        }
-
-        // ---------------------------------------------------------
-        // 2. DYNAMIC CLASSES & SECTIONS
-        // ---------------------------------------------------------
-        window.fetchDynamicClasses = async () => {
-            try {
-                const snap = await getDocs(collection(db, "classes"));
-                window.classesList = []; snap.forEach(doc => window.classesList.push({ id: doc.id, ...doc.data() }));
-                
-                const tbody = document.getElementById('classesTableBody'); tbody.innerHTML = '';
-                window.classesList.forEach(c => { tbody.innerHTML += `<tr><td><strong>${c.className}</strong></td><td>${c.sections.join(', ')}</td><td><button class="btn btn-danger" onclick="deleteRecord('classes', '${c.id}')">Del</button></td></tr>`; });
-                
-                document.querySelectorAll('.dynamic-class-dropdown').forEach(dd => {
-                    let html = dd.id.includes('Filter') ? '<option value="All">All Classes</option>' : '<option value="">-- Select Class --</option>';
-                    window.classesList.forEach(c => { html += `<option value="${c.className}">${c.className}</option>`; });
-                    dd.innerHTML = html;
-                });
-            } catch(e) { console.error(e); }
-        }
-
-        window.addClass = async (e) => {
-            e.preventDefault(); 
-            const btn = document.getElementById('addClassBtn'); btn.innerText = "Creating...";
-            try {
-                const cName = document.getElementById('newClassName').value.trim();
-                const cSec = document.getElementById('newClassSections').value.trim().split(',').map(s => s.trim());
-                await addDoc(collection(db, "classes"), { className: cName, sections: cSec, timestamp: new Date() });
-                alert("Class added!"); document.getElementById('newClassName').value=''; document.getElementById('newClassSections').value=''; fetchDynamicClasses();
-            } catch(e) { alert(e.message); } finally { btn.innerText = "Create Class"; }
-        }
-
-        window.updateDynamicSections = (clsId, secId) => {
-            const clsVal = document.getElementById(clsId).value;
-            const secDropdown = document.getElementById(secId);
-            secDropdown.innerHTML = secId.includes('Filter') ? '<option value="All">All Sections</option>' : '<option value="">-- Select Section --</option>';
-            
-            if(!clsVal || clsVal === 'All') return;
-            
-            const cObj = window.classesList.find(c => c.className === clsVal);
-            if(cObj && cObj.sections) {
-                cObj.sections.forEach(s => {
-                    if(s && s !== 'N/A' && s.trim() !== '') {
-                        secDropdown.innerHTML += `<option value="${s.trim()}">${s.trim()}</option>`;
-                    }
-                });
-                if(!secId.includes('Filter')) secDropdown.innerHTML += '<option value="N/A">N/A</option>';
-            }
-        }
-
-        // ---------------------------------------------------------
-        // 3. FINANCE & DYNAMIC FEES
-        // ---------------------------------------------------------
-        window.addFeeRow = () => {
-            const container = document.getElementById('dynamicFeeContainer');
-            const row = document.createElement('div'); row.className = 'grid-2 fee-input-row'; row.style.alignItems = 'end'; row.style.marginBottom = '10px';
-            row.innerHTML = `
-                <div class="form-group" style="margin:0;"><input type="text" class="fee-head-name" placeholder="Fee Name (e.g. Bus Fee)" required></div>
-                <div class="form-group" style="margin:0;"><div style="display:flex; gap:10px;"><input type="number" class="fee-head-amount" required><button type="button" class="btn btn-danger" onclick="this.parentElement.parentElement.parentElement.remove()">X</button></div></div>
-            `;
-            container.appendChild(row);
-        }
-
-        window.saveDynamicFeeStructure = async (e) => {
-            e.preventDefault();
-            const cls = document.getElementById('feeStructClass').value;
-            if(!cls) return alert("Select Class!");
-            
-            const rows = document.querySelectorAll('.fee-input-row');
-            let feeDetails = []; let total = 0;
-            
-            rows.forEach(r => {
-                const name = r.querySelector('.fee-head-name').value;
-                const amt = parseInt(r.querySelector('.fee-head-amount').value) || 0;
-                feeDetails.push({ name: name, amount: amt });
-                total += amt;
-            });
-
-            try {
-                await setDoc(doc(db, "fee_structures", cls), { breakdown: feeDetails, total: total, updatedAt: new Date() });
-                alert("Fee Structure Saved!"); loadFeeStructures(); loadFinanceDashboard();
-            } catch(e) { alert(e.message); }
-        }
-
-        window.loadFeeStructures = async () => {
-            try {
-                const snap = await getDocs(collection(db, "fee_structures"));
-                window.feeStructureMap = {};
-                const tbody = document.getElementById('feeStructBody'); tbody.innerHTML = '';
-                if(snap.empty) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No fee structures.</td></tr>'; return; }
-                snap.forEach(doc => {
-                    const data = doc.data(); window.feeStructureMap[doc.id] = data;
-                    let breakdownHTML = data.breakdown.map(f => `${f.name}: ₹${f.amount}`).join('<br>');
-                    tbody.innerHTML += `<tr><td><strong>${doc.id}</strong></td><td><small>${breakdownHTML}</small></td><td><strong>₹${data.total}</strong></td><td><button class="btn btn-danger" onclick="deleteRecord('fee_structures', '${doc.id}')">Clear</button></td></tr>`;
-                });
-            } catch(e) { console.error(e); }
-        }
-
-        window.addExtraExpense = async (e) => {
-            e.preventDefault(); 
-            try {
-                await addDoc(collection(db, "expenses"), { date: document.getElementById('expDate').value, detail: document.getElementById('expDetail').value, amount: parseInt(document.getElementById('expAmount').value), timestamp: new Date() });
-                alert("Expense logged!"); document.getElementById('expDetail').value=''; document.getElementById('expAmount').value=''; loadFinanceDashboard();
-            } catch(e) { alert(e.message); }
-        }
-
-        window.loadFinanceDashboard = async () => {
-            let totalIncome = 0; let totalExpense = 0;
-            try {
-                const sSnap = await getDocs(collection(db, "students"));
-                sSnap.forEach(doc => { const s = doc.data(); const feeRec = s.feeRecords || {}; const cFee = window.feeStructureMap[s.className] ? window.feeStructureMap[s.className].total : 0; totalIncome += (Object.keys(feeRec).length * cFee); });
-                
-                const expSnap = await getDocs(collection(db, "expenses")); const tbody = document.getElementById('expensesBody'); tbody.innerHTML = '';
-                expSnap.forEach(doc => { const e = doc.data(); totalExpense += e.amount; tbody.innerHTML += `<tr><td>${e.date}</td><td>${e.detail}</td><td>₹${e.amount}</td><td><button class="btn btn-danger" onclick="deleteRecord('expenses', '${doc.id}')">Del</button></td></tr>`; });
-                if(expSnap.empty) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No expenses.</td></tr>';
-
-                const salSnap = await getDocs(collection(db, "salary_payments")); salSnap.forEach(doc => { totalExpense += doc.data().amount; });
-
-                document.getElementById('finTotalIncome').innerText = `₹ ${totalIncome}`; document.getElementById('finTotalExpense').innerText = `₹ ${totalExpense}`; document.getElementById('finNetBalance').innerText = `₹ ${totalIncome - totalExpense}`;
-            } catch(e) { console.error(e); }
-        }
-
-        // ---------------------------------------------------------
-        // 4. HR MANAGEMENT (WITH ADDRESS, PHONE, AND EDIT)
-        // ---------------------------------------------------------
         window.copyAddress = (prefix) => {
-            if(document.getElementById(prefix + 'SameAddress').checked) {
-                document.getElementById(prefix + 'PresVill').value = document.getElementById(prefix + 'PermVill').value; document.getElementById(prefix + 'PresPO').value = document.getElementById(prefix + 'PermPO').value; document.getElementById(prefix + 'PresDist').value = document.getElementById(prefix + 'PermDist').value; document.getElementById(prefix + 'PresState').value = document.getElementById(prefix + 'PermState').value; document.getElementById(prefix + 'PresPin').value = document.getElementById(prefix + 'PermPin').value;
-            } else { document.getElementById(prefix + 'PresVill').value = ''; document.getElementById(prefix + 'PresPO').value = ''; document.getElementById(prefix + 'PresDist').value = ''; document.getElementById(prefix + 'PresState').value = ''; document.getElementById(prefix + 'PresPin').value = ''; }
-        }
-
-        window.openTeacherModal = () => {
-            document.getElementById('tModalTitle').innerText = "👨‍🏫 Register New Teacher";
-            document.getElementById('tIdHidden').value = '';
-            document.getElementById('tPassGroup').style.display = 'block';
-            document.getElementById('tPassword').required = true;
-            document.getElementById('teacherModal').style.display='flex';
-            // Clear fields usually handled by form reset if needed
-        }
-
-        window.openStaffModal = () => {
-            document.getElementById('stModalTitle').innerText = "👨‍💼 Register New Staff";
-            document.getElementById('stIdHidden').value = '';
-            document.getElementById('staffModal').style.display='flex';
-        }
-
-        window.openEditTeacher = (id) => {
-            const t = window.allTeachersList.find(x => x.id === id);
-            if(t) {
-                document.getElementById('tModalTitle').innerText = "✏️ Edit Teacher Details";
-                document.getElementById('tIdHidden').value = t.id;
-                document.getElementById('tName').value = t.name || '';
-                document.getElementById('tDob').value = t.dob || '';
-                document.getElementById('tSubject').value = t.subject || '';
-                document.getElementById('tSalary').value = t.salary || '';
-                document.getElementById('tMobile').value = t.mobile || '';
-                document.getElementById('tFather').value = t.fatherName || '';
-                document.getElementById('tMother').value = t.motherName || '';
-                document.getElementById('tEmail').value = t.email || '';
-                
-                document.getElementById('tPassGroup').style.display = 'none';
-                document.getElementById('tPassword').required = false;
-
-                if(t.permAddress) { document.getElementById('tPermVill').value = t.permAddress.vill||''; document.getElementById('tPermPO').value = t.permAddress.po||''; document.getElementById('tPermDist').value = t.permAddress.dist||''; document.getElementById('tPermState').value = t.permAddress.state||''; document.getElementById('tPermPin').value = t.permAddress.pin||''; }
-                if(t.presAddress) { document.getElementById('tPresVill').value = t.presAddress.vill||''; document.getElementById('tPresPO').value = t.presAddress.po||''; document.getElementById('tPresDist').value = t.presAddress.dist||''; document.getElementById('tPresState').value = t.presAddress.state||''; document.getElementById('tPresPin').value = t.presAddress.pin||''; }
-
-                document.getElementById('teacherModal').style.display='flex'; 
+            if(document.getElementById(prefix+'SameAddress').checked) {
+                document.getElementById(prefix+'PresVill').value = document.getElementById(prefix+'PermVill').value;
+                document.getElementById(prefix+'PresPO').value = document.getElementById(prefix+'PermPO').value;
+                document.getElementById(prefix+'PresDist').value = document.getElementById(prefix+'PermDist').value;
+                document.getElementById(prefix+'PresState').value = document.getElementById(prefix+'PermState').value;
+                document.getElementById(prefix+'PresPin').value = document.getElementById(prefix+'PermPin').value;
             }
-        }
+        };
 
-        window.openEditStaff = (id) => {
-            const s = window.allStaffList.find(x => x.id === id);
-            if(s) {
-                document.getElementById('stModalTitle').innerText = "✏️ Edit Staff Details";
-                document.getElementById('stIdHidden').value = s.id;
-                document.getElementById('stName').value = s.name || '';
-                document.getElementById('stDob').value = s.dob || '';
-                document.getElementById('stRole').value = s.role || '';
-                document.getElementById('stSalary').value = s.salary || '';
-                document.getElementById('stMobile').value = s.mobile || '';
-                document.getElementById('stFather').value = s.fatherName || '';
-                document.getElementById('stMother').value = s.motherName || '';
-                
-                if(s.permAddress) { document.getElementById('stPermVill').value = s.permAddress.vill||''; document.getElementById('stPermPO').value = s.permAddress.po||''; document.getElementById('stPermDist').value = s.permAddress.dist||''; document.getElementById('stPermState').value = s.permAddress.state||''; document.getElementById('stPermPin').value = s.permAddress.pin||''; }
-                if(s.presAddress) { document.getElementById('stPresVill').value = s.presAddress.vill||''; document.getElementById('stPresPO').value = s.presAddress.po||''; document.getElementById('stPresDist').value = s.presAddress.dist||''; document.getElementById('stPresState').value = s.presAddress.state||''; document.getElementById('stPresPin').value = s.presAddress.pin||''; }
+        window.secureLogout = () => {
+            localStorage.clear();
+            window.location.href = "main-website.html";
+        };
 
-                document.getElementById('staffModal').style.display='flex'; 
-            }
-        }
+        // ==========================================
+        // 3. ADD DATA (SAVE WITH SCHOOL ID TAG)
+        // ==========================================
 
-        window.saveTeacher = async (e) => {
-            e.preventDefault(); const btn = document.getElementById('tBtn'); btn.innerText = "Saving...";
-            const id = document.getElementById('tIdHidden').value;
-            
-            let dataObj = { 
-                name: document.getElementById('tName').value, subject: document.getElementById('tSubject').value, salary: parseInt(document.getElementById('tSalary').value), dob: document.getElementById('tDob').value, mobile: document.getElementById('tMobile').value, email: document.getElementById('tEmail').value, fatherName: document.getElementById('tFather').value, motherName: document.getElementById('tMother').value,
-                permAddress: { vill: document.getElementById('tPermVill').value, po: document.getElementById('tPermPO').value, dist: document.getElementById('tPermDist').value, state: document.getElementById('tPermState').value, pin: document.getElementById('tPermPin').value },
-                presAddress: { vill: document.getElementById('tPresVill').value, po: document.getElementById('tPresPO').value, dist: document.getElementById('tPresDist').value, state: document.getElementById('tPresState').value, pin: document.getElementById('tPresPin').value }
-            };
-
-            try { 
-                if(id) { await updateDoc(doc(db, "teachers", id), dataObj); alert("Teacher Updated!"); } 
-                else { dataObj.password = document.getElementById('tPassword').value; dataObj.timestamp = new Date(); await addDoc(collection(db, "teachers"), dataObj); alert("Teacher Added!"); }
-                document.getElementById('teacherModal').style.display='none'; loadHR(); 
-            } catch(err) { alert(err.message); } finally { btn.innerText = "Save Teacher Record"; }
-        }
-
-        window.saveStaff = async (e) => {
-            e.preventDefault(); const btn = document.getElementById('stBtn'); btn.innerText = "Saving...";
-            const id = document.getElementById('stIdHidden').value;
-            
-            let dataObj = { 
-                name: document.getElementById('stName').value, role: document.getElementById('stRole').value, salary: parseInt(document.getElementById('stSalary').value), dob: document.getElementById('stDob').value, mobile: document.getElementById('stMobile').value, fatherName: document.getElementById('stFather').value, motherName: document.getElementById('stMother').value,
-                permAddress: { vill: document.getElementById('stPermVill').value, po: document.getElementById('stPermPO').value, dist: document.getElementById('stPermDist').value, state: document.getElementById('stPermState').value, pin: document.getElementById('stPermPin').value },
-                presAddress: { vill: document.getElementById('stPresVill').value, po: document.getElementById('stPresPO').value, dist: document.getElementById('stPresDist').value, state: document.getElementById('stPresState').value, pin: document.getElementById('stPresPin').value }
-            };
-
-            try { 
-                if(id) { await updateDoc(doc(db, "staff", id), dataObj); alert("Staff Updated!"); } 
-                else { dataObj.timestamp = new Date(); await addDoc(collection(db, "staff"), dataObj); alert("Staff Added!"); }
-                document.getElementById('staffModal').style.display='none'; loadHR(); 
-            } catch(err) { alert(err.message); } finally { btn.innerText = "Save Staff Record"; }
-        }
-
-        window.paySalary = async (type, id, name, amount) => {
-            const month = prompt(`Enter month to mark ${name}'s salary as paid (e.g. Jan 2026):`);
-            if(month) { 
-                try {
-                    await addDoc(collection(db, "salary_payments"), { type, userId: id, name, amount: parseInt(amount), month, timestamp: new Date() }); 
-                    alert("Salary Paid!"); loadHR(); loadFinanceDashboard(); 
-                } catch(e) { alert(e.message); }
-            }
-        }
-
-        window.loadHR = async () => {
+        // --- Save Class ---
+        window.addClass = async function(event) {
+            event.preventDefault();
             try {
-                const salSnap = await getDocs(collection(db, "salary_payments"));
-                let payments = []; salSnap.forEach(d => payments.push(d.data()));
-                payments.sort((a,b) => b.timestamp - a.timestamp); 
-                let lastPaidMap = {}; payments.forEach(p => { if(!lastPaidMap[p.userId]) lastPaidMap[p.userId] = p.month; });
-
-                const tSnap = await getDocs(collection(db, "teachers")); const tBody = document.getElementById('teacherTableBody'); tBody.innerHTML = '';
-                window.allTeachersList = []; document.getElementById('dashTeachersCount').innerText = tSnap.size;
-                if(tSnap.empty) { tBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No teachers found.</td></tr>'; }
-                else {
-                    tSnap.forEach(doc => { 
-                        const t = doc.data(); t.id = doc.id; window.allTeachersList.push(t);
-                        let lp = lastPaidMap[doc.id] || '<span style="color:#e74c3c; font-size:12px;">Never</span>';
-                        tBody.innerHTML += `<tr>
-                            <td><strong>${t.name}</strong><br><small>📞 ${t.mobile||'N/A'}</small><br><small>✉️ ${t.email}</small></td>
-                            <td>${t.subject}</td><td>₹${t.salary||0}</td><td><strong>${lp}</strong></td>
-                            <td>
-                                <button class="btn btn-success" style="margin-bottom:5px; width:100%;" onclick="paySalary('Teacher', '${doc.id}', '${t.name}', '${t.salary||0}')">Pay Salary</button>
-                                <button class="btn btn-warning" style="margin-bottom:5px; width:100%;" onclick="openEditTeacher('${doc.id}')">Edit Profile</button>
-                                <button class="btn btn-danger" style="width:100%;" onclick="deleteRecord('teachers', '${doc.id}')">Del</button>
-                            </td>
-                        </tr>`; 
-                    });
-                }
-                
-                const stSnap = await getDocs(collection(db, "staff")); const stBody = document.getElementById('staffTableBody'); stBody.innerHTML = '';
-                window.allStaffList = []; document.getElementById('dashStaffCount').innerText = stSnap.size;
-                if(stSnap.empty) { stBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No staff found.</td></tr>'; }
-                else {
-                    stSnap.forEach(doc => { 
-                        const s = doc.data(); s.id = doc.id; window.allStaffList.push(s);
-                        let lp = lastPaidMap[doc.id] || '<span style="color:#e74c3c; font-size:12px;">Never</span>';
-                        stBody.innerHTML += `<tr>
-                            <td><strong>${s.name}</strong><br><small>📞 ${s.mobile||'N/A'}</small></td>
-                            <td>${s.role}</td><td>₹${s.salary||0}</td><td><strong>${lp}</strong></td>
-                            <td>
-                                <button class="btn btn-success" style="margin-bottom:5px; width:100%;" onclick="paySalary('Staff', '${doc.id}', '${s.name}', '${s.salary||0}')">Pay Salary</button>
-                                <button class="btn btn-info" style="margin-bottom:5px; width:100%;" onclick="openEditStaff('${doc.id}')">Edit Profile</button>
-                                <button class="btn btn-danger" style="width:100%;" onclick="deleteRecord('staff', '${doc.id}')">Del</button>
-                            </td>
-                        </tr>`; 
-                    });
-                }
-            } catch(error) { console.error("HR Load Error:", error); }
-        }
-
-        // ---------------------------------------------------------
-        // 5. STUDENT DB 
-        // ---------------------------------------------------------
-        window.openStudentModal = () => { 
-            document.getElementById('sModalTitle').innerText = "🎓 Complete Student Registration";
-            document.getElementById('sIdHidden').value = '';
-            document.getElementById('sPassGroup').style.display = 'block';
-            document.getElementById('sPassword').required = true;
-            document.getElementById('studentModal').style.display='flex'; 
-        }
-
-        window.openEditStudent = (id) => {
-            const s = window.allStudentsList.find(x => x.id === id);
-            if(s) {
-                document.getElementById('sModalTitle').innerText = "✏️ Edit Student Details";
-                document.getElementById('sIdHidden').value = s.id;
-                document.getElementById('sName').value = s.name || '';
-                document.getElementById('sDob').value = s.dob || '';
-                document.getElementById('sClass').value = s.className || '';
-                
-                // Populate section based on class
-                updateDynamicSections('sClass', 'sSection');
-                // Timeout to let dropdown populate
-                setTimeout(() => { document.getElementById('sSection').value = s.section || ''; }, 100);
-                
-                document.getElementById('sRoll').value = s.rollNumber || '';
-                document.getElementById('sFather').value = s.fatherName || '';
-                document.getElementById('sMother').value = s.motherName || '';
-                document.getElementById('sMobile').value = s.mobile || '';
-                document.getElementById('sEmail').value = s.email || '';
-                
-                document.getElementById('sPassGroup').style.display = 'none';
-                document.getElementById('sPassword').required = false;
-
-                if(s.permAddress) { document.getElementById('sPermVill').value = s.permAddress.vill||''; document.getElementById('sPermPO').value = s.permAddress.po||''; document.getElementById('sPermDist').value = s.permAddress.dist||''; document.getElementById('sPermState').value = s.permAddress.state||''; document.getElementById('sPermPin').value = s.permAddress.pin||''; }
-                if(s.presAddress) { document.getElementById('sPresVill').value = s.presAddress.vill||''; document.getElementById('sPresPO').value = s.presAddress.po||''; document.getElementById('sPresDist').value = s.presAddress.dist||''; document.getElementById('sPresState').value = s.presAddress.state||''; document.getElementById('sPresPin').value = s.presAddress.pin||''; }
-
-                document.getElementById('studentModal').style.display='flex'; 
-            }
-        }
-
-        window.saveStudent = async (e) => {
-            e.preventDefault(); 
-            const btn = document.getElementById('sBtn'); btn.innerText = "Saving...";
-            const id = document.getElementById('sIdHidden').value;
-
-            let dataObj = { 
-                name: document.getElementById('sName').value, className: document.getElementById('sClass').value, section: document.getElementById('sSection').value, rollNumber: document.getElementById('sRoll').value, dob: document.getElementById('sDob').value,
-                fatherName: document.getElementById('sFather').value, motherName: document.getElementById('sMother').value, mobile: document.getElementById('sMobile').value, email: document.getElementById('sEmail').value,
-                permAddress: { vill: document.getElementById('sPermVill').value, po: document.getElementById('sPermPO').value, dist: document.getElementById('sPermDist').value, state: document.getElementById('sPermState').value, pin: document.getElementById('sPermPin').value },
-                presAddress: { vill: document.getElementById('sPresVill').value, po: document.getElementById('sPresPO').value, dist: document.getElementById('sPresDist').value, state: document.getElementById('sPresState').value, pin: document.getElementById('sPresPin').value }
-            };
-
-            try { 
-                if(id) {
-                    await updateDoc(doc(db, "students", id), dataObj); 
-                    alert("Student Updated!");
-                } else {
-                    dataObj.password = document.getElementById('sPassword').value;
-                    dataObj.feeRecords = {}; dataObj.academicStatus = 'Active'; dataObj.status = 'Active'; dataObj.timestamp = new Date();
-                    await addDoc(collection(db, "students"), dataObj); 
-                    alert("Student Added!");
-                }
-                document.getElementById('studentModal').style.display='none'; loadStudents(); 
-            } catch(err) { alert(err.message); } finally { btn.innerText = "Save Student Record"; }
-        }
-
-        window.loadStudents = async () => {
-            try {
-                const snap = await getDocs(collection(db, "students")); window.allStudentsList = []; 
-                snap.forEach(doc => window.allStudentsList.push({id: doc.id, ...doc.data()})); 
-                renderStudents();
-            } catch (error) { console.error("Load Students Error:", error); }
-        }
-
-        window.renderStudents = () => {
-            const tbody = document.getElementById('studentTableBody'); const search = document.getElementById('searchStudentInput').value.toLowerCase(); const cFilter = document.getElementById('stuClassFilter').value; const sFilter = document.getElementById('stuSectionFilter').value; const targetMonth = document.getElementById('feeMonthFilter').value;
-            document.getElementById('tableMonthLabel').innerText = targetMonth; tbody.innerHTML = ''; 
-            
-            const monthsArray = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            let academicMonths = []; for(let i=0; i<12; i++) { academicMonths.push(monthsArray[(window.academicStartMonth + i) % 12]); }
-            
-            window.allStudentsList.forEach(s => {
-                if(s.status === 'Inactive') return; 
-                if(cFilter !== 'All' && s.className !== cFilter) return;
-                if(sFilter !== 'All' && s.section !== sFilter) return;
-                if(search && !s.name.toLowerCase().includes(search) && !s.rollNumber.includes(search)) return;
-                
-                let isPaid = s.feeRecords && s.feeRecords[targetMonth];
-                let feeUI = isPaid ? `<span class="badge bg-success">Paid ✅</span>` : `<button class="btn btn-success" style="padding:4px; font-size:11px;" onclick="markFeePaid('${s.id}', '${targetMonth}')">Pay Due</button>`;
-                
-                let duesUI = ''; let reachedTarget = false;
-                academicMonths.forEach(m => {
-                    if(m === targetMonth) reachedTarget = true;
-                    if(!reachedTarget && (!s.feeRecords || !s.feeRecords[m])) {
-                        duesUI += `<span class="badge bg-danger" style="cursor:pointer; margin:2px;" onclick="markFeePaid('${s.id}', '${m}')" title="Click to pay ${m}">${m.substring(0,3)}</span> `;
-                    }
+                await addDoc(collection(db, "classes"), {
+                    className: document.getElementById('newClassName').value,
+                    sections: document.getElementById('newClassSections').value,
+                    schoolId: activeSchoolId
                 });
-                if(duesUI === '') duesUI = `<span style="color:#27ae60; font-size:12px; font-weight:bold;">Clear</span>`;
-
-                let acadStatusUI = s.academicStatus === 'Retained' ? `<br><span class="badge bg-danger" style="font-size:10px;">Retained</span>` : '';
-
-                tbody.innerHTML += `<tr>
-                    <td>${s.rollNumber}</td>
-                    <td><strong>${s.name}</strong>${acadStatusUI}<br><small>${s.email}</small></td>
-                    <td>${s.className} - Sec ${s.section}</td>
-                    <td><small>F: ${s.fatherName}<br>📞 ${s.mobile}</small></td>
-                    <td>${feeUI}</td>
-                    <td>${duesUI}</td>
-                    <td>
-                        <button class="btn btn-warning" style="font-size:11px; padding:5px; margin-bottom:4px; width:100%;" onclick="openEditStudent('${s.id}')">Edit Profile</button>
-                        <button class="btn btn-secondary" style="font-size:11px; padding:5px; margin-bottom:4px; width:100%;" onclick="promoteStudent('${s.id}', '${s.className}')">Promote</button>
-                        <button class="btn btn-warning" style="background:#f39c12; font-size:11px; padding:5px; margin-bottom:4px; width:100%;" onclick="failStudent('${s.id}')">Fail/Retain</button>
-                        <button class="btn btn-danger" style="font-size:11px; padding:5px; width:100%;" onclick="issueTC('${s.id}')">Issue TC</button>
-                    </td>
-                </tr>`;
-            });
+                alert("Class added successfully!");
+                event.target.reset();
+                loadClasses();
+            } catch(e) { alert("Error: " + e.message); }
         }
 
-        window.markFeePaid = async (id, month) => {
-            if(confirm(`Receive ${month} fee for this student?`)) { 
-                try { await updateDoc(doc(db, "students", id), { [`feeRecords.${month}`]: new Date().toISOString().split('T')[0] }); loadStudents(); loadFinanceDashboard(); } catch(e) { alert(e.message); }
-            }
-        }
-        window.promoteStudent = async (id, currentClass) => {
-            let nextClass = prompt(`Promote student from ${currentClass} to which class?`);
-            if(nextClass) { try { await updateDoc(doc(db, "students", id), { className: nextClass, academicStatus: 'Promoted' }); loadStudents(); } catch(e){alert(e.message);} }
-        }
-        window.failStudent = async (id) => {
-            if(confirm("Mark this student as Failed? They will be retained in their current class.")) { try { await updateDoc(doc(db, "students", id), { academicStatus: 'Retained' }); loadStudents(); } catch(e){alert(e.message);} }
-        }
-        window.issueTC = async (id) => {
-            if(confirm("Issue TC? This student will be marked inactive and removed from active lists.")) { try { await updateDoc(doc(db, "students", id), { status: 'Inactive' }); loadStudents(); } catch(e){alert(e.message);} }
-        }
+        // --- Save Student ---
+        window.saveStudent = async function(event) {
+            event.preventDefault();
+            const btn = document.getElementById('sBtn');
+            btn.innerText = "Saving...";
 
-        // ---------------------------------------------------------
-        // 6. GLOBAL ATTENDANCE (WITH SECTION FILTER)
-        // ---------------------------------------------------------
-        window.loadGlobalAttendance = async () => {
-            const date = document.getElementById('attDateGlobal').value; const type = document.getElementById('attUserType').value; 
-            const cFilter = document.getElementById('attClassFilterGlobal').value; const sFilter = document.getElementById('attSectionFilterGlobal').value;
-            const tbody = document.getElementById('globalAttBody'); tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Loading...</td></tr>';
             try {
-                let collectionName = type === 'Student' ? 'students' : (type === 'Teacher' ? 'teachers' : 'staff');
-                let attCollection = type === 'Student' ? 'student_attendance' : (type === 'Teacher' ? 'teacher_attendance' : 'staff_attendance');
-                
-                let usersSnap = await getDocs(collection(db, collectionName));
-                let attSnap = await getDocs(query(collection(db, attCollection), where("date", "==", date)));
-                let attMap = {}; attSnap.forEach(d => attMap[d.data().studentId || d.data().teacherId || d.data().staffId] = d.data().status);
-
-                tbody.innerHTML = ''; 
-                usersSnap.forEach(doc => {
-                    const u = doc.data(); u.id = doc.id;
-                    if(u.status === 'Inactive') return;
-                    if(type === 'Student' && cFilter !== 'All' && u.className !== cFilter) return;
-                    if(type === 'Student' && sFilter !== 'All' && u.section !== sFilter) return;
-                    
-                    let curStat = attMap[u.id] || 'Not Marked';
-                    let select = `<select class="global-att-dropdown" style="padding:5px; border-radius:3px;" data-id="${u.id}" data-name="${u.name}" data-class="${u.className||''}"><option value="Not Marked" ${curStat==='Not Marked'?'selected':''}>Not Marked</option><option value="Present" ${curStat==='Present'?'selected':''}>Present</option><option value="Absent" ${curStat==='Absent'?'selected':''}>Absent</option><option value="Leave" ${curStat==='Leave'?'selected':''}>Leave</option><option value="Holiday" ${curStat==='Holiday'?'selected':''}>Holiday</option></select>`;
-                    let roleStr = type === 'Student' ? `${u.className} - Sec ${u.section}` : (u.role || u.subject);
-                    tbody.innerHTML += `<tr><td>${u.rollNumber || 'N/A'}</td><td>${u.name}</td><td>${roleStr}</td><td>${select}</td></tr>`;
+                await addDoc(collection(db, "students"), {
+                    name: document.getElementById('sName').value,
+                    className: document.getElementById('sClass').value,
+                    section: document.getElementById('sSection').value,
+                    rollNo: document.getElementById('sRoll').value,
+                    email: document.getElementById('sEmail').value,
+                    password: document.getElementById('sPassword').value,
+                    mobile: document.getElementById('sMobile').value,
+                    schoolId: activeSchoolId // <-- SaaS Isolation Tag
                 });
-            } catch(e) { console.error("Global Attendance Error:", e); }
+                alert("Student successfully registered in your school!");
+                document.getElementById('studentModal').style.display = 'none';
+                event.target.reset();
+                loadStudents();
+            } catch(e) { alert("Error: " + e.message); }
+            btn.innerText = "💾 Save Student Record";
         }
 
-        window.saveGlobalAttendance = async () => {
-            const btn = document.getElementById('saveGlobalAttBtn'); btn.innerText = 'Saving...';
-            const date = document.getElementById('attDateGlobal').value; const type = document.getElementById('attUserType').value;
-            let attCollection = type === 'Student' ? 'student_attendance' : (type === 'Teacher' ? 'teacher_attendance' : 'staff_attendance');
-            
-            const dropdowns = document.querySelectorAll('.global-att-dropdown');
-            let promises = [];
-            dropdowns.forEach(sel => {
-                const stat = sel.value; if(stat === 'Not Marked') return;
-                const uid = sel.getAttribute('data-id'); const docId = `${uid}_${date}`;
-                let payload = { date: date, status: stat, timestamp: new Date(), name: sel.getAttribute('data-name') };
-                if(type === 'Student') { payload.studentId = uid; payload.className = sel.getAttribute('data-class'); payload.studentName = payload.name; }
-                else if(type === 'Teacher') { payload.teacherId = uid; payload.teacherName = payload.name; }
-                else { payload.staffId = uid; payload.staffName = payload.name; }
-                promises.push(setDoc(doc(db, attCollection, docId), payload));
-            });
-            try { await Promise.all(promises); alert("School Attendance Saved!"); } catch (error) { console.error("Save Attendance Error:", error); } finally { btn.innerText = '💾 Save'; }
-        }
+        // --- Save Teacher ---
+        window.saveTeacher = async function(event) {
+            event.preventDefault();
+            const btn = document.getElementById('tBtn');
+            btn.innerText = "Saving...";
 
-        // ---------------------------------------------------------
-        // 7. LEAVES, EXAMS, TIMETABLE & NOTICES
-        // ---------------------------------------------------------
-        window.loadLeaveRequests = async () => {
-            const tbody = document.getElementById('leaveReqTableBody'); tbody.innerHTML = '';
-            const snap = await getDocs(query(collection(db, "leave_requests"), where("status", "==", "Pending")));
-            if(snap.empty) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:green;">No pending requests.</td></tr>'; return; }
-            snap.forEach(doc => {
-                const r = doc.data();
-                let info = r.role === 'Student' ? `${r.senderName}<br><small>${r.className} - Sec ${r.section||'N/A'}</small>` : r.senderName;
-                tbody.innerHTML += `<tr><td>${r.date}</td><td>${info}</td><td>${r.role}</td><td>${r.reason}</td><td><span class="badge bg-warning">Pending</span></td><td><button class="btn btn-success" style="margin-bottom:5px;" onclick="approveLeave('${doc.id}', '${r.senderId}', '${r.role}', '${r.date}')">Approve</button> <button class="btn btn-danger" onclick="updateDoc(doc(db, 'leave_requests', '${doc.id}'), {status: 'Rejected'}); loadLeaveRequests();">Reject</button></td></tr>`;
-            });
-        }
-        window.approveLeave = async (reqId, userId, role, date) => {
-            if(confirm("Approve leave? This marks 'Leave' in attendance automatically.")) {
-                try {
-                    await updateDoc(doc(db, "leave_requests", reqId), { status: "Approved" });
-                    const col = role === 'Student' ? 'student_attendance' : (role === 'Teacher' ? 'teacher_attendance' : 'staff_attendance');
-                    await setDoc(doc(db, col, `${userId}_${date}`), { studentId: userId, teacherId: userId, staffId: userId, date: date, status: "Leave", timestamp: new Date() }, { merge: true });
-                    alert("Approved & Attendance updated!"); loadLeaveRequests();
-                } catch(e) { alert(e.message); }
-            }
-        }
-
-        window.loadPendingExams = async () => {
-            const tbody = document.getElementById('examApprovalBody'); tbody.innerHTML = '';
-            const snap = await getDocs(query(collection(db, "marks"), where("status", "==", "Pending")));
-            if(snap.empty) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No pending results.</td></tr>'; return; }
-            snap.forEach(doc => {
-                const m = doc.data();
-                tbody.innerHTML += `<tr><td>${new Date(m.timestamp.toDate()).toLocaleDateString()}</td><td>${m.studentName}</td><td>${m.examName}</td><td>${m.theoryObt}/${m.theoryTotal}</td><td>${m.pracObt}/${m.pracTotal}</td><td>${m.teacherName}</td><td><button class="btn btn-success" onclick="approveExam('${doc.id}')">Publish</button></td></tr>`;
-            });
-        }
-        window.approveExam = async (id) => { if(confirm("Publish Result?")) { await updateDoc(doc(db, "marks", id), { status: "Published" }); loadPendingExams(); } }
-
-        window.addTimetable = async (e) => { e.preventDefault(); try { await addDoc(collection(db, "timetable"), { className: document.getElementById('ttClass').value, day: document.getElementById('ttDay').value, time: document.getElementById('ttTime').value, subject: document.getElementById('ttSubject').value, teacher: document.getElementById('ttTeacher').value, timestamp: new Date() }); alert("Timetable Added!"); document.getElementById('ttTime').value=''; document.getElementById('ttSubject').value=''; loadTimetableAdmin(); } catch(e){alert(e.message);} }
-        window.loadTimetableAdmin = async () => { const filter = document.getElementById('ttFilterClass').value; const tbody = document.getElementById('timetableBody'); tbody.innerHTML=''; try { let q = filter==='All'?collection(db,"timetable"):query(collection(db,"timetable"), where("className","==",filter)); const snap = await getDocs(q); snap.forEach(d=>{ const t=d.data(); tbody.innerHTML+=`<tr><td>${t.className}</td><td>${t.day}</td><td>${t.time}</td><td>${t.subject}</td><td>${t.teacher}</td><td><button class="btn btn-danger" onclick="deleteRecord('timetable', '${d.id}')">Del</button></td></tr>`; }); }catch(e){console.error(e);} }
-
-        window.addNotice = async (e) => { e.preventDefault(); try { await addDoc(collection(db, "notices"), { title: document.getElementById('nTitle').value, category: document.getElementById('nCategory').value, date: document.getElementById('nDate').value, description: document.getElementById('nDesc').value, timestamp: new Date() }); alert("Notice Published!"); document.getElementById('noticeModal').style.display='none'; loadNotices(); }catch(e){alert(e.message);} }
-        window.loadNotices = async () => { const tbody = document.getElementById('noticeTableBody'); tbody.innerHTML=''; try { const snap = await getDocs(collection(db, "notices")); let arr = []; snap.forEach(d=>arr.push({id:d.id, ...d.data()})); arr.sort((a,b)=>new Date(b.date)-new Date(a.date)); arr.forEach(n=>{ tbody.innerHTML+=`<tr><td>${n.date}</td><td><span class="badge bg-info">${n.category}</span></td><td><strong>${n.title}</strong><br><small>${n.description}</small></td><td><button class="btn btn-danger" onclick="deleteRecord('notices', '${n.id}')">Del</button></td></tr>`; }); }catch(e){console.error(e);} }
-
-        window.deleteRecord = async (col, id) => { if(confirm("Delete this record permanently?")) { await deleteDoc(doc(db, col, id)); location.reload(); } }
-
-        // --- PUBLIC WEBSITE MANAGEMENT ---
-        window.loadWebsiteProfile = async () => {
             try {
-                const docSnap = await getDoc(doc(db, "schools", "main_profile"));
-                if(docSnap.exists()) {
-                    const data = docSnap.data();
-                    document.getElementById('webSchoolId').value = data.schoolId || '';
-                    document.getElementById('webSchoolName').value = data.schoolName || '';
-                    document.getElementById('webAdminName').value = data.adminName || '';
-                    document.getElementById('webEmail').value = data.email || '';
-                    document.getElementById('webBanner').value = data.bannerImage || '';
-                    document.getElementById('webMessage').value = data.principalMessage || '';
-                    document.getElementById('webAbout').value = data.aboutSchool || '';
-                    document.getElementById('webAchievements').value = data.achievements || '';
-                    
-                    if(data.schoolId) {
-                        // Generates the shareable link for WhatsApp/Facebook
-                        const link = `public-site.html?school=${data.schoolId}`;
-                        const linkEl = document.getElementById('publicSiteLink');
-                        linkEl.href = link;
-                        linkEl.innerText = window.location.origin + '/' + link; 
-                    }
-                }
-            } catch(e) { console.error("Error loading website profile:", e); }
+                await addDoc(collection(db, "teachers"), {
+                    name: document.getElementById('tName').value,
+                    subject: document.getElementById('tSubject').value,
+                    email: document.getElementById('tEmail').value,
+                    password: document.getElementById('tPassword').value,
+                    salary: document.getElementById('tSalary').value,
+                    mobile: document.getElementById('tMobile').value,
+                    schoolId: activeSchoolId // <-- SaaS Isolation Tag
+                });
+                alert("Teacher successfully added!");
+                document.getElementById('teacherModal').style.display = 'none';
+                event.target.reset();
+                loadTeachers();
+            } catch(e) { alert("Error: " + e.message); }
+            btn.innerText = "💾 Save Teacher Record";
         }
 
-        window.saveWebsiteProfile = async (e) => {
-            e.preventDefault();
+        // --- Save Staff ---
+        window.saveStaff = async function(event) {
+            event.preventDefault();
+            try {
+                await addDoc(collection(db, "staff"), {
+                    name: document.getElementById('stName').value,
+                    role: document.getElementById('stRole').value,
+                    mobile: document.getElementById('stMobile').value,
+                    salary: document.getElementById('stSalary').value,
+                    schoolId: activeSchoolId
+                });
+                alert("Staff successfully added!");
+                document.getElementById('staffModal').style.display = 'none';
+                event.target.reset();
+            } catch(e) { alert("Error: " + e.message); }
+        }
+
+        // ==========================================
+        // 4. LOAD DATA (FILTER BY SCHOOL ID)
+        // ==========================================
+
+        window.loadClasses = async function() {
+            try {
+                const q = query(collection(db, "classes"), where("schoolId", "==", activeSchoolId));
+                const snap = await getDocs(q);
+                let tableHtml = "", dropdownHtml = "<option value=''>Select Class</option>";
+                
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    tableHtml += `<tr><td>${data.className}</td><td>${data.sections}</td><td><button class='btn btn-danger'>Del</button></td></tr>`;
+                    dropdownHtml += `<option value="${data.className}">${data.className}</option>`;
+                });
+                
+                document.getElementById('classesTableBody').innerHTML = tableHtml || "<tr><td colspan='3'>No classes found.</td></tr>";
+                
+                // Update dropdowns
+                document.querySelectorAll('.dynamic-class-dropdown').forEach(select => {
+                    select.innerHTML = dropdownHtml;
+                });
+            } catch(e) { console.error(e); }
+        }
+
+        window.loadStudents = async function() {
+            try {
+                const q = query(collection(db, "students"), where("schoolId", "==", activeSchoolId));
+                const snap = await getDocs(q);
+                let html = "";
+                let count = 0;
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    count++;
+                    html += `<tr>
+                        <td>${data.rollNo || 'N/A'}</td>
+                        <td><strong>${data.name}</strong></td>
+                        <td>${data.className} (${data.section || '-'})</td>
+                        <td>${data.mobile}</td>
+                        <td><span class="badge bg-danger">Pending</span></td>
+                        <td>-</td>
+                        <td><button class="btn btn-warning">Edit</button></td>
+                    </tr>`;
+                });
+                document.getElementById('studentTableBody').innerHTML = html || "<tr><td colspan='7'>No students found.</td></tr>";
+                document.getElementById('dashStudentsCount').innerText = count;
+            } catch(e) { console.error(e); }
+        }
+
+        window.loadTeachers = async function() {
+            try {
+                const q = query(collection(db, "teachers"), where("schoolId", "==", activeSchoolId));
+                const snap = await getDocs(q);
+                let html = "";
+                let count = 0;
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    count++;
+                    html += `<tr>
+                        <td><strong>${data.name}</strong><br><small>${data.mobile}</small></td>
+                        <td>${data.subject}</td>
+                        <td>₹ ${data.salary || '0'}</td>
+                        <td>-</td>
+                        <td><button class="btn btn-warning">Edit</button></td>
+                    </tr>`;
+                });
+                document.getElementById('teacherTableBody').innerHTML = html || "<tr><td colspan='5'>No teachers found.</td></tr>";
+                document.getElementById('dashTeachersCount').innerText = count;
+            } catch(e) { console.error(e); }
+        }
+
+        // ==========================================
+        // 5. PUBLIC WEBSITE SETUP LOGIC
+        // ==========================================
+        window.saveWebsiteProfile = async function(event) {
+            event.preventDefault();
             const btn = document.getElementById('webSaveBtn');
-            btn.innerText = "Publishing...";
-            
-            const dataObj = {
-                schoolId: document.getElementById('webSchoolId').value.trim(),
-                schoolName: document.getElementById('webSchoolName').value,
-                adminName: document.getElementById('webAdminName').value,
-                email: document.getElementById('webEmail').value,
-                bannerImage: document.getElementById('webBanner').value,
-                principalMessage: document.getElementById('webMessage').value,
-                aboutSchool: document.getElementById('webAbout').value,
-                achievements: document.getElementById('webAchievements').value,
-                updatedAt: new Date()
-            };
+            btn.innerText = "Publishing to Web...";
 
             try {
-                // Yeh data seedha "schools" collection mein save hoga jise public-site read karti hai
-                await setDoc(doc(db, "schools", "main_profile"), dataObj);
-                alert("Public Website Updated Successfully! Changes are now LIVE.");
-                loadWebsiteProfile();
-            } catch(error) {
-                alert(error.message);
-            } finally {
-                btn.innerText = "🌍 Publish to Public Website";
-            }
+                const q = query(collection(db, "schools"), where("schoolId", "==", activeSchoolId));
+                const snap = await getDocs(q);
+
+                if (!snap.empty) {
+                    const docId = snap.docs[0].id;
+                    const docRef = doc(db, "schools", docId);
+
+                    const webUrlId = document.getElementById('webSchoolId').value.toLowerCase().replace(/\s+/g, '-');
+
+                    await updateDoc(docRef, {
+                        schoolId: webUrlId, // Allow URL ID update
+                        schoolName: document.getElementById('webSchoolName').value,
+                        adminName: document.getElementById('webAdminName').value,
+                        email: document.getElementById('webEmail').value,
+                        bannerImage: document.getElementById('webBanner').value,
+                        principalMessage: document.getElementById('webMessage').value,
+                        aboutSchool: document.getElementById('webAbout').value,
+                        achievements: document.getElementById('webAchievements').value
+                    });
+                    
+                    localStorage.setItem("activeSchoolId", webUrlId); // Update local memory
+                    
+                    const pubLink = `${window.location.origin}/public-site.html?school=${webUrlId}`;
+                    const linkEl = document.getElementById('publicSiteLink');
+                    linkEl.href = pubLink;
+                    linkEl.innerText = pubLink;
+                    
+                    alert("Success! Profile Published.");
+                }
+            } catch(e) { alert("Error: " + e.message); }
+            btn.innerText = "🌍 Publish to Public Website";
         }
+
     </script>
+
+
+   
 </body>
-</html>
+</html> 
