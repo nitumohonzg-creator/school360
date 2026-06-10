@@ -891,7 +891,8 @@
             </form>
         </div>
     </div>
-        <script type="module">
+
+    <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, query, where, updateDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -907,7 +908,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // GLOBAL VARIABLE FOR CLASSES (Bug fix)
+        // GLOBAL VARIABLE FOR CLASSES
         window.schoolClassesData = {};
 
         // ==========================================
@@ -945,7 +946,7 @@
             document.querySelectorAll('.sidebar a').forEach(el => el.classList.remove('active-link'));
             document.getElementById(tabId).classList.add('active');
             document.getElementById('nav-' + tabId).classList.add('active-link');
-            if(window.innerWidth <= 850) toggleSidebar(); // Close sidebar on mobile
+            if(window.innerWidth <= 850) toggleSidebar(); 
         };
 
         window.openStudentModal = () => document.getElementById('studentModal').style.display='flex';
@@ -999,9 +1000,9 @@
                     email: document.getElementById('sEmail').value,
                     password: document.getElementById('sPassword').value,
                     mobile: document.getElementById('sMobile').value,
-                    schoolId: activeSchoolId // <-- SaaS Isolation Tag
+                    schoolId: activeSchoolId 
                 });
-                alert("Student successfully registered in your school!");
+                alert("Student successfully registered!");
                 document.getElementById('studentModal').style.display = 'none';
                 event.target.reset();
                 loadStudents();
@@ -1022,7 +1023,7 @@
                     password: document.getElementById('tPassword').value,
                     salary: document.getElementById('tSalary').value,
                     mobile: document.getElementById('tMobile').value,
-                    schoolId: activeSchoolId // <-- SaaS Isolation Tag
+                    schoolId: activeSchoolId 
                 });
                 alert("Teacher successfully added!");
                 document.getElementById('teacherModal').style.display = 'none';
@@ -1200,7 +1201,7 @@
                     const webUrlId = document.getElementById('webSchoolId').value.toLowerCase().replace(/\s+/g, '-');
 
                     await updateDoc(docRef, {
-                        schoolId: webUrlId, // Allow URL ID update
+                        schoolId: webUrlId, 
                         schoolName: document.getElementById('webSchoolName').value,
                         adminName: document.getElementById('webAdminName').value,
                         email: document.getElementById('webEmail').value,
@@ -1210,7 +1211,7 @@
                         achievements: document.getElementById('webAchievements').value
                     });
                     
-                    localStorage.setItem("activeSchoolId", webUrlId); // Update local memory
+                    localStorage.setItem("activeSchoolId", webUrlId); 
                     
                     const pubLink = `${window.location.origin}/public-site.html?school=${webUrlId}`;
                     const linkEl = document.getElementById('publicSiteLink');
@@ -1224,23 +1225,102 @@
         }
 
         // ==========================================
-        // PLACEHOLDER FUNCTIONS FOR MISSING UI BUTTONS
+        // 6. WORKING FUNCTIONS (NOTICE, EXPENSE, TIMETABLE, SETTINGS)
+        // ==========================================
+
+        window.addNotice = async function(event) {
+            event.preventDefault();
+            const btn = document.getElementById('nBtn');
+            btn.innerText = "Publishing...";
+            try {
+                await addDoc(collection(db, "notices"), {
+                    title: document.getElementById('nTitle').value,
+                    category: document.getElementById('nCategory').value,
+                    date: document.getElementById('nDate').value,
+                    description: document.getElementById('nDesc').value,
+                    schoolId: activeSchoolId,
+                    timestamp: new Date()
+                });
+                alert("Notice Published Successfully!");
+                document.getElementById('noticeModal').style.display = 'none';
+                event.target.reset();
+            } catch(e) { alert("Error: " + e.message); }
+            btn.innerText = "Publish Notice";
+        }
+
+        window.addExtraExpense = async function(event) {
+            event.preventDefault();
+            const btn = document.getElementById('expBtn');
+            btn.innerText = "Adding...";
+            try {
+                await addDoc(collection(db, "expenses"), {
+                    date: document.getElementById('expDate').value,
+                    detail: document.getElementById('expDetail').value,
+                    amount: Number(document.getElementById('expAmount').value),
+                    schoolId: activeSchoolId
+                });
+                alert("Expense Added Successfully!");
+                event.target.reset();
+            } catch(e) { alert("Error: " + e.message); }
+            btn.innerText = "Add Expense";
+        }
+
+        window.addTimetable = async function(event) {
+            event.preventDefault();
+            const btn = document.getElementById('ttBtn');
+            btn.innerText = "Adding...";
+            try {
+                await addDoc(collection(db, "timetable"), {
+                    className: document.getElementById('ttClass').value,
+                    day: document.getElementById('ttDay').value,
+                    time: document.getElementById('ttTime').value,
+                    subject: document.getElementById('ttSubject').value,
+                    teacher: document.getElementById('ttTeacher').value,
+                    schoolId: activeSchoolId
+                });
+                alert("Timetable Updated!");
+                event.target.reset();
+            } catch(e) { alert("Error: " + e.message); }
+            btn.innerText = "Add to Timetable";
+        }
+
+        window.calculateAcademicYear = function() {
+            const start = document.getElementById('setStartDate').value;
+            const end = document.getElementById('setEndDate').value;
+            if(start && end) {
+                const startYear = new Date(start).getFullYear();
+                const endYear = new Date(end).getFullYear();
+                document.getElementById('setAcadYear').value = `${startYear} - ${endYear}`;
+            }
+        }
+
+        window.saveSchoolSettings = async function(event) {
+            event.preventDefault();
+            const btn = document.getElementById('setSaveBtn');
+            btn.innerText = "Saving...";
+            try {
+                await addDoc(collection(db, "settings"), {
+                    brandName: document.getElementById('setSchoolName').value,
+                    startDate: document.getElementById('setStartDate').value,
+                    endDate: document.getElementById('setEndDate').value,
+                    academicYear: document.getElementById('setAcadYear').value,
+                    schoolId: activeSchoolId
+                });
+                alert("Global Settings Saved!");
+            } catch(e) { alert("Error: " + e.message); }
+            btn.innerText = "Save Global Settings";
+        }
+
+        // ==========================================
+        // PENDING UI MODULES (Placeholder)
         // ==========================================
         window.renderStudents = () => {};
-        window.saveDynamicFeeStructure = (e) => { e.preventDefault(); alert("Fees module coming soon!"); };
+        window.saveDynamicFeeStructure = (e) => { e.preventDefault(); alert("Fees module setup is in progress."); };
         window.addFeeRow = () => {};
-        window.addExtraExpense = (e) => { e.preventDefault(); };
         window.loadGlobalAttendance = () => {};
         window.saveGlobalAttendance = () => {};
-        window.addTimetable = (e) => { e.preventDefault(); };
         window.loadTimetableAdmin = () => {};
-        window.addNotice = (e) => { e.preventDefault(); alert("Notice feature coming soon!"); document.getElementById('noticeModal').style.display='none';};
-        window.calculateAcademicYear = () => {};
-        window.saveSchoolSettings = (e) => { e.preventDefault(); };
 
     </script>
-
-
-   
 </body>
 </html>
