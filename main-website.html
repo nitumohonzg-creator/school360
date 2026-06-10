@@ -136,6 +136,11 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // EXTRA SECURITY: Jab bhi login page khule, purana memory saaf ho jaye taaki data leak na ho.
+        window.onload = () => {
+            localStorage.clear();
+        };
+
         // Modals Open/Close Logic
         window.openModal = () => document.getElementById('registerModal').style.display = 'flex';
         window.closeModal = () => document.getElementById('registerModal').style.display = 'none';
@@ -165,7 +170,7 @@
                     localStorage.setItem("activeSchoolId", userData.schoolId); // The unique SaaS ID
                     localStorage.setItem("schoolName", userData.schoolName);
                     
-                    // Redirect to Admin Panel
+                    // Redirect to Admin Panel (Make sure aapka dashboard page 'index.html' hi hai)
                     window.location.href = "index.html"; 
                     
                 } else {
