@@ -307,7 +307,6 @@
 </head>
 <body>
 
-    <!-- Mobile Header -->
     <div class="mobile-header">
         <h2 id="mobileSchoolName">School<span>360</span></h2>
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
@@ -315,7 +314,6 @@
     
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <!-- Sidebar Navigation -->
     <div class="sidebar" id="sidebar">
         <h2 id="sidebarSchoolName">School<span>360</span></h2>
         <a id="nav-dashboardSec" class="active-link" onclick="switchTab('dashboardSec')">📊 Master Dashboard</a>
@@ -328,6 +326,7 @@
         <a id="nav-examApprovalSec" onclick="switchTab('examApprovalSec')">🏆 Publish Results</a>
         <a id="nav-timetableSec" onclick="switchTab('timetableSec')">📅 Class Timetable</a>
         <a id="nav-noticeSec" onclick="switchTab('noticeSec')">📢 Notice Board</a>
+        <a id="nav-websiteSec" onclick="switchTab('websiteSec')">🌐 Public Website Setup</a>
         <a id="nav-settingsSec" onclick="switchTab('settingsSec')">⚙️ Global Settings</a>
         <a href="main-website.html" class="logout-btn" onclick="secureLogout()">Logout System</a>
     </div>
@@ -340,7 +339,6 @@
             </div>
         </div>
 
-        <!-- 1. DASHBOARD -->
         <div id="dashboardSec" class="content-section active">
             <div class="action-cards">
                 <div class="card" style="border-top-color: #3498db;">
@@ -363,7 +361,6 @@
             </div>
         </div>
 
-        <!-- 2. MANAGE CLASSES -->
         <div id="classManageSec" class="content-section box-container" style="border-top: 4px solid var(--secondary);">
             <h3>🏫 Dynamic Class & Section Setup</h3>
             <p style="font-size:13px; color:#666;">Create classes here. These will dynamically appear in all dropdowns across the software.</p>
@@ -388,7 +385,6 @@
             </table>
         </div>
 
-        <!-- 3. FINANCE & ACCOUNTS MODULE -->
         <div id="financeSec" class="content-section">
             
             <div class="finance-cards">
@@ -457,7 +453,6 @@
             </div>
         </div>
 
-        <!-- 4. HR MANAGEMENT -->
         <div id="hrSec" class="content-section box-container">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <h3 style="margin:0; border:none;">👨‍💼 HR & Staff Management</h3>
@@ -484,7 +479,6 @@
             </div>
         </div>
 
-        <!-- 5. STUDENT MANAGEMENT -->
         <div id="studentsSec" class="content-section box-container">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap:wrap; gap:10px;">
                 <h3 style="margin:0; border:none;">🎓 Student Database & Fee Collection</h3>
@@ -533,7 +527,6 @@
             </div>
         </div>
 
-        <!-- 6. MARK ATTENDANCE -->
         <div id="studentAttSec" class="content-section box-container" style="border-top: 4px solid #e67e22;">
             <h3>📝 Official School Attendance</h3>
             <div style="background: #fdf2e9; padding: 15px; border-radius: 8px; display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; align-items:flex-end;">
@@ -566,7 +559,6 @@
             </table>
         </div>
 
-        <!-- 7. LEAVE APPROVALS -->
         <div id="leaveReqSec" class="content-section box-container" style="border-top: 4px solid #f39c12;">
             <h3>📩 Manage Leave Requests</h3>
             <p style="font-size:13px; color:#666;">Approving a leave here will automatically mark the user as 'Leave' in the attendance register for that date.</p>
@@ -576,7 +568,6 @@
             </table>
         </div>
 
-        <!-- 8. EXAM APPROVALS -->
         <div id="examApprovalSec" class="content-section box-container" style="border-top: 4px solid #8e44ad;">
             <h3>🏆 Review & Publish Exam Results</h3>
             <p style="font-size:13px; color:#666;">Teachers have uploaded these marks. Publish them so students can view their Report Cards.</p>
@@ -586,7 +577,6 @@
             </table>
         </div>
 
-        <!-- 9. TIMETABLE -->
         <div id="timetableSec" class="content-section box-container" style="border-top: 4px solid #2980b9;">
             <h3>📅 Manage Class Timetable</h3>
             <form onsubmit="addTimetable(event)" style="background: #eaf2f8; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
@@ -608,7 +598,6 @@
             </table>
         </div>
 
-        <!-- 10. NOTICES -->
         <div id="noticeSec" class="content-section box-container" style="border-top: 4px solid #9b59b6;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <h3 style="margin:0; border:none;">📢 Notice Board & Updates</h3>
@@ -620,7 +609,64 @@
             </table>
         </div>
 
-        <!-- 11. SETTINGS -->
+        <div id="websiteSec" class="content-section box-container" style="border-top: 4px solid #16a085;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin:0; border:none;">🌐 Manage Public Website Profile</h3>
+            </div>
+            <p style="font-size:13px; color:#666;">Ye details aapki public link (public-site.html) par live dikhengi.</p>
+            
+            <form onsubmit="saveWebsiteProfile(event)" style="background: #f4fbf9; padding: 20px; border-radius: 8px; border: 1px solid #16a085;">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Unique School ID (For URL Link)</label>
+                        <input type="text" id="webSchoolId" required placeholder="E.g. Chakapara (Bina space ke)">
+                    </div>
+                    <div class="form-group">
+                        <label>Public School Name</label>
+                        <input type="text" id="webSchoolName" required>
+                    </div>
+                </div>
+                
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Principal / Admin Name</label>
+                        <input type="text" id="webAdminName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Public Contact Email</label>
+                        <input type="email" id="webEmail" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Banner Image URL (Optional)</label>
+                    <input type="text" id="webBanner" placeholder="Paste image link here...">
+                </div>
+
+                <div class="form-group">
+                    <label>Hero Description / Principal's Message</label>
+                    <textarea id="webMessage" rows="3" required placeholder="Empowering students with knowledge..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>About Our Institution</label>
+                    <textarea id="webAbout" rows="4" required placeholder="Welcome to our official portal..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Key Achievements (Comma Separated)</label>
+                    <textarea id="webAchievements" rows="2" placeholder="E.g. 100% Board Results, State Sports Champion"></textarea>
+                </div>
+
+                <button type="submit" class="btn" id="webSaveBtn" style="background-color: #16a085; width: 100%; font-size: 16px; padding: 12px;">🌍 Publish to Public Website</button>
+            </form>
+            
+            <div style="margin-top: 20px; padding: 15px; background: #e8f6f3; border-radius: 8px;">
+                <strong>🔗 Your Public Website Link:</strong><br>
+                <a id="publicSiteLink" href="#" target="_blank" style="color: #16a085; font-size: 18px; word-break: break-all;">Save profile first to generate link</a>
+            </div>
+        </div>
+
         <div id="settingsSec" class="content-section box-container" style="border-top: 4px solid #34495e;">
             <h3>⚙️ Global School Settings</h3>
             <form onsubmit="saveSchoolSettings(event)" style="background: #fafafa; padding: 20px; border-radius: 8px; max-width: 600px;">
@@ -636,11 +682,6 @@
 
     </div>
 
-    <!-- ==============================================
-         MODALS (Forms for Adding/Editing Data)
-         ============================================== -->
-    
-    <!-- Notice Modal -->
     <div id="noticeModal" class="modal-overlay">
         <div class="modal-box">
             <span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
@@ -655,7 +696,6 @@
         </div>
     </div>
 
-    <!-- Teacher Modal (Add & Edit) -->
     <div id="teacherModal" class="modal-overlay">
         <div class="modal-box large">
             <span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
@@ -722,7 +762,6 @@
         </div>
     </div>
     
-    <!-- Staff Modal (Add & Edit) -->
     <div id="staffModal" class="modal-overlay">
         <div class="modal-box large">
             <span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
@@ -785,7 +824,6 @@
         </div>
     </div>
 
-    <!-- Student Modal (Add & Edit) -->
     <div id="studentModal" class="modal-overlay">
         <div class="modal-box large">
             <span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
@@ -854,7 +892,6 @@
         </div>
     </div>
 
-    <!-- MAIN JAVASCRIPT LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, getDoc, doc, setDoc, updateDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -901,6 +938,7 @@
                 loadTimetableAdmin();
                 loadPendingExams();
                 loadLeaveRequests();
+                await loadWebsiteProfile();
             } catch(e) { console.error("Load Error:", e); }
         }
 
@@ -924,6 +962,7 @@
             if(tabId === 'examApprovalSec') loadPendingExams();
             if(tabId === 'financeSec') loadFinanceDashboard();
             if(tabId === 'hrSec') loadHR();
+            if(tabId === 'websiteSec') loadWebsiteProfile();
         }
 
         window.toggleSidebar = () => { 
@@ -1483,6 +1522,61 @@
         window.loadNotices = async () => { const tbody = document.getElementById('noticeTableBody'); tbody.innerHTML=''; try { const snap = await getDocs(collection(db, "notices")); let arr = []; snap.forEach(d=>arr.push({id:d.id, ...d.data()})); arr.sort((a,b)=>new Date(b.date)-new Date(a.date)); arr.forEach(n=>{ tbody.innerHTML+=`<tr><td>${n.date}</td><td><span class="badge bg-info">${n.category}</span></td><td><strong>${n.title}</strong><br><small>${n.description}</small></td><td><button class="btn btn-danger" onclick="deleteRecord('notices', '${n.id}')">Del</button></td></tr>`; }); }catch(e){console.error(e);} }
 
         window.deleteRecord = async (col, id) => { if(confirm("Delete this record permanently?")) { await deleteDoc(doc(db, col, id)); location.reload(); } }
+
+        // --- PUBLIC WEBSITE MANAGEMENT ---
+        window.loadWebsiteProfile = async () => {
+            try {
+                const docSnap = await getDoc(doc(db, "schools", "main_profile"));
+                if(docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('webSchoolId').value = data.schoolId || '';
+                    document.getElementById('webSchoolName').value = data.schoolName || '';
+                    document.getElementById('webAdminName').value = data.adminName || '';
+                    document.getElementById('webEmail').value = data.email || '';
+                    document.getElementById('webBanner').value = data.bannerImage || '';
+                    document.getElementById('webMessage').value = data.principalMessage || '';
+                    document.getElementById('webAbout').value = data.aboutSchool || '';
+                    document.getElementById('webAchievements').value = data.achievements || '';
+                    
+                    if(data.schoolId) {
+                        // Generates the shareable link for WhatsApp/Facebook
+                        const link = `public-site.html?school=${data.schoolId}`;
+                        const linkEl = document.getElementById('publicSiteLink');
+                        linkEl.href = link;
+                        linkEl.innerText = window.location.origin + '/' + link; 
+                    }
+                }
+            } catch(e) { console.error("Error loading website profile:", e); }
+        }
+
+        window.saveWebsiteProfile = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('webSaveBtn');
+            btn.innerText = "Publishing...";
+            
+            const dataObj = {
+                schoolId: document.getElementById('webSchoolId').value.trim(),
+                schoolName: document.getElementById('webSchoolName').value,
+                adminName: document.getElementById('webAdminName').value,
+                email: document.getElementById('webEmail').value,
+                bannerImage: document.getElementById('webBanner').value,
+                principalMessage: document.getElementById('webMessage').value,
+                aboutSchool: document.getElementById('webAbout').value,
+                achievements: document.getElementById('webAchievements').value,
+                updatedAt: new Date()
+            };
+
+            try {
+                // Yeh data seedha "schools" collection mein save hoga jise public-site read karti hai
+                await setDoc(doc(db, "schools", "main_profile"), dataObj);
+                alert("Public Website Updated Successfully! Changes are now LIVE.");
+                loadWebsiteProfile();
+            } catch(error) {
+                alert(error.message);
+            } finally {
+                btn.innerText = "🌍 Publish to Public Website";
+            }
+        }
     </script>
 </body>
 </html>
