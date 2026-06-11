@@ -104,6 +104,7 @@
                     <div style="margin-top: 20px; padding-top: 20px; border-top: 1px dashed #ddd;">
                         <p><strong>Principal/Admin:</strong> <span id="dynAdminName">Loading...</span></p>
                         <p><strong>Contact Support:</strong> <span id="dynEmail">Loading...</span></p>
+                        <p><strong>Helpline / Mobile:</strong> <span id="dynContactNumbers" style="font-weight:bold; color:var(--secondary);">Loading...</span></p>
                     </div>
                 </div>
 
@@ -232,7 +233,16 @@
             document.getElementById('modalSchoolName').innerText = currentSchoolName;
             document.getElementById('footerSchoolName').innerText = currentSchoolName;
             document.getElementById('dynAdminName').innerText = data.adminName || 'Admin Office';
-            document.getElementById('dynEmail').innerText = data.email || 'Contact Support';
+            
+            // Render Public Email
+            document.getElementById('dynEmail').innerText = data.publicEmail || data.email || 'Contact Support';
+            
+            // Render Multiple Contact Numbers
+            if(data.contactNumbers && data.contactNumbers.length > 0) {
+                document.getElementById('dynContactNumbers').innerText = data.contactNumbers.join(", ");
+            } else {
+                document.getElementById('dynContactNumbers').innerText = 'Not Available';
+            }
             
             if(data.principalMessage) document.getElementById('dynHeroDesc').innerText = data.principalMessage;
             if(data.aboutSchool) document.getElementById('dynAbout').innerText = data.aboutSchool;
