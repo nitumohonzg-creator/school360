@@ -1522,4 +1522,9 @@
                     let breakdownText = data.feeBreakdown.map(f => `${f.head}: ₹${f.amount}`).join("<br>"); 
                     html += `<tr><td><strong>${data.className}</strong></td><td>${breakdownText}</td><td style="color:#27ae60;"><strong>₹${data.totalMonthlyFee}</strong></td><td><button class="btn btn-danger" onclick="deleteFeeStruct('${doc.id}')">Del</button></td></tr>`; 
                 }); 
-                document.getElementById('feeStruct
+                document.getElementById('feeStructBody').innerHTML = html || "<tr><td colspan='4'>No fees set.</td></tr>"; 
+            } catch(e) { console.error(e); } 
+        }
+    </script>
+</body>
+</html>
