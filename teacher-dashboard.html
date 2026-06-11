@@ -82,7 +82,6 @@
         .bg-danger { background-color: var(--danger); }
         .bg-info { background-color: var(--info); }
         .bg-warning { background-color: var(--warning); color:#333;}
-        .bg-neutral { background-color: var(--sidebar-bg); }
 
         fieldset { border: 1px solid #ddd; border-radius: 5px; padding: 15px; margin-bottom: 15px; background: #fafafa; }
         legend { font-weight: bold; color: var(--primary-dark); background: white; padding: 0 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px;}
@@ -130,6 +129,7 @@
             </div>
         </div>
 
+        <!-- 1. DASHBOARD -->
         <div id="dashboardSec" class="section active">
             <div class="grid-2">
                 <div class="box-container" style="border-top: 4px solid var(--danger);">
@@ -149,6 +149,7 @@
             </div>
         </div>
 
+        <!-- 2. TIMETABLE -->
         <div id="timetableSec" class="section box-container" style="border-top: 4px solid var(--warning);">
             <h3>📅 View Class Timetable</h3>
             <p style="font-size:13px; color:#666; margin-top:0;">Official routine uploaded by the Administration.</p>
@@ -166,10 +167,9 @@
             </div>
         </div>
 
+        <!-- 3. EXAM MARKS -->
         <div id="examMarksSec" class="section box-container" style="border-top: 4px solid #8e44ad;">
             <h3>📝 Upload Exam Marks (For Admin Approval)</h3>
-            <p style="font-size:13px; color:#666; margin-top:0;">Submit theory and practical marks here. Once approved by the Admin, it will reflect on the student's report card.</p>
-            
             <form onsubmit="submitExamMarks(event)" style="background: #fafafa; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
                 <div class="flex-row" style="margin-bottom: 15px;">
                     <div class="form-group" style="margin:0;">
@@ -216,6 +216,7 @@
             </form>
         </div>
 
+        <!-- 4. CLASS ATTENDANCE -->
         <div id="classAttSec" class="section box-container" style="border-top: 4px solid var(--info);">
             <h3>🏫 Mark Subject / Class Attendance</h3>
             <p style="font-size:13px; color:#666; margin-top:0; margin-bottom: 20px;">Marking attendance here will directly reflect in the student's dashboard.</p>
@@ -260,6 +261,7 @@
             </div>
         </div>
 
+        <!-- 5. ASSIGNMENTS UPLOAD -->
         <div id="uploadSec" class="section box-container" style="border-top: 4px solid var(--success);">
             <h3>📂 Post New Assignment / Homework</h3>
             <form id="assignmentForm" onsubmit="uploadAssignment(event)">
@@ -275,6 +277,7 @@
             </form>
         </div>
 
+        <!-- 6. ASSIGNMENTS GRADE -->
         <div id="receiveSec" class="section box-container" style="border-top: 4px solid var(--primary-dark);">
             <h3>📥 Grade Student Assignments</h3>
             <div class="flex-row" style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid #eee; margin-bottom: 20px;">
@@ -312,11 +315,13 @@
             </div>
         </div>
 
+        <!-- 7. NOTICES -->
         <div id="noticeSec" class="section box-container" style="border-top: 4px solid var(--info);">
             <h3>📢 Complete School Notice Board</h3>
             <div id="noticeBoardDiv"><p style="text-align:center; color:#888; font-size:14px;">Loading notices...</p></div>
         </div>
 
+        <!-- 8. LEAVE REQUESTS -->
         <div id="leaveReqSec" class="section box-container" style="border-top: 4px solid var(--danger);">
             <h3>📩 Request Leave to Admin</h3>
             <form id="leaveForm" onsubmit="submitLeaveRequest(event)">
@@ -340,6 +345,7 @@
             </div>
         </div>
 
+        <!-- 9. PROFILE -->
         <div id="profileSec" class="section box-container" style="border-top: 4px solid var(--sidebar-bg);">
             <h3>👤 My Profile & Settings</h3>
             <div class="grid-2">
@@ -425,7 +431,7 @@
             window.location.href = "main-website.html"; 
         }
 
-        // --- DYNAMIC CLASSES (ISOLATED) ---
+        // --- DYNAMIC CLASSES ---
         window.fetchDynamicClasses = async function() {
             try {
                 const q = query(collection(db, "classes"), where("schoolId", "==", activeSchoolId));
@@ -470,7 +476,7 @@
             } catch(err) { alert("Error: " + err.message); }
         }
 
-        // --- TIMETABLE (ISOLATED) ---
+        // --- TIMETABLE ---
         window.loadTimetableTeacher = async function() {
             const tbody = document.getElementById('timetableBody');
             const filterClass = document.getElementById('ttFilterClass').value;
@@ -488,7 +494,7 @@
             } catch(e) { console.error(e); }
         }
 
-        // --- EXAM MARKS UPLOAD (ISOLATED) ---
+        // --- EXAM MARKS UPLOAD ---
         window.loadStudentsForMarks = async function() {
             const cls = document.getElementById('emClass').value;
             const sec = document.getElementById('emSection').value;
@@ -506,10 +512,11 @@
                 
                 snap.forEach(doc => {
                     const s = doc.data();
-                    if(s.status === 'Inactive') return; 
+                    // BUG FIX: Ensure TC (Transfer Certificate) and old "Inactive" students are hidden
+                    if(s.status === 'Inactive' || s.status === 'TC') return; 
                     
                     if(sec === 'All' || s.section === sec) {
-                        studentSelect.innerHTML += `<option value="${doc.id}">${s.rollNumber || 'N/A'} - ${s.name}</option>`;
+                        studentSelect.innerHTML += `<option value="${doc.id}">${s.rollNo || s.rollNumber || 'N/A'} - ${s.name}</option>`;
                         studentsFound = true;
                     }
                 });
@@ -549,7 +556,7 @@
             } catch(err) { alert("Error: " + err.message); } finally { btn.innerText = "Submit Marks for Approval"; }
         }
 
-        // --- CLASS ATTENDANCE (ISOLATED) ---
+        // --- CLASS ATTENDANCE ---
         window.loadedClassStudents = [];
 
         window.loadClassAttendanceStudents = async function() {
@@ -578,12 +585,13 @@
                 window.loadedClassStudents = [];
                 studentSnap.forEach(doc => { 
                     const s = doc.data(); s.id = doc.id; 
-                    if(s.status === 'Inactive') return;
+                    // BUG FIX: Hide Left (TC) Students from Attendance Register
+                    if(s.status === 'Inactive' || s.status === 'TC') return;
                     if(sec === 'All' || s.section === sec) window.loadedClassStudents.push(s); 
                 });
 
                 if(window.loadedClassStudents.length === 0) { 
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No students found.</td></tr>'; return; 
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No students found in this class/section.</td></tr>'; return; 
                 }
                 
                 tbody.innerHTML = '';
@@ -591,7 +599,7 @@
                     let currentStatus = existingAtt[s.id] || 'Present';
                     let secDisplay = s.section && s.section !== 'N/A' ? s.section : '-';
                     let attSelect = `<select class="status-select class-att-dropdown" data-id="${s.id}" data-name="${s.name}" data-class="${s.className}" data-sec="${s.section}"><option value="Present" ${currentStatus==='Present'?'selected':''}>Present</option><option value="Absent" ${currentStatus==='Absent'?'selected':''}>Absent</option><option value="Leave" ${currentStatus==='Leave'?'selected':''}>Leave</option></select>`;
-                    tbody.innerHTML += `<tr><td><strong>${s.rollNumber || '-'}</strong></td><td>${s.name}</td><td>${secDisplay}</td><td>${attSelect}</td></tr>`;
+                    tbody.innerHTML += `<tr><td><strong>${s.rollNo || s.rollNumber || '-'}</strong></td><td>${s.name}</td><td>${secDisplay}</td><td>${attSelect}</td></tr>`;
                 });
                 saveBtn.style.display = 'inline-block';
             } catch(e) { console.error(e); tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:red;">Error loading students.</td></tr>'; }
@@ -617,7 +625,7 @@
             } catch(e) { alert("Error saving: " + e.message); } finally { btn.innerText = "💾 Save Class Attendance"; }
         }
 
-        // --- NOTICES (ISOLATED) ---
+        // --- NOTICES ---
         window.loadNotices = async function() {
             const noticeDiv = document.getElementById('noticeBoardDiv');
             const recentDiv = document.getElementById('recentNoticesDiv');
@@ -643,7 +651,7 @@
             } catch(e) { console.error("Notices Error:", e); }
         }
 
-        // --- LEAVE REQUESTS (ISOLATED) ---
+        // --- LEAVE REQUESTS ---
         window.submitLeaveRequest = async function(e) {
             e.preventDefault();
             const btn = document.getElementById('leaveBtn'); btn.innerText = "Sending Request...";
@@ -673,7 +681,7 @@
             } catch(e) { console.error(e); }
         }
 
-        // --- ASSIGNMENTS (ISOLATED) ---
+        // --- ASSIGNMENTS UPLOAD & GRADE ---
         window.uploadAssignment = async function(e) {
             e.preventDefault();
             const btn = document.getElementById('aBtn'); btn.innerText = "Posting...";
@@ -717,12 +725,14 @@
                 tbody.innerHTML = '';
                 studentSnap.forEach(doc => {
                     const s = doc.data(); const studentId = doc.id;
-                    if(s.status === 'Inactive') return; 
+                    // BUG FIX: Hide Left (TC) Students from Assignments
+                    if(s.status === 'Inactive' || s.status === 'TC') return; 
+                    
                     const studentData = savedData[studentId] || { status: 'Pending', marks: '' };
                     const statusColor = studentData.status === 'Received' ? 'status-received' : 'status-pending';
                     tbody.innerHTML += `
                         <tr class="student-row" data-id="${studentId}" data-name="${s.name}">
-                            <td><strong>${s.rollNumber || '-'}</strong></td><td>${s.name}</td>
+                            <td><strong>${s.rollNo || s.rollNumber || '-'}</strong></td><td>${s.name}</td>
                             <td><select class="status-select ${statusColor}" onchange="this.className='status-select ' + (this.value==='Received'?'status-received':'status-pending')"><option value="Pending" ${studentData.status === 'Pending' ? 'selected' : ''}>⏳ Pending</option><option value="Received" ${studentData.status === 'Received' ? 'selected' : ''}>✅ Received</option></select></td>
                             <td><input type="number" class="mark-input" placeholder="E.g. 10" value="${studentData.marks}"></td>
                         </tr>
