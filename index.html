@@ -209,6 +209,7 @@
         .btn-danger { background-color: var(--danger); }
         .btn-success { background-color: var(--success); }
         .btn-warning { background-color: var(--warning); color: #333;}
+        .btn-info { background-color: var(--info); color: white;}
         .badge { 
             padding: 4px 8px; 
             border-radius: 4px; 
@@ -219,6 +220,8 @@
         }
         .bg-danger { background-color: var(--danger); }
         .bg-success { background-color: var(--success); }
+        .bg-warning { background-color: var(--warning); color:#333; }
+        .bg-info { background-color: var(--info); }
         
         /* Forms */
         .form-group { margin-bottom: 15px; width: 100%;}
@@ -321,7 +324,7 @@
         <a id="nav-studentsSec" onclick="switchTab('studentsSec')">🎓 Students Management</a>
         <a id="nav-hrSec" onclick="switchTab('hrSec')">👨‍💼 HR (Teachers & Staff)</a>
         <a id="nav-financeSec" onclick="switchTab('financeSec')">💰 Finance & Accounts</a>
-        <a id="nav-studentAttSec" onclick="switchTab('studentAttSec')">📝 Mark Attendance</a>
+        <a id="nav-studentAttSec" onclick="switchTab('studentAttSec')">📝 Mark Staff Attendance</a>
         <a id="nav-leaveReqSec" onclick="switchTab('leaveReqSec')">📩 Leave Approvals</a>
         <a id="nav-examApprovalSec" onclick="switchTab('examApprovalSec')">🏆 Publish Results</a>
         <a id="nav-timetableSec" onclick="switchTab('timetableSec')">📅 Class Timetable</a>
@@ -465,16 +468,16 @@
             <h4 style="background:#eee; padding:8px; border-radius:4px;">Academic Teachers</h4>
             <div style="overflow-x: auto; margin-bottom: 20px;">
                 <table id="teachersTable">
-                    <thead><tr><th>Teacher Details</th><th>Subject</th><th>Monthly Salary</th><th>Last Paid Month</th><th>Actions</th></tr></thead>
-                    <tbody id="teacherTableBody"><tr><td colspan="5" style="text-align: center;">Loading teachers...</td></tr></tbody>
+                    <thead><tr><th>Teacher Details</th><th>Subject</th><th>Monthly Base Salary</th><th>Salary Actions</th></tr></thead>
+                    <tbody id="teacherTableBody"><tr><td colspan="4" style="text-align: center;">Loading teachers...</td></tr></tbody>
                 </table>
             </div>
 
             <h4 style="background:#eee; padding:8px; border-radius:4px;">Non-Teaching Staff</h4>
             <div style="overflow-x: auto;">
                 <table id="staffTable">
-                    <thead><tr><th>Staff Details</th><th>Role / Duty</th><th>Monthly Salary</th><th>Last Paid Month</th><th>Actions</th></tr></thead>
-                    <tbody id="staffTableBody"><tr><td colspan="5" style="text-align: center;">Loading staff...</td></tr></tbody>
+                    <thead><tr><th>Staff Details</th><th>Role / Duty</th><th>Monthly Base Salary</th><th>Salary Actions</th></tr></thead>
+                    <tbody id="staffTableBody"><tr><td colspan="4" style="text-align: center;">Loading staff...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -504,22 +507,23 @@
                 <table id="studentsTable">
                     <thead>
                         <tr>
-                            <th>Roll & ID</th>
-                            <th>Student Name</th>
+                            <th>Roll No</th>
+                            <th>Student Details</th>
                             <th>Class & Sec</th>
-                            <th>Parents & Contact</th>
-                            <th>Fee Status</th>
-                            <th>Pending Dues</th>
-                            <th>Actions</th>
+                            <th>Contact</th>
+                            <th>Fees Action</th>
+                            <th>Academic Action</th>
                         </tr>
                     </thead>
-                    <tbody id="studentTableBody"><tr><td colspan="7" style="text-align: center;">Loading students...</td></tr></tbody>
+                    <tbody id="studentTableBody"><tr><td colspan="6" style="text-align: center;">Loading students...</td></tr></tbody>
                 </table>
             </div>
         </div>
 
         <div id="studentAttSec" class="content-section box-container" style="border-top: 4px solid #e67e22;">
-            <h3>📝 Official School Attendance</h3>
+            <h3>📝 Official Staff & Teacher Attendance</h3>
+            <p style="font-size:13px; color:#666;">Note: Student attendance is managed exclusively by Teachers from their portal.</p>
+            
             <div style="background: #fdf2e9; padding: 15px; border-radius: 8px; display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; align-items:flex-end;">
                 <div class="form-group" style="flex:1; margin:0;">
                     <label>Date</label>
@@ -528,25 +532,26 @@
                 <div class="form-group" style="flex:1; margin:0;">
                     <label>User Type</label>
                     <select id="attUserType" onchange="loadGlobalAttendance()">
-                        <option value="Student">Students</option>
                         <option value="Teacher">Teachers</option>
                         <option value="Staff">Non-Teaching Staff</option>
                     </select>
                 </div>
-                <div class="form-group" style="flex:1; margin:0;">
-                    <label>Class Filter (For Students)</label>
-                    <select id="attClassFilterGlobal" class="dynamic-class-dropdown" onchange="updateDynamicSections('attClassFilterGlobal', 'attSectionFilterGlobal'); loadGlobalAttendance();"><option value="All">All Classes</option></select>
+                <button class="btn btn-success" id="saveGlobalAttBtn" onclick="saveGlobalAttendance()" style="height: 38px;">💾 Save Attendance</button>
+            </div>
+
+            <div style="margin-bottom: 20px; padding: 15px; background: #ffebee; border-radius: 8px; border: 1px solid #ef9a9a;">
+                <h4 style="margin: 0 0 10px 0; color: #c62828;">🏖️ Declare School Holiday</h4>
+                <p style="font-size:12px; margin:0 0 10px 0; color:#555;">Declaring a holiday will instantly mark all Teachers & Staff as "Holiday" and push a Notice to the public board.</p>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;">
+                    <div class="form-group" style="flex:1; margin:0;"><label>Holiday Date</label><input type="date" id="holDate"></div>
+                    <div class="form-group" style="flex:2; margin:0;"><label>Reason / Festival Name</label><input type="text" id="holReason" placeholder="E.g. Diwali, Independence Day"></div>
+                    <button class="btn btn-danger" onclick="declareHoliday()" style="height: 38px;">Declare Holiday</button>
                 </div>
-                <div class="form-group" style="flex:1; margin:0;">
-                    <label>Section Filter</label>
-                    <select id="attSectionFilterGlobal" onchange="loadGlobalAttendance()"><option value="All">All Sections</option></select>
-                </div>
-                <button class="btn btn-success" id="saveGlobalAttBtn" onclick="saveGlobalAttendance()" style="height: 38px;">💾 Save</button>
             </div>
             
             <table id="globalAttTable">
-                <thead><tr><th>ID/Roll</th><th>Name</th><th>Role/Class/Sec</th><th>Status</th></tr></thead>
-                <tbody id="globalAttBody"><tr><td colspan="4" style="text-align: center;">Select filters...</td></tr></tbody>
+                <thead><tr><th>Name</th><th>Role/Subject</th><th>Status</th></tr></thead>
+                <tbody id="globalAttBody"><tr><td colspan="3" style="text-align: center;">Select filters above...</td></tr></tbody>
             </table>
         </div>
 
@@ -701,50 +706,16 @@
                     </div>
                     <div class="grid-3">
                         <div class="form-group"><label>Subject Expert</label><input type="text" id="tSubject" required></div>
-                        <div class="form-group"><label>Monthly Salary (₹)</label><input type="number" id="tSalary" required></div>
+                        <div class="form-group"><label>Monthly Base Salary (₹)</label><input type="number" id="tSalary" required></div>
                         <div class="form-group"><label>Mobile No.</label><input type="tel" id="tMobile" required></div>
                     </div>
                 </fieldset>
                 
                 <fieldset>
-                    <legend>Family & Contact</legend>
-                    <div class="grid-2">
-                        <div class="form-group"><label>Father's Name</label><input type="text" id="tFather" required></div>
-                        <div class="form-group"><label>Mother's Name</label><input type="text" id="tMother" required></div>
-                    </div>
+                    <legend>Contact & Login</legend>
                     <div class="grid-2">
                         <div class="form-group"><label>Login Email</label><input type="email" id="tEmail" required></div>
                         <div class="form-group" id="tPassGroup"><label>Login Password</label><input type="password" id="tPassword" required></div>
-                    </div>
-                </fieldset>
-
-                <fieldset>
-                    <legend>Permanent Address</legend>
-                    <div class="grid-2">
-                        <div class="form-group"><label>Village / Town</label><input type="text" id="tPermVill" required></div>
-                        <div class="form-group"><label>Post Office (PO)</label><input type="text" id="tPermPO" required></div>
-                    </div>
-                    <div class="grid-3">
-                        <div class="form-group"><label>District</label><input type="text" id="tPermDist" required></div>
-                        <div class="form-group"><label>State</label><input type="text" id="tPermState" required></div>
-                        <div class="form-group"><label>PIN Code</label><input type="number" id="tPermPin" required></div>
-                    </div>
-                </fieldset>
-
-                <fieldset>
-                    <legend>Present Address</legend>
-                    <div style="margin-bottom:10px;">
-                        <input type="checkbox" id="tSameAddress" onchange="copyAddress('t')"> 
-                        <label for="tSameAddress" style="display:inline; font-weight:bold; color:var(--info);">Same as Permanent</label>
-                    </div>
-                    <div class="grid-2">
-                        <div class="form-group"><label>Village / Town</label><input type="text" id="tPresVill" required></div>
-                        <div class="form-group"><label>Post Office (PO)</label><input type="text" id="tPresPO" required></div>
-                    </div>
-                    <div class="grid-3">
-                        <div class="form-group"><label>District</label><input type="text" id="tPresDist" required></div>
-                        <div class="form-group"><label>State</label><input type="text" id="tPresState" required></div>
-                        <div class="form-group"><label>PIN Code</label><input type="number" id="tPresPin" required></div>
                     </div>
                 </fieldset>
 
@@ -763,53 +734,13 @@
                     <legend>Personal Info</legend>
                     <div class="grid-2">
                         <div class="form-group"><label>Full Name</label><input type="text" id="stName" required></div>
-                        <div class="form-group"><label>Date of Birth</label><input type="date" id="stDob" required></div>
-                    </div>
-                    <div class="grid-3">
                         <div class="form-group"><label>Role / Duty</label><input type="text" id="stRole" required></div>
-                        <div class="form-group"><label>Monthly Salary (₹)</label><input type="number" id="stSalary" required></div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group"><label>Monthly Base Salary (₹)</label><input type="number" id="stSalary" required></div>
                         <div class="form-group"><label>Mobile No.</label><input type="tel" id="stMobile" required></div>
                     </div>
                 </fieldset>
-                
-                <fieldset>
-                    <legend>Family Details</legend>
-                    <div class="grid-2">
-                        <div class="form-group"><label>Father's Name</label><input type="text" id="stFather" required></div>
-                        <div class="form-group"><label>Mother's Name</label><input type="text" id="stMother" required></div>
-                    </div>
-                </fieldset>
-
-                <fieldset>
-                    <legend>Permanent Address</legend>
-                    <div class="grid-2">
-                        <div class="form-group"><label>Village / Town</label><input type="text" id="stPermVill" required></div>
-                        <div class="form-group"><label>Post Office (PO)</label><input type="text" id="stPermPO" required></div>
-                    </div>
-                    <div class="grid-3">
-                        <div class="form-group"><label>District</label><input type="text" id="stPermDist" required></div>
-                        <div class="form-group"><label>State</label><input type="text" id="stPermState" required></div>
-                        <div class="form-group"><label>PIN Code</label><input type="number" id="stPermPin" required></div>
-                    </div>
-                </fieldset>
-
-                <fieldset>
-                    <legend>Present Address</legend>
-                    <div style="margin-bottom:10px;">
-                        <input type="checkbox" id="stSameAddress" onchange="copyAddress('st')"> 
-                        <label for="stSameAddress" style="display:inline; font-weight:bold; color:var(--danger);">Same as Permanent</label>
-                    </div>
-                    <div class="grid-2">
-                        <div class="form-group"><label>Village / Town</label><input type="text" id="stPresVill" required></div>
-                        <div class="form-group"><label>Post Office (PO)</label><input type="text" id="stPresPO" required></div>
-                    </div>
-                    <div class="grid-3">
-                        <div class="form-group"><label>District</label><input type="text" id="stPresDist" required></div>
-                        <div class="form-group"><label>State</label><input type="text" id="stPresState" required></div>
-                        <div class="form-group"><label>PIN Code</label><input type="number" id="stPresPin" required></div>
-                    </div>
-                </fieldset>
-
                 <button type="submit" class="btn btn-danger" id="stBtn" style="width: 100%; font-size:16px; padding:12px;">💾 Save Staff Record</button>
             </form>
         </div>
@@ -836,11 +767,7 @@
                 </fieldset>
                 
                 <fieldset>
-                    <legend>Family & Contact Details</legend>
-                    <div class="grid-2">
-                        <div class="form-group"><label>Father's Name</label><input type="text" id="sFather" required></div>
-                        <div class="form-group"><label>Mother's Name</label><input type="text" id="sMother" required></div>
-                    </div>
+                    <legend>Contact & Login Details</legend>
                     <div class="grid-3">
                         <div class="form-group"><label>Parent Mobile No.</label><input type="tel" id="sMobile" required></div>
                         <div class="form-group"><label>Student Login Email</label><input type="email" id="sEmail" required></div>
@@ -848,38 +775,69 @@
                     </div>
                 </fieldset>
 
-                <fieldset>
-                    <legend>Permanent Address</legend>
-                    <div class="grid-2">
-                        <div class="form-group"><label>Village / Town</label><input type="text" id="sPermVill" required></div>
-                        <div class="form-group"><label>Post Office (PO)</label><input type="text" id="sPermPO" required></div>
-                    </div>
-                    <div class="grid-3">
-                        <div class="form-group"><label>District</label><input type="text" id="sPermDist" required></div>
-                        <div class="form-group"><label>State</label><input type="text" id="sPermState" required></div>
-                        <div class="form-group"><label>PIN Code</label><input type="number" id="sPermPin" required></div>
-                    </div>
-                </fieldset>
-
-                <fieldset>
-                    <legend>Present Address</legend>
-                    <div style="margin-bottom:10px;">
-                        <input type="checkbox" id="sSameAddress" onchange="copyAddress('s')"> 
-                        <label for="sSameAddress" style="display:inline; font-weight:bold; color:#d35400;">Same as Permanent Address</label>
-                    </div>
-                    <div class="grid-2">
-                        <div class="form-group"><label>Village / Town</label><input type="text" id="sPresVill" required></div>
-                        <div class="form-group"><label>Post Office (PO)</label><input type="text" id="sPresPO" required></div>
-                    </div>
-                    <div class="grid-3">
-                        <div class="form-group"><label>District</label><input type="text" id="sPresDist" required></div>
-                        <div class="form-group"><label>State</label><input type="text" id="sPresState" required></div>
-                        <div class="form-group"><label>PIN Code</label><input type="number" id="sPresPin" required></div>
-                    </div>
-                </fieldset>
-
                 <button type="submit" class="btn btn-success" id="sBtn" style="width: 100%; font-size:16px; padding:12px;">💾 Save Student Record</button>
             </form>
+        </div>
+    </div>
+
+    <div id="feeModal" class="modal-overlay">
+        <div class="modal-box">
+            <span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+            <h3 style="margin-top:0; color:#27ae60;">💳 Collect Student Fee</h3>
+            <p><strong>Student:</strong> <span id="feeStudentName"></span></p>
+            <div class="form-group">
+                <label>Select Month to Pay</label>
+                <select id="feeMonthSelect">
+                    <option value="January">January</option><option value="February">February</option>
+                    <option value="March">March</option><option value="April">April</option>
+                    <option value="May">May</option><option value="June">June</option>
+                    <option value="July">July</option><option value="August">August</option>
+                    <option value="September">September</option><option value="October">October</option>
+                    <option value="November">November</option><option value="December">December</option>
+                </select>
+            </div>
+            <button class="btn btn-success" onclick="processFeePayment()" style="width:100%;">Mark as Paid</button>
+            <h4 style="margin-top: 20px; border-bottom: 2px solid #eee; padding-bottom: 5px;">Payment History</h4>
+            <ul id="feeHistoryList" style="padding-left: 20px; font-size: 13px; color: #555;"></ul>
+        </div>
+    </div>
+
+    <div id="salaryModal" class="modal-overlay">
+        <div class="modal-box">
+            <span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+            <h3 style="margin-top:0; color:#8e44ad;">💸 Process Salary</h3>
+            <p><strong>Employee:</strong> <span id="salEmpName"></span></p>
+            <div class="form-group">
+                <label>Select Month to Pay</label>
+                <select id="salMonthSelect">
+                    <option value="January">January</option><option value="February">February</option>
+                    <option value="March">March</option><option value="April">April</option>
+                    <option value="May">May</option><option value="June">June</option>
+                    <option value="July">July</option><option value="August">August</option>
+                    <option value="September">September</option><option value="October">October</option>
+                    <option value="November">November</option><option value="December">December</option>
+                </select>
+            </div>
+            <button class="btn btn-info" onclick="processSalaryPayment()" style="width:100%;">Mark as Paid</button>
+            <h4 style="margin-top: 20px; border-bottom: 2px solid #eee; padding-bottom: 5px;">Salary History</h4>
+            <ul id="salHistoryList" style="padding-left: 20px; font-size: 13px; color: #555;"></ul>
+        </div>
+    </div>
+
+    <div id="statusModal" class="modal-overlay">
+        <div class="modal-box">
+            <span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+            <h3 style="margin-top:0; color:#e74c3c;">🎓 Update Academic Status</h3>
+            <div class="form-group">
+                <label>Current Status</label>
+                <select id="studentStatusSelect">
+                    <option value="Active">Active (Studying)</option>
+                    <option value="Pass">Pass (Promoted)</option>
+                    <option value="Fail">Fail (Retained)</option>
+                    <option value="TC">Transfer Certificate (Left)</option>
+                </select>
+            </div>
+            <button class="btn btn-danger" onclick="saveStudentStatus()" style="width:100%;">Update Status</button>
         </div>
     </div>
 
@@ -902,10 +860,11 @@
         // GLOBAL VARIABLES
         window.schoolClassesData = {};
         window.allStudentsData = []; 
+        window.allTeachersData = [];
+        window.allStaffData = [];
+        window.currentActionId = null;
+        window.currentActionType = null; // 'Teacher' or 'Staff'
 
-        // ==========================================
-        // 1. SAAS SECURITY & INIT
-        // ==========================================
         const activeSchoolId = localStorage.getItem("activeSchoolId");
         const userRole = localStorage.getItem("userRole");
 
@@ -923,6 +882,7 @@
             loadClasses();
             loadStudents();
             loadTeachers();
+            loadStaff();
             loadFeeStructures();
             loadExpenses();
             loadTimetableAdmin();
@@ -930,9 +890,7 @@
             loadLeaveRequests();
         };
 
-        // ==========================================
-        // 2. UI CONTROL FUNCTIONS (TABS & MODALS)
-        // ==========================================
+        // UI CONTROL
         window.toggleSidebar = () => {
             document.getElementById('sidebar').classList.toggle('active');
             document.querySelector('.sidebar-overlay').classList.toggle('active');
@@ -950,82 +908,47 @@
         window.openTeacherModal = () => document.getElementById('teacherModal').style.display='flex';
         window.openStaffModal = () => document.getElementById('staffModal').style.display='flex';
 
-        window.copyAddress = (prefix) => {
-            if(document.getElementById(prefix+'SameAddress').checked) {
-                document.getElementById(prefix+'PresVill').value = document.getElementById(prefix+'PermVill').value;
-                document.getElementById(prefix+'PresPO').value = document.getElementById(prefix+'PermPO').value;
-                document.getElementById(prefix+'PresDist').value = document.getElementById(prefix+'PermDist').value;
-                document.getElementById(prefix+'PresState').value = document.getElementById(prefix+'PermState').value;
-                document.getElementById(prefix+'PresPin').value = document.getElementById(prefix+'PermPin').value;
-            }
-        };
-
         window.secureLogout = () => {
             localStorage.clear();
             window.location.href = "main-website.html";
         };
 
         // ==========================================
-        // 3. ADD DATA 
+        // 1. ADD DATA FUNCTIONS
         // ==========================================
-
         window.addClass = async function(event) {
             event.preventDefault();
             try {
-                await addDoc(collection(db, "classes"), {
-                    className: document.getElementById('newClassName').value,
-                    sections: document.getElementById('newClassSections').value,
-                    schoolId: activeSchoolId
-                });
-                alert("Class added successfully!");
-                event.target.reset();
-                loadClasses();
+                await addDoc(collection(db, "classes"), { className: document.getElementById('newClassName').value, sections: document.getElementById('newClassSections').value, schoolId: activeSchoolId });
+                alert("Class added successfully!"); event.target.reset(); loadClasses();
             } catch(e) { alert("Error: " + e.message); }
         }
 
         window.saveStudent = async function(event) {
             event.preventDefault();
-            const btn = document.getElementById('sBtn');
-            btn.innerText = "Saving...";
-
+            const btn = document.getElementById('sBtn'); btn.innerText = "Saving...";
             try {
                 await addDoc(collection(db, "students"), {
-                    name: document.getElementById('sName').value,
-                    className: document.getElementById('sClass').value,
-                    section: document.getElementById('sSection').value,
-                    rollNo: document.getElementById('sRoll').value,
-                    email: document.getElementById('sEmail').value,
-                    password: document.getElementById('sPassword').value,
-                    mobile: document.getElementById('sMobile').value,
-                    schoolId: activeSchoolId 
+                    name: document.getElementById('sName').value, className: document.getElementById('sClass').value,
+                    section: document.getElementById('sSection').value, rollNo: document.getElementById('sRoll').value,
+                    email: document.getElementById('sEmail').value, password: document.getElementById('sPassword').value,
+                    mobile: document.getElementById('sMobile').value, schoolId: activeSchoolId, status: "Active", feeRecords: {} 
                 });
-                alert("Student successfully registered!");
-                document.getElementById('studentModal').style.display = 'none';
-                event.target.reset();
-                loadStudents();
+                alert("Student registered!"); document.getElementById('studentModal').style.display = 'none'; event.target.reset(); loadStudents();
             } catch(e) { alert("Error: " + e.message); }
             btn.innerText = "💾 Save Student Record";
         }
 
         window.saveTeacher = async function(event) {
             event.preventDefault();
-            const btn = document.getElementById('tBtn');
-            btn.innerText = "Saving...";
-
+            const btn = document.getElementById('tBtn'); btn.innerText = "Saving...";
             try {
                 await addDoc(collection(db, "teachers"), {
-                    name: document.getElementById('tName').value,
-                    subject: document.getElementById('tSubject').value,
-                    email: document.getElementById('tEmail').value,
-                    password: document.getElementById('tPassword').value,
-                    salary: document.getElementById('tSalary').value,
-                    mobile: document.getElementById('tMobile').value,
-                    schoolId: activeSchoolId 
+                    name: document.getElementById('tName').value, subject: document.getElementById('tSubject').value,
+                    email: document.getElementById('tEmail').value, password: document.getElementById('tPassword').value,
+                    salary: document.getElementById('tSalary').value, mobile: document.getElementById('tMobile').value, schoolId: activeSchoolId, salaryRecords: {}
                 });
-                alert("Teacher successfully added!");
-                document.getElementById('teacherModal').style.display = 'none';
-                event.target.reset();
-                loadTeachers();
+                alert("Teacher added!"); document.getElementById('teacherModal').style.display = 'none'; event.target.reset(); loadTeachers();
             } catch(e) { alert("Error: " + e.message); }
             btn.innerText = "💾 Save Teacher Record";
         }
@@ -1033,96 +956,61 @@
         window.saveStaff = async function(event) {
             event.preventDefault();
             try {
-                await addDoc(collection(db, "staff"), {
-                    name: document.getElementById('stName').value,
-                    role: document.getElementById('stRole').value,
-                    mobile: document.getElementById('stMobile').value,
-                    salary: document.getElementById('stSalary').value,
-                    schoolId: activeSchoolId
-                });
-                alert("Staff successfully added!");
-                document.getElementById('staffModal').style.display = 'none';
-                event.target.reset();
+                await addDoc(collection(db, "staff"), { name: document.getElementById('stName').value, role: document.getElementById('stRole').value, mobile: document.getElementById('stMobile').value, salary: document.getElementById('stSalary').value, schoolId: activeSchoolId, salaryRecords: {} });
+                alert("Staff added!"); document.getElementById('staffModal').style.display = 'none'; event.target.reset(); loadStaff();
             } catch(e) { alert("Error: " + e.message); }
         }
 
-        // ==========================================
-        // DYNAMIC SECTIONS FIX
-        // ==========================================
         window.updateDynamicSections = function(classDropdownId, sectionDropdownId) {
             const selectedClass = document.getElementById(classDropdownId).value;
             const sectionDropdown = document.getElementById(sectionDropdownId);
-            
             sectionDropdown.innerHTML = '<option value="">--Select Section--</option>';
-
             if (selectedClass && window.schoolClassesData[selectedClass]) {
                 const sections = window.schoolClassesData[selectedClass].split(',');
-                
                 sections.forEach(sec => {
                     const cleanSec = sec.trim();
-                    if (cleanSec && cleanSec.toLowerCase() !== 'n/a') {
-                        sectionDropdown.innerHTML += `<option value="${cleanSec}">${cleanSec}</option>`;
-                    }
+                    if (cleanSec && cleanSec.toLowerCase() !== 'n/a') sectionDropdown.innerHTML += `<option value="${cleanSec}">${cleanSec}</option>`;
                 });
-                
-                if (sectionDropdown.options.length === 1) {
-                    sectionDropdown.innerHTML += `<option value="A">A</option><option value="N/A">N/A</option>`;
-                }
+                if (sectionDropdown.options.length === 1) sectionDropdown.innerHTML += `<option value="A">A</option><option value="N/A">N/A</option>`;
             }
         }
-
-        // ==========================================
-        // 4. LOAD DATA (FILTER BY SCHOOL ID)
-        // ==========================================
 
         window.loadClasses = async function() {
             try {
                 const q = query(collection(db, "classes"), where("schoolId", "==", activeSchoolId));
                 const snap = await getDocs(q);
                 let tableHtml = "", dropdownHtml = "<option value='All'>All Classes</option>";
-                
                 window.schoolClassesData = {}; 
-                
                 snap.forEach(doc => {
-                    const data = doc.data();
-                    window.schoolClassesData[data.className] = data.sections; 
+                    const data = doc.data(); window.schoolClassesData[data.className] = data.sections; 
                     tableHtml += `<tr><td>${data.className}</td><td>${data.sections}</td><td><button class='btn btn-danger'>Del</button></td></tr>`;
                     dropdownHtml += `<option value="${data.className}">${data.className}</option>`;
                 });
-                
                 document.getElementById('classesTableBody').innerHTML = tableHtml || "<tr><td colspan='3'>No classes found.</td></tr>";
-                
-                document.querySelectorAll('.dynamic-class-dropdown').forEach(select => {
-                    select.innerHTML = dropdownHtml;
-                });
+                document.querySelectorAll('.dynamic-class-dropdown').forEach(select => select.innerHTML = dropdownHtml);
             } catch(e) { console.error(e); }
         }
 
-        // FETCH ALL STUDENTS THEN RENDER WITH FILTERS
+        // ==========================================
+        // 2. LOAD STUDENTS + FEES + STATUS
+        // ==========================================
         window.loadStudents = async function() {
             try {
                 const q = query(collection(db, "students"), where("schoolId", "==", activeSchoolId));
                 const snap = await getDocs(q);
                 window.allStudentsData = [];
-                snap.forEach(doc => {
-                    window.allStudentsData.push({ id: doc.id, ...doc.data() });
-                });
+                snap.forEach(doc => window.allStudentsData.push({ id: doc.id, ...doc.data() }));
                 renderStudents(); 
-            } catch(error) { 
-                console.error(error); 
-                document.getElementById('studentTableBody').innerHTML = `<tr><td colspan='7'>Error loading data.</td></tr>`;
-            }
+            } catch(error) { console.error(error); }
         }
 
-        // STUDENT FILTER LOGIC
         window.renderStudents = function() {
             const classFilter = document.getElementById('stuClassFilter').value;
             const secFilter = document.getElementById('stuSectionFilter').value;
             const searchInput = document.getElementById('searchStudentInput').value.toLowerCase();
             const tbody = document.getElementById('studentTableBody');
             
-            let html = "";
-            let count = 0;
+            let html = ""; let count = 0;
 
             window.allStudentsData.forEach(data => {
                 if(classFilter !== 'All' && data.className !== classFilter) return;
@@ -1130,372 +1018,348 @@
                 if(searchInput && !data.name.toLowerCase().includes(searchInput) && !(data.rollNo && data.rollNo.toString().includes(searchInput))) return;
 
                 count++;
+                let statusBadge = data.status === 'TC' ? 'bg-danger' : (data.status === 'Pass' ? 'bg-success' : (data.status === 'Fail' ? 'bg-warning' : 'bg-info'));
+                
                 html += `<tr>
                     <td>${data.rollNo || 'N/A'}</td>
-                    <td><strong>${data.name || 'Unknown'}</strong></td>
+                    <td><strong>${data.name || 'Unknown'}</strong><br><span class="badge ${statusBadge}">${data.status || 'Active'}</span></td>
                     <td>${data.className || 'N/A'} (${data.section || '-'})</td>
                     <td>${data.mobile || 'No Contact'}</td>
-                    <td><span class="badge bg-danger">Pending</span></td>
-                    <td>-</td>
+                    <td><button class="btn btn-success" onclick="openFeeModal('${data.id}', '${data.name}')">₹ Pay Fees</button></td>
                     <td>
-                        <button class="btn btn-warning" onclick="editStudent('${data.id}')">Edit</button>
-                        <button class="btn btn-danger" onclick="deleteStudent('${data.id}')">Del</button>
+                        <button class="btn btn-info" onclick="openStatusModal('${data.id}', '${data.status || 'Active'}')" style="margin-bottom:5px;">Update Status</button>
+                        <button class="btn btn-danger" onclick="deleteStudent('${data.id}')" style="margin-bottom:5px;">Del</button>
                     </td>
                 </tr>`;
             });
-
-            tbody.innerHTML = html || "<tr><td colspan='7' style='text-align: center;'>No students found matching filters.</td></tr>";
+            tbody.innerHTML = html || "<tr><td colspan='6' style='text-align: center;'>No students found.</td></tr>";
             document.getElementById('dashStudentsCount').innerText = count;
         }
 
         window.deleteStudent = async function(docId) {
-            if(confirm("Are you sure you want to delete this student?")) {
-                try {
-                    await deleteDoc(doc(db, "students", docId));
-                    loadStudents();
-                } catch (error) { console.error(error); }
-            }
+            if(confirm("Delete this student completely?")) { await deleteDoc(doc(db, "students", docId)); loadStudents(); }
         }
 
+        window.openFeeModal = function(id, name) {
+            window.currentActionId = id;
+            document.getElementById('feeStudentName').innerText = name;
+            document.getElementById('feeModal').style.display = 'flex';
+            
+            const student = window.allStudentsData.find(s => s.id === id);
+            const list = document.getElementById('feeHistoryList'); list.innerHTML = "";
+            if(student && student.feeRecords) {
+                for (const [month, dateStr] of Object.entries(student.feeRecords)) {
+                    list.innerHTML += `<li><strong>${month}</strong>: Paid on ${dateStr}</li>`;
+                }
+            } else { list.innerHTML = "<li>No payments recorded yet.</li>"; }
+        }
+
+        window.processFeePayment = async function() {
+            const month = document.getElementById('feeMonthSelect').value;
+            const dateStr = new Date().toISOString().split('T')[0];
+            try {
+                const student = window.allStudentsData.find(s => s.id === window.currentActionId);
+                let records = student.feeRecords || {};
+                records[month] = dateStr;
+                await updateDoc(doc(db, "students", window.currentActionId), { feeRecords: records });
+                alert(`Fee for ${month} marked as Paid!`); document.getElementById('feeModal').style.display = 'none'; loadStudents(); 
+            } catch(e) { alert("Error: " + e.message); }
+        }
+
+        window.openStatusModal = function(id, currentStatus) {
+            window.currentActionId = id; document.getElementById('studentStatusSelect').value = currentStatus;
+            document.getElementById('statusModal').style.display = 'flex';
+        }
+
+        window.saveStudentStatus = async function() {
+            const newStatus = document.getElementById('studentStatusSelect').value;
+            try {
+                await updateDoc(doc(db, "students", window.currentActionId), { status: newStatus });
+                alert("Student status updated!"); document.getElementById('statusModal').style.display = 'none'; loadStudents();
+            } catch(e) { alert("Error: " + e.message); }
+        }
+
+        // ==========================================
+        // 3. LOAD HR (TEACHERS & STAFF SALARIES)
+        // ==========================================
         window.loadTeachers = async function() {
             try {
-                const q = query(collection(db, "teachers"), where("schoolId", "==", activeSchoolId));
-                const snap = await getDocs(q);
-                let html = "";
-                let count = 0;
+                const snap = await getDocs(query(collection(db, "teachers"), where("schoolId", "==", activeSchoolId)));
+                let html = ""; let count = 0;
+                window.allTeachersData = [];
                 snap.forEach(doc => {
-                    const data = doc.data();
-                    count++;
-                    html += `<tr>
-                        <td><strong>${data.name}</strong><br><small>${data.mobile}</small></td>
-                        <td>${data.subject}</td>
-                        <td>₹ ${data.salary || '0'}</td>
-                        <td>-</td>
-                        <td><button class="btn btn-warning">Edit</button></td>
-                    </tr>`;
+                    const data = doc.data(); count++;
+                    window.allTeachersData.push({ id: doc.id, ...data });
+                    html += `<tr><td><strong>${data.name}</strong><br><small>${data.mobile}</small></td><td>${data.subject}</td><td>₹ ${data.salary || '0'}</td>
+                        <td><button class="btn btn-info" onclick="openSalaryModal('${doc.id}', '${data.name}', 'Teacher')">₹ Pay & View Salary</button></td></tr>`;
                 });
-                document.getElementById('teacherTableBody').innerHTML = html || "<tr><td colspan='5'>No teachers found.</td></tr>";
+                document.getElementById('teacherTableBody').innerHTML = html || "<tr><td colspan='4'>No teachers found.</td></tr>";
                 document.getElementById('dashTeachersCount').innerText = count;
             } catch(e) { console.error(e); }
         }
 
+        window.loadStaff = async function() {
+            try {
+                const snap = await getDocs(query(collection(db, "staff"), where("schoolId", "==", activeSchoolId)));
+                let html = ""; let count = 0;
+                window.allStaffData = [];
+                snap.forEach(doc => {
+                    const data = doc.data(); count++;
+                    window.allStaffData.push({ id: doc.id, ...data });
+                    html += `<tr><td><strong>${data.name}</strong><br><small>${data.mobile}</small></td><td>${data.role}</td><td>₹ ${data.salary || '0'}</td>
+                        <td><button class="btn btn-info" onclick="openSalaryModal('${doc.id}', '${data.name}', 'Staff')">₹ Pay & View Salary</button></td></tr>`;
+                });
+                document.getElementById('staffTableBody').innerHTML = html || "<tr><td colspan='4'>No staff found.</td></tr>";
+                document.getElementById('dashStaffCount').innerText = count;
+            } catch(e) { console.error(e); }
+        }
+
+        window.openSalaryModal = function(id, name, type) {
+            window.currentActionId = id; window.currentActionType = type;
+            document.getElementById('salEmpName').innerText = name; document.getElementById('salaryModal').style.display = 'flex';
+            
+            const employee = type === 'Teacher' ? window.allTeachersData.find(t => t.id === id) : window.allStaffData.find(s => s.id === id);
+            const list = document.getElementById('salHistoryList'); list.innerHTML = "";
+            if(employee && employee.salaryRecords) {
+                for (const [month, dateStr] of Object.entries(employee.salaryRecords)) {
+                    list.innerHTML += `<li><strong>${month}</strong>: Paid on ${dateStr}</li>`;
+                }
+            } else { list.innerHTML = "<li>No salary records yet.</li>"; }
+        }
+
+        window.processSalaryPayment = async function() {
+            const monthVal = document.getElementById('salMonthSelect').value; 
+            const dateStr = new Date().toISOString().split('T')[0];
+            try {
+                const collectionName = window.currentActionType === 'Teacher' ? 'teachers' : 'staff';
+                const employee = window.currentActionType === 'Teacher' ? window.allTeachersData.find(t => t.id === window.currentActionId) : window.allStaffData.find(s => s.id === window.currentActionId);
+                
+                let records = employee.salaryRecords || {};
+                records[monthVal] = dateStr;
+
+                await updateDoc(doc(db, collectionName, window.currentActionId), { salaryRecords: records });
+                alert(`Salary for ${monthVal} marked as Paid!`); document.getElementById('salaryModal').style.display = 'none';
+                if(window.currentActionType === 'Teacher') loadTeachers(); else loadStaff();
+            } catch(e) { alert("Error: " + e.message); }
+        }
+
         // ==========================================
-        // 5. PUBLIC WEBSITE SETUP LOGIC
+        // 4. WEBSITE SETUP
         // ==========================================
         window.saveWebsiteProfile = async function(event) {
-            event.preventDefault();
-            const btn = document.getElementById('webSaveBtn');
-            btn.innerText = "Publishing to Web...";
+            event.preventDefault(); const btn = document.getElementById('webSaveBtn'); btn.innerText = "Publishing to Web...";
             try {
                 const q = query(collection(db, "schools"), where("schoolId", "==", activeSchoolId));
                 const snap = await getDocs(q);
                 if (!snap.empty) {
-                    const docId = snap.docs[0].id;
-                    const docRef = doc(db, "schools", docId);
-                    const webUrlId = document.getElementById('webSchoolId').value.toLowerCase().replace(/\s+/g, '-');
-
-                    await updateDoc(docRef, {
-                        schoolId: webUrlId, 
-                        schoolName: document.getElementById('webSchoolName').value,
-                        adminName: document.getElementById('webAdminName').value,
-                        email: document.getElementById('webEmail').value,
-                        bannerImage: document.getElementById('webBanner').value,
-                        principalMessage: document.getElementById('webMessage').value,
-                        aboutSchool: document.getElementById('webAbout').value,
-                        achievements: document.getElementById('webAchievements').value
-                    });
+                    const docId = snap.docs[0].id; const webUrlId = document.getElementById('webSchoolId').value.toLowerCase().replace(/\s+/g, '-');
+                    await updateDoc(doc(db, "schools", docId), { schoolId: webUrlId, schoolName: document.getElementById('webSchoolName').value, adminName: document.getElementById('webAdminName').value, email: document.getElementById('webEmail').value, bannerImage: document.getElementById('webBanner').value, principalMessage: document.getElementById('webMessage').value, aboutSchool: document.getElementById('webAbout').value, achievements: document.getElementById('webAchievements').value });
                     localStorage.setItem("activeSchoolId", webUrlId); 
                     const pubLink = `${window.location.origin}/public-site.html?school=${webUrlId}`;
-                    const linkEl = document.getElementById('publicSiteLink');
-                    linkEl.href = pubLink; linkEl.innerText = pubLink;
+                    const linkEl = document.getElementById('publicSiteLink'); linkEl.href = pubLink; linkEl.innerText = pubLink;
                     alert("Success! Profile Published.");
                 }
-            } catch(e) { alert("Error: " + e.message); }
-            btn.innerText = "🌍 Publish to Public Website";
+            } catch(e) { alert("Error: " + e.message); } btn.innerText = "🌍 Publish to Public Website";
         }
 
         // ==========================================
-        // 6. FEES MODULE (WORKING)
+        // 5. FEES MODULE DYNAMIC STRUCTURE
         // ==========================================
         window.addFeeRow = function() {
-            const container = document.getElementById('dynamicFeeContainer');
-            const row = document.createElement('div');
-            row.className = 'grid-2 fee-input-row';
-            row.style.cssText = 'align-items: end; margin-bottom: 10px;';
-            row.innerHTML = `
-                <div class="form-group" style="margin:0;"><input type="text" class="fee-head-name" placeholder="E.g. Transport Fee" required></div>
-                <div class="form-group" style="margin:0;">
-                    <div style="display:flex; gap:10px;">
-                        <input type="number" class="fee-head-amount" required>
-                        <button type="button" class="btn btn-danger" onclick="this.parentElement.parentElement.parentElement.remove()">X</button>
-                    </div>
-                </div>`;
+            const container = document.getElementById('dynamicFeeContainer'); const row = document.createElement('div');
+            row.className = 'grid-2 fee-input-row'; row.style.cssText = 'align-items: end; margin-bottom: 10px;';
+            row.innerHTML = `<div class="form-group" style="margin:0;"><input type="text" class="fee-head-name" placeholder="E.g. Transport Fee" required></div><div class="form-group" style="margin:0;"><div style="display:flex; gap:10px;"><input type="number" class="fee-head-amount" required><button type="button" class="btn btn-danger" onclick="this.parentElement.parentElement.parentElement.remove()">X</button></div></div>`;
             container.appendChild(row);
         }
 
         window.saveDynamicFeeStructure = async function(event) {
-            event.preventDefault();
-            const selectedClass = document.getElementById('feeStructClass').value;
+            event.preventDefault(); const selectedClass = document.getElementById('feeStructClass').value;
             if(!selectedClass || selectedClass === 'All') return alert("Select a specific class.");
-            
-            const feeNames = document.querySelectorAll('.fee-head-name');
-            const feeAmounts = document.querySelectorAll('.fee-head-amount');
+            const feeNames = document.querySelectorAll('.fee-head-name'); const feeAmounts = document.querySelectorAll('.fee-head-amount');
             let breakdown = []; let total = 0;
-            
-            for(let i=0; i<feeNames.length; i++) {
-                const amt = Number(feeAmounts[i].value);
-                breakdown.push({ head: feeNames[i].value, amount: amt });
-                total += amt;
-            }
-
-            try {
-                await addDoc(collection(db, "feeStructures"), { className: selectedClass, feeBreakdown: breakdown, totalMonthlyFee: total, schoolId: activeSchoolId });
-                alert("Fee Saved!"); event.target.reset(); loadFeeStructures();
-            } catch(e) { alert(e.message); }
+            for(let i=0; i<feeNames.length; i++) { const amt = Number(feeAmounts[i].value); breakdown.push({ head: feeNames[i].value, amount: amt }); total += amt; }
+            try { await addDoc(collection(db, "feeStructures"), { className: selectedClass, feeBreakdown: breakdown, totalMonthlyFee: total, schoolId: activeSchoolId }); alert("Fee Saved!"); event.target.reset(); loadFeeStructures(); } catch(e) { alert(e.message); }
         }
 
         window.loadFeeStructures = async function() {
             try {
-                const q = query(collection(db, "feeStructures"), where("schoolId", "==", activeSchoolId));
-                const snap = await getDocs(q);
+                const snap = await getDocs(query(collection(db, "feeStructures"), where("schoolId", "==", activeSchoolId)));
                 let html = "";
-                snap.forEach(doc => {
-                    const data = doc.data();
-                    let breakdownText = data.feeBreakdown.map(f => `${f.head}: ₹${f.amount}`).join("<br>");
-                    html += `<tr><td><strong>${data.className}</strong></td><td>${breakdownText}</td><td style="color:#27ae60;"><strong>₹${data.totalMonthlyFee}</strong></td><td><button class="btn btn-danger" onclick="deleteFeeStruct('${doc.id}')">Del</button></td></tr>`;
-                });
+                snap.forEach(doc => { const data = doc.data(); let breakdownText = data.feeBreakdown.map(f => `${f.head}: ₹${f.amount}`).join("<br>"); html += `<tr><td><strong>${data.className}</strong></td><td>${breakdownText}</td><td style="color:#27ae60;"><strong>₹${data.totalMonthlyFee}</strong></td><td><button class="btn btn-danger" onclick="deleteFeeStruct('${doc.id}')">Del</button></td></tr>`; });
                 document.getElementById('feeStructBody').innerHTML = html || "<tr><td colspan='4'>No fees set.</td></tr>";
             } catch(e) { console.error(e); }
         }
-
-        window.deleteFeeStruct = async function(id) {
-            if(confirm("Delete fee structure?")) { await deleteDoc(doc(db, "feeStructures", id)); loadFeeStructures(); }
-        }
+        window.deleteFeeStruct = async function(id) { if(confirm("Delete fee structure?")) { await deleteDoc(doc(db, "feeStructures", id)); loadFeeStructures(); } }
 
         // ==========================================
-        // 7. EXPENSES, NOTICES, TIMETABLE, SETTINGS
+        // 6. EXPENSES, NOTICES, TIMETABLE, SETTINGS
         // ==========================================
         window.addNotice = async function(event) {
-            event.preventDefault();
-            try {
-                await addDoc(collection(db, "notices"), {
-                    title: document.getElementById('nTitle').value, category: document.getElementById('nCategory').value,
-                    date: document.getElementById('nDate').value, description: document.getElementById('nDesc').value, schoolId: activeSchoolId
-                });
-                alert("Notice Published!"); document.getElementById('noticeModal').style.display='none'; event.target.reset(); loadNotices();
-            } catch(e) { alert(e.message); }
+            event.preventDefault(); try { await addDoc(collection(db, "notices"), { title: document.getElementById('nTitle').value, category: document.getElementById('nCategory').value, date: document.getElementById('nDate').value, description: document.getElementById('nDesc').value, schoolId: activeSchoolId }); alert("Notice Published!"); document.getElementById('noticeModal').style.display='none'; event.target.reset(); loadNotices(); } catch(e) { alert(e.message); }
         }
 
         window.loadNotices = async function() {
             try {
                 const snap = await getDocs(query(collection(db, "notices"), where("schoolId", "==", activeSchoolId)));
-                let html = "";
-                snap.forEach(doc => {
-                    const data = doc.data();
-                    html += `<tr><td>${data.date}</td><td><span class='badge bg-info'>${data.category}</span></td><td><strong>${data.title}</strong><br><small>${data.description}</small></td><td><button class='btn btn-danger' onclick='deleteNotice("${doc.id}")'>Del</button></td></tr>`;
-                });
+                let html = ""; snap.forEach(doc => { const data = doc.data(); html += `<tr><td>${data.date}</td><td><span class='badge bg-info'>${data.category}</span></td><td><strong>${data.title}</strong><br><small>${data.description}</small></td><td><button class='btn btn-danger' onclick='deleteNotice("${doc.id}")'>Del</button></td></tr>`; });
                 document.getElementById('noticeTableBody').innerHTML = html || "<tr><td colspan='4'>No notices published.</td></tr>";
             } catch(e) { console.error(e); }
         }
         window.deleteNotice = async function(id) { if(confirm("Delete Notice?")) { await deleteDoc(doc(db, "notices", id)); loadNotices(); } }
 
         window.addExtraExpense = async function(event) {
-            event.preventDefault();
-            try {
-                await addDoc(collection(db, "expenses"), { date: document.getElementById('expDate').value, detail: document.getElementById('expDetail').value, amount: Number(document.getElementById('expAmount').value), schoolId: activeSchoolId });
-                alert("Expense Added!"); event.target.reset(); loadExpenses();
-            } catch(e) { alert(e.message); }
+            event.preventDefault(); try { await addDoc(collection(db, "expenses"), { date: document.getElementById('expDate').value, detail: document.getElementById('expDetail').value, amount: Number(document.getElementById('expAmount').value), schoolId: activeSchoolId }); alert("Expense Added!"); event.target.reset(); loadExpenses(); } catch(e) { alert(e.message); }
         }
 
         window.loadExpenses = async function() {
             try {
-                const snap = await getDocs(query(collection(db, "expenses"), where("schoolId", "==", activeSchoolId)));
-                let html = ""; let total = 0;
-                snap.forEach(doc => {
-                    const data = doc.data(); total += data.amount;
-                    html += `<tr><td>${data.date}</td><td>${data.detail}</td><td>₹${data.amount}</td><td><button class='btn btn-danger' onclick='deleteExpense("${doc.id}")'>Del</button></td></tr>`;
-                });
-                document.getElementById('expensesBody').innerHTML = html || "<tr><td colspan='4'>No expenses logged.</td></tr>";
-                document.getElementById('finTotalExpense').innerText = `₹ ${total}`;
+                const snap = await getDocs(query(collection(db, "expenses"), where("schoolId", "==", activeSchoolId))); let html = ""; let total = 0;
+                snap.forEach(doc => { const data = doc.data(); total += data.amount; html += `<tr><td>${data.date}</td><td>${data.detail}</td><td>₹${data.amount}</td><td><button class='btn btn-danger' onclick='deleteExpense("${doc.id}")'>Del</button></td></tr>`; });
+                document.getElementById('expensesBody').innerHTML = html || "<tr><td colspan='4'>No expenses logged.</td></tr>"; document.getElementById('finTotalExpense').innerText = `₹ ${total}`;
             } catch(e) { console.error(e); }
         }
         window.deleteExpense = async function(id) { if(confirm("Delete expense?")) { await deleteDoc(doc(db, "expenses", id)); loadExpenses(); } }
 
         window.addTimetable = async function(event) {
-            event.preventDefault();
-            try {
-                await addDoc(collection(db, "timetable"), { className: document.getElementById('ttClass').value, day: document.getElementById('ttDay').value, time: document.getElementById('ttTime').value, subject: document.getElementById('ttSubject').value, teacher: document.getElementById('ttTeacher').value, schoolId: activeSchoolId });
-                alert("Timetable Updated!"); event.target.reset(); loadTimetableAdmin();
-            } catch(e) { alert(e.message); }
+            event.preventDefault(); try { await addDoc(collection(db, "timetable"), { className: document.getElementById('ttClass').value, day: document.getElementById('ttDay').value, time: document.getElementById('ttTime').value, subject: document.getElementById('ttSubject').value, teacher: document.getElementById('ttTeacher').value, schoolId: activeSchoolId }); alert("Timetable Updated!"); event.target.reset(); loadTimetableAdmin(); } catch(e) { alert(e.message); }
         }
 
         window.loadTimetableAdmin = async function() {
             const filterClass = document.getElementById('ttFilterClass').value;
             try {
-                const snap = await getDocs(query(collection(db, "timetable"), where("schoolId", "==", activeSchoolId)));
-                let html = "";
-                snap.forEach(doc => {
-                    const data = doc.data();
-                    if(filterClass !== 'All' && data.className !== filterClass) return;
-                    html += `<tr><td>${data.className}</td><td>${data.day}</td><td>${data.time}</td><td>${data.subject}</td><td>${data.teacher}</td><td><button class='btn btn-danger' onclick='deleteTimetable("${doc.id}")'>Del</button></td></tr>`;
-                });
+                const snap = await getDocs(query(collection(db, "timetable"), where("schoolId", "==", activeSchoolId))); let html = "";
+                snap.forEach(doc => { const data = doc.data(); if(filterClass !== 'All' && data.className !== filterClass) return; html += `<tr><td>${data.className}</td><td>${data.day}</td><td>${data.time}</td><td>${data.subject}</td><td>${data.teacher}</td><td><button class='btn btn-danger' onclick='deleteTimetable("${doc.id}")'>Del</button></td></tr>`; });
                 document.getElementById('timetableBody').innerHTML = html || "<tr><td colspan='6'>No schedule found.</td></tr>";
             } catch(e) { console.error(e); }
         }
-        window.deleteTimetable = async function(id) { if(confirm("Delete class schedule?")) { await deleteDoc(doc(db, "timetable", id)); loadTimetableAdmin(); } }
+        window.deleteTimetable = async function(id) { if(confirm("Delete schedule?")) { await deleteDoc(doc(db, "timetable", id)); loadTimetableAdmin(); } }
 
-        window.calculateAcademicYear = function() {
-            const start = document.getElementById('setStartDate').value; const end = document.getElementById('setEndDate').value;
-            if(start && end) { document.getElementById('setAcadYear').value = `${new Date(start).getFullYear()} - ${new Date(end).getFullYear()}`; }
-        }
+        window.calculateAcademicYear = function() { const start = document.getElementById('setStartDate').value; const end = document.getElementById('setEndDate').value; if(start && end) { document.getElementById('setAcadYear').value = `${new Date(start).getFullYear()} - ${new Date(end).getFullYear()}`; } }
 
         window.saveSchoolSettings = async function(event) {
-            event.preventDefault();
-            try {
-                await addDoc(collection(db, "settings"), { brandName: document.getElementById('setSchoolName').value, startDate: document.getElementById('setStartDate').value, endDate: document.getElementById('setEndDate').value, academicYear: document.getElementById('setAcadYear').value, schoolId: activeSchoolId });
-                alert("Global Settings Saved!");
-            } catch(e) { alert(e.message); }
+            event.preventDefault(); try { await addDoc(collection(db, "settings"), { brandName: document.getElementById('setSchoolName').value, startDate: document.getElementById('setStartDate').value, endDate: document.getElementById('setEndDate').value, academicYear: document.getElementById('setAcadYear').value, schoolId: activeSchoolId }); alert("Global Settings Saved!"); } catch(e) { alert(e.message); }
         }
 
         // ==========================================
-        // 8. GLOBAL ATTENDANCE MODULE
+        // 7. GLOBAL STAFF/TEACHER ATTENDANCE & HOLIDAYS
         // ==========================================
         window.loadGlobalAttendance = async function() {
-            const date = document.getElementById('attDateGlobal').value;
-            const userType = document.getElementById('attUserType').value;
-            const classFilter = document.getElementById('attClassFilterGlobal').value;
-            const secFilter = document.getElementById('attSectionFilterGlobal').value;
+            const date = document.getElementById('attDateGlobal').value; const userType = document.getElementById('attUserType').value;
             const tbody = document.getElementById('globalAttBody');
-
-            if(!date) { tbody.innerHTML = "<tr><td colspan='4'>Please select a date first.</td></tr>"; return; }
-            tbody.innerHTML = "<tr><td colspan='4'>Loading users...</td></tr>";
+            if(!date) { tbody.innerHTML = "<tr><td colspan='3'>Please select a date.</td></tr>"; return; }
+            tbody.innerHTML = "<tr><td colspan='3'>Loading...</td></tr>";
 
             try {
-                let colName = userType === 'Student' ? 'students' : (userType === 'Teacher' ? 'teachers' : 'staff');
+                let colName = userType === 'Teacher' ? 'teachers' : 'staff';
                 const snap = await getDocs(query(collection(db, colName), where("schoolId", "==", activeSchoolId)));
-                let users = [];
-                snap.forEach(doc => users.push({id: doc.id, ...doc.data()}));
-
-                if(userType === 'Student') {
-                    if(classFilter !== 'All') users = users.filter(u => u.className === classFilter);
-                    if(secFilter !== 'All' && secFilter !== '') users = users.filter(u => u.section === secFilter);
-                }
+                let users = []; snap.forEach(doc => users.push({id: doc.id, ...doc.data()}));
 
                 const attSnap = await getDocs(query(collection(db, "attendance"), where("schoolId", "==", activeSchoolId), where("date", "==", date), where("userType", "==", userType)));
-                let existingAtt = {};
-                attSnap.forEach(doc => { doc.data().records.forEach(r => existingAtt[r.userId] = r.status); });
+                let existingAtt = {}; attSnap.forEach(doc => { doc.data().records.forEach(r => existingAtt[r.userId] = r.status); });
 
                 let html = "";
                 users.forEach(u => {
-                    let roleStr = userType === 'Student' ? `${u.className}-${u.section}` : (u.subject || u.role || 'Staff');
-                    let status = existingAtt[u.id] || 'Present'; 
-                    html += `<tr class="att-row" data-id="${u.id}" data-name="${u.name}">
-                        <td>${u.rollNo || '-'}</td><td>${u.name}</td><td>${roleStr}</td>
+                    let roleStr = u.subject || u.role || 'Staff'; let status = existingAtt[u.id] || 'Present'; 
+                    html += `<tr class="att-row" data-id="${u.id}" data-name="${u.name}"><td>${u.name}</td><td>${roleStr}</td>
                         <td><select class="att-status" style="padding:5px; border-radius:4px;">
                             <option value="Present" ${status==='Present'?'selected':''}>Present</option>
                             <option value="Absent" ${status==='Absent'?'selected':''}>Absent</option>
                             <option value="Leave" ${status==='Leave'?'selected':''}>Leave</option>
+                            <option value="Holiday" ${status==='Holiday'?'selected':''}>Holiday</option>
                         </select></td></tr>`;
                 });
-                tbody.innerHTML = html || "<tr><td colspan='4'>No users found for selected filters.</td></tr>";
-            } catch(e) { console.error(e); tbody.innerHTML = "<tr><td colspan='4'>Error loading data.</td></tr>"; }
+                tbody.innerHTML = html || "<tr><td colspan='3'>No users found.</td></tr>";
+            } catch(e) { console.error(e); tbody.innerHTML = "<tr><td colspan='3'>Error loading data.</td></tr>"; }
         }
 
         window.saveGlobalAttendance = async function() {
-            const date = document.getElementById('attDateGlobal').value;
-            const userType = document.getElementById('attUserType').value;
+            const date = document.getElementById('attDateGlobal').value; const userType = document.getElementById('attUserType').value;
             if(!date) return alert("Please select a date.");
+            const rows = document.querySelectorAll('.att-row'); if(rows.length === 0) return alert("No users to mark.");
 
-            const rows = document.querySelectorAll('.att-row');
-            if(rows.length === 0) return alert("No users to mark.");
-
-            document.getElementById('saveGlobalAttBtn').innerText = "Saving...";
-            let records = [];
+            document.getElementById('saveGlobalAttBtn').innerText = "Saving..."; let records = [];
             rows.forEach(row => { records.push({ userId: row.getAttribute('data-id'), name: row.getAttribute('data-name'), status: row.querySelector('.att-status').value }); });
 
             try {
                 const attSnap = await getDocs(query(collection(db, "attendance"), where("schoolId", "==", activeSchoolId), where("date", "==", date), where("userType", "==", userType)));
                 attSnap.forEach(async (d) => await deleteDoc(doc(db, "attendance", d.id)));
-
                 await addDoc(collection(db, "attendance"), { schoolId: activeSchoolId, date: date, userType: userType, records: records, timestamp: new Date() });
-                alert("Attendance saved successfully!");
+                alert("Attendance saved!");
             } catch(e) { alert("Error: " + e.message); }
-            document.getElementById('saveGlobalAttBtn').innerText = "💾 Save";
+            document.getElementById('saveGlobalAttBtn').innerText = "💾 Save Attendance";
+        }
+
+        window.declareHoliday = async function() {
+            const hDate = document.getElementById('holDate').value;
+            const hReason = document.getElementById('holReason').value;
+            if(!hDate || !hReason) return alert("Please enter both Holiday Date and Reason.");
+            if(!confirm(`Declare ${hReason} as a Holiday on ${hDate}? This will mark all staff and teachers as Holiday.`)) return;
+
+            try {
+                // 1. Mark Teachers Holiday
+                const tSnap = await getDocs(query(collection(db, "teachers"), where("schoolId", "==", activeSchoolId)));
+                let tRec = []; tSnap.forEach(doc => tRec.push({ userId: doc.id, name: doc.data().name, status: "Holiday" }));
+                await addDoc(collection(db, "attendance"), { schoolId: activeSchoolId, date: hDate, userType: 'Teacher', records: tRec, timestamp: new Date() });
+
+                // 2. Mark Staff Holiday
+                const sSnap = await getDocs(query(collection(db, "staff"), where("schoolId", "==", activeSchoolId)));
+                let sRec = []; sSnap.forEach(doc => sRec.push({ userId: doc.id, name: doc.data().name, status: "Holiday" }));
+                await addDoc(collection(db, "attendance"), { schoolId: activeSchoolId, date: hDate, userType: 'Staff', records: sRec, timestamp: new Date() });
+
+                // 3. Add Public Notice
+                await addDoc(collection(db, "notices"), { title: "School Holiday: " + hReason, category: "Holiday", date: hDate, description: `The school will remain closed on ${hDate} on account of ${hReason}.`, schoolId: activeSchoolId });
+
+                alert(`Holiday Declared! Attendance updated and Notice published.`);
+                document.getElementById('holDate').value = ""; document.getElementById('holReason').value = ""; loadNotices();
+            } catch(e) { alert("Error: " + e.message); }
         }
 
         // ==========================================
-        // 9. LEAVE MANAGEMENT & AUTO ATTENDANCE UPDATE
+        // 8. LEAVE AUTOMATION
         // ==========================================
         window.loadLeaveRequests = async function() {
-            const tbody = document.getElementById('leaveReqTableBody');
-            tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Loading leave requests...</td></tr>";
-            
+            const tbody = document.getElementById('leaveReqTableBody'); tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Loading...</td></tr>";
             try {
-                const snap = await getDocs(query(collection(db, "leaves"), where("schoolId", "==", activeSchoolId)));
-                let html = "";
-                let count = 0;
-                
+                const snap = await getDocs(query(collection(db, "leave_requests"), where("schoolId", "==", activeSchoolId))); let html = ""; let count = 0;
                 snap.forEach(doc => {
-                    const data = doc.data();
-                    if(data.status === 'Pending') count++;
-
-                    let actionBtns = data.status === 'Pending' ?
-                        `<button class='btn btn-success' style='margin-right:5px;' onclick='approveLeave("${doc.id}", "${data.userId}", "${data.userType}", "${data.date}", "${data.name}")'>Approve</button>
-                         <button class='btn btn-danger' onclick='updateLeaveStatus("${doc.id}", "Rejected")'>Reject</button>` :
-                        `<span style="color:#666; font-weight:bold;">${data.status}</span>`;
-
-                    html += `<tr>
-                        <td>${data.date}</td>
-                        <td><strong>${data.name}</strong></td>
-                        <td>${data.userType}</td>
-                        <td>${data.reason}</td>
-                        <td><span class="badge ${data.status === 'Approved' ? 'bg-success' : (data.status === 'Rejected' ? 'bg-danger' : 'bg-warning')}">${data.status}</span></td>
-                        <td>${actionBtns}</td>
-                    </tr>`;
+                    const data = doc.data(); if(data.status === 'Pending') count++;
+                    let actionBtns = data.status === 'Pending' ? `<button class='btn btn-success' style='margin-right:5px;' onclick='approveLeave("${doc.id}", "${data.senderId}", "${data.role || data.userType}", "${data.date}", "${data.senderName}")'>Approve</button><button class='btn btn-danger' onclick='updateLeaveStatus("${doc.id}", "Rejected")'>Reject</button>` : `<span style="color:#666; font-weight:bold;">${data.status}</span>`;
+                    html += `<tr><td>${data.date}</td><td><strong>${data.senderName}</strong></td><td>${data.role || data.userType}</td><td>${data.reason}</td><td><span class="badge ${data.status === 'Approved' ? 'bg-success' : (data.status === 'Rejected' ? 'bg-danger' : 'bg-warning')}">${data.status}</span></td><td>${actionBtns}</td></tr>`;
                 });
-                
-                tbody.innerHTML = html || "<tr><td colspan='6' style='text-align:center;'>No leave requests.</td></tr>";
-                document.getElementById('dashPendingLeaves').innerText = count;
+                tbody.innerHTML = html || "<tr><td colspan='6' style='text-align:center;'>No requests.</td></tr>"; document.getElementById('dashPendingLeaves').innerText = count;
             } catch(e) { console.error(e); }
         }
 
         window.approveLeave = async function(leaveId, userId, userType, leaveDate, userName) {
-            if(!confirm("Approve this leave? This will automatically mark them as 'Leave' in the attendance register.")) return;
-            
+            if(!confirm("Approve leave and auto-mark attendance for this user?")) return;
             try {
-                await updateDoc(doc(db, "leaves", leaveId), { status: "Approved" });
+                await updateDoc(doc(db, "leave_requests", leaveId), { status: "Approved" });
 
-                const attSnap = await getDocs(query(collection(db, "attendance"), where("schoolId", "==", activeSchoolId), where("date", "==", leaveDate), where("userType", "==", userType)));
-
-                if(attSnap.empty) {
-                    await addDoc(collection(db, "attendance"), {
-                        schoolId: activeSchoolId, date: leaveDate, userType: userType,
-                        records: [{ userId: userId, name: userName, status: "Leave" }], timestamp: new Date()
+                if(userType === 'Teacher' || userType === 'Staff') { 
+                    // Update global attendance for Teachers/Staff
+                    const attSnap = await getDocs(query(collection(db, "attendance"), where("schoolId", "==", activeSchoolId), where("date", "==", leaveDate), where("userType", "==", userType)));
+                    if(attSnap.empty) { await addDoc(collection(db, "attendance"), { schoolId: activeSchoolId, date: leaveDate, userType: userType, records: [{ userId: userId, name: userName, status: "Leave" }], timestamp: new Date() }); } 
+                    else {
+                        let attDoc = attSnap.docs[0]; let records = attDoc.data().records || []; let userIndex = records.findIndex(r => r.userId === userId);
+                        if(userIndex > -1) { records[userIndex].status = "Leave"; } else { records.push({ userId: userId, name: userName, status: "Leave" }); }
+                        await updateDoc(doc(db, "attendance", attDoc.id), { records: records });
+                    }
+                } else if(userType === 'Student') {
+                    // Inject a Leave record into class_attendance for the student so it shows on their dashboard
+                    const docId = `${activeSchoolId}_${userId}_AdminLeave_${leaveDate}`;
+                    await updateDoc(doc(db, "class_attendance", docId), { studentId: userId, studentName: userName, teacherName: 'Admin Approval', subject: 'Full Day Leave', date: leaveDate, status: 'Leave', schoolId: activeSchoolId, timestamp: new Date() }).catch(async (e) => {
+                        // If document doesn't exist, create it
+                        await addDoc(collection(db, "class_attendance"), { studentId: userId, studentName: userName, teacherName: 'Admin Approval', subject: 'Full Day Leave', date: leaveDate, status: 'Leave', schoolId: activeSchoolId, timestamp: new Date() });
                     });
-                } else {
-                    let attDoc = attSnap.docs[0];
-                    let records = attDoc.data().records || [];
-                    let userIndex = records.findIndex(r => r.userId === userId);
-
-                    if(userIndex > -1) { records[userIndex].status = "Leave"; } 
-                    else { records.push({ userId: userId, name: userName, status: "Leave" }); }
-                    
-                    await updateDoc(doc(db, "attendance", attDoc.id), { records: records });
                 }
-
-                alert("Leave Approved and Attendance Auto-Updated successfully!");
-                loadLeaveRequests(); 
+                alert("Leave Approved and Attendance Auto-Updated successfully!"); loadLeaveRequests(); 
             } catch(e) { alert("Error: " + e.message); }
         }
 
         window.updateLeaveStatus = async function(leaveId, newStatus) {
-            if(!confirm(`Are you sure you want to mark this request as ${newStatus}?`)) return;
-            try {
-                await updateDoc(doc(db, "leaves", leaveId), { status: newStatus });
-                loadLeaveRequests();
-            } catch(e) { alert("Error: " + e.message); }
+            if(!confirm(`Mark request as ${newStatus}?`)) return;
+            try { await updateDoc(doc(db, "leave_requests", leaveId), { status: newStatus }); loadLeaveRequests(); } catch(e) { alert(e.message); }
         }
-
     </script>
 </body>
 </html>
