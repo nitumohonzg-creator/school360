@@ -2057,6 +2057,185 @@
         window.approveLeave = async function(leaveId, userId, userType, leaveDate, userName) { if(!confirm("Approve leave and auto-mark attendance for this user?")) return; try { await updateDoc(doc(db, "leave_requests", leaveId), { status: "Approved" }); if(userType === 'Teacher' || userType === 'Staff') { const attSnap = await getDocs(query(collection(db, "attendance"), where("schoolId", "==", activeSchoolId), where("date", "==", leaveDate), where("userType", "==", userType))); if(attSnap.empty) { await addDoc(collection(db, "attendance"), { schoolId: activeSchoolId, date: leaveDate, userType: userType, records: [{ userId: userId, name: userName, status: "Leave" }], timestamp: new Date() }); } else { let attDoc = attSnap.docs[0]; let records = attDoc.data().records || []; let userIndex = records.findIndex(r => r.userId === userId); if(userIndex > -1) { records[userIndex].status = "Leave"; } else { records.push({ userId: userId, name: userName, status: "Leave" }); } await updateDoc(doc(db, "attendance", attDoc.id), { records: records }); } } else if(userType === 'Student') { const docId = `${activeSchoolId}_${userId}_${leaveDate}`; await setDoc(doc(db, "student_attendance", docId), { studentId: userId, studentName: userName, date: leaveDate, status: 'Leave', schoolId: activeSchoolId, timestamp: new Date() }, { merge: true }); } alert("Leave Approved and Attendance Auto-Updated successfully!"); loadLeaveRequests(); } catch(e) { alert("Error: " + e.message); } }
         window.updateLeaveStatus = async function(leaveId, newStatus) { if(!confirm(`Mark request as ${newStatus}?`)) return; try { await updateDoc(doc(db, "leave_requests", leaveId), { status: newStatus }); loadLeaveRequests(); } catch(e) { alert(e.message); } }
 
+                // --- FINANCE & ACCOUNTS LOGIC ---
+
+        // 1. Fixes the "+" button to add new fee rows
+        window.addFeeRow = function() {
+            const container = document.getElementById('dynamicFeeContainer');
+            const row = document.createElement('div');
+            row.className = 'grid-2 fee-input-row';
+            row.style.cssText = 'align-items: end; margin-bottom: 10px;';
+            row.innerHTML = `
+                <div class="form-group" style="margin:0;">
+                    <label>Fee Head Name</label>
+                    <input type="text" class="fee-head-name" placeholder="E.g. Transport Fee" required>
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label>Amount (₹)</label>
+                    <div style="display:flex; gap:10px;">
+                        <input type="number" class="fee-head-amount" required>
+                        <button type="button" class="btn btn-danger" onclick="this.closest('.fee-input-row').remove()">X</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(row);
+        };
+
+        // 2. Saves the dynamic fee structure to Firebase
+        window.saveDynamicFeeStructure = async function(event) {
+            event.preventDefault();
+            const btn = event.target.querySelector('button[type="submit"]');
+            const className = document.getElementById('feeStructClass').value;
+            
+            if (!className) return alert("Please select a class first.");
+
+            btn.innerText = "Saving...";
+            const feeNames = document.querySelectorAll('.fee-head-name');
+            const feeAmounts = document.querySelectorAll('.fee-head-amount');
+
+            let breakdown = [];
+            let totalMonthlyFee = 0;
+
+            for(let i = 0; i < feeNames.length; i++) {
+                let name = feeNames[i].value.trim();
+                let amount = Number(feeAmounts[i].value) || 0;
+                if (name && amount > 0) {
+                    breakdown.push({ head: name, amount: amount });
+                    totalMonthlyFee += amount;
+                }
+            }
+
+            if (breakdown.length === 0) {
+                btn.innerText = "Save Total Structure";
+                return alert("Add at least one valid fee head with an amount.");
+            }
+
+            try {
+                const q = query(collection(db, "feeStructures"), where("schoolId", "==", activeSchoolId), where("className", "==", className));
+                const snap = await getDocs(q);
+
+                if (!snap.empty) {
+                    const docId = snap.docs[0].id;
+                    await updateDoc(doc(db, "feeStructures", docId), { breakdown, totalMonthlyFee });
+                } else {
+                    await addDoc(collection(db, "feeStructures"), { schoolId: activeSchoolId, className, breakdown, totalMonthlyFee });
+                }
+                
+                alert("Fee Structure Saved!");
+                event.target.reset();
+                
+                // Reset dynamic rows back to a single default row
+                document.getElementById('dynamicFeeContainer').innerHTML = `
+                    <div class="grid-2 fee-input-row" style="align-items: end; margin-bottom: 10px;">
+                        <div class="form-group" style="margin:0;">
+                            <label>Fee Head Name</label>
+                            <input type="text" class="fee-head-name" placeholder="E.g. Tuition Fee" required>
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label>Amount (₹)</label>
+                            <div style="display:flex; gap:10px;">
+                                <input type="number" class="fee-head-amount" required>
+                                <button type="button" class="btn btn-success" onclick="addFeeRow()">+</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                loadFeeStructures();
+                calculateFinanceTotals();
+            } catch(e) {
+                alert("Error saving fee structure: " + e.message);
+            }
+            btn.innerText = "Save Total Structure";
+        };
+
+        // 3. Loads the fee structures into the table
+        window.loadFeeStructures = async function() {
+            try {
+                const snap = await getDocs(query(collection(db, "feeStructures"), where("schoolId", "==", activeSchoolId)));
+                let html = "";
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    let breakdownHtml = data.breakdown.map(b => `${b.head}: ₹${b.amount}`).join('<br>');
+                    html += `<tr>
+                        <td><strong>${data.className}</strong></td>
+                        <td>${breakdownHtml}</td>
+                        <td><strong>₹ ${data.totalMonthlyFee}</strong></td>
+                        <td><button class="btn btn-danger" onclick="deleteFeeStructure('${doc.id}')">Del</button></td>
+                    </tr>`;
+                });
+                document.getElementById('feeStructBody').innerHTML = html || "<tr><td colspan='4' style='text-align: center;'>No fee structures defined yet.</td></tr>";
+            } catch(e) {
+                console.error("Error loading fee structures:", e);
+            }
+        };
+
+        // 4. Deletes a fee structure
+        window.deleteFeeStructure = async function(id) {
+            if(confirm("Are you sure you want to delete this class fee structure?")) {
+                await deleteDoc(doc(db, "feeStructures", id));
+                loadFeeStructures();
+                calculateFinanceTotals();
+            }
+        };
+
+        // 5. Saves extra school expenses
+        window.addExtraExpense = async function(event) {
+            event.preventDefault();
+            const btn = document.getElementById('expBtn');
+            btn.innerText = "Adding...";
+            try {
+                await addDoc(collection(db, "expenses"), {
+                    schoolId: activeSchoolId,
+                    date: document.getElementById('expDate').value,
+                    detail: document.getElementById('expDetail').value,
+                    amount: Number(document.getElementById('expAmount').value),
+                    timestamp: new Date()
+                });
+                alert("Expense Recorded!");
+                event.target.reset();
+                loadExpenses();
+                calculateFinanceTotals();
+            } catch(e) {
+                alert("Error adding expense: " + e.message);
+            }
+            btn.innerText = "Add Expense";
+        };
+
+        // 6. Loads expenses into the table
+        window.loadExpenses = async function() {
+            try {
+                // Sorting expenses isn't natively supported without composite indexes, so we fetch and sort in memory
+                const snap = await getDocs(query(collection(db, "expenses"), where("schoolId", "==", activeSchoolId)));
+                let expenses = [];
+                snap.forEach(doc => expenses.push({ id: doc.id, ...doc.data() }));
+                
+                expenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                let html = "";
+                expenses.forEach(data => {
+                    html += `<tr>
+                        <td>${data.date}</td>
+                        <td>${data.detail}</td>
+                        <td>₹ ${data.amount}</td>
+                        <td><button class="btn btn-danger" onclick="deleteExpense('${data.id}')">Del</button></td>
+                    </tr>`;
+                });
+                document.getElementById('expensesBody').innerHTML = html || "<tr><td colspan='4' style='text-align: center;'>No expenses recorded yet.</td></tr>";
+            } catch(e) {
+                console.error("Error loading expenses:", e);
+            }
+        };
+
+        // 7. Deletes an expense
+        window.deleteExpense = async function(id) {
+            if(confirm("Delete this expense record?")) {
+                await deleteDoc(doc(db, "expenses", id));
+                loadExpenses();
+                calculateFinanceTotals();
+            }
+        };
+
+        
     </script>
 </body>
 </html>
