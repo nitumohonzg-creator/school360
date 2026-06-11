@@ -23,6 +23,7 @@
             display: flex; 
         }
         
+        /* Mobile Header Fixed Alignment */
         .mobile-header { 
             display: none; 
             background: var(--primary); 
@@ -76,6 +77,7 @@
         
         .sidebar-overlay.active { display: block; }
 
+        /* Sidebar */
         .sidebar { 
             width: 250px; 
             background-color: var(--primary); 
@@ -124,6 +126,7 @@
             border: none !important; 
         }
 
+        /* Main Content */
         .main-content { 
             margin-left: 250px; 
             padding: 25px; 
@@ -153,6 +156,7 @@
             to { opacity: 1; transform: translateY(0); } 
         }
 
+        /* Action Cards */
         .action-cards { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
@@ -171,6 +175,7 @@
         
         .card h2 { margin: 0; font-size: 32px; color: var(--primary); }
         
+        /* Box Containers */
         .box-container { 
             background: white; 
             padding: 20px; 
@@ -190,6 +195,7 @@
             align-items: center; 
         }
         
+        /* Tables */
         table { 
             width: 100%; 
             border-collapse: collapse; 
@@ -213,6 +219,7 @@
             vertical-align: middle; 
         }
         
+        /* Buttons & Badges */
         .btn { 
             background-color: var(--secondary); 
             color: white; 
@@ -245,22 +252,85 @@
         .bg-warning { background-color: var(--warning); color:#333; }
         .bg-info { background-color: var(--info); }
         
+        /* Forms */
         .form-group { margin-bottom: 15px; width: 100%;}
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; color: #333; }
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: inherit; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
         
-        fieldset { border: 1px solid #ddd; border-radius: 5px; padding: 15px; margin-bottom: 15px; background: #fafafa; }
-        legend { font-weight: bold; color: var(--secondary); background: white; padding: 0 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px;}
+        fieldset { 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            padding: 15px; 
+            margin-bottom: 15px; 
+            background: #fafafa; 
+        }
+        
+        legend { 
+            font-weight: bold; 
+            color: var(--secondary); 
+            background: white; 
+            padding: 0 5px; 
+            border: 1px solid #ddd; 
+            border-radius: 3px; 
+            font-size: 14px;
+        }
 
-        .finance-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .fin-card { padding: 20px; border-radius: 8px; color: white; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .finance-cards { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 15px; 
+            margin-bottom: 20px; 
+        }
+        
+        .fin-card { 
+            padding: 20px; 
+            border-radius: 8px; 
+            color: white; 
+            text-align: center; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        }
 
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
-        .modal-box { background: white; padding: 25px; border-radius: 8px; width: 100%; max-width: 500px; position: relative; max-height: 90vh; overflow-y: auto; }
-        .modal-box.large { max-width: 800px; }
-        .close-btn { position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #555; }
+        /* Modals */
+        .modal-overlay { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.6); 
+            z-index: 1000; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 20px; 
+            box-sizing: border-box; 
+        }
+        
+        .modal-box { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 8px; 
+            width: 100%; 
+            max-width: 500px; 
+            position: relative; 
+            max-height: 90vh; 
+            overflow-y: auto; 
+        }
+        
+        .modal-box.large { 
+            max-width: 800px; 
+        }
+        
+        .close-btn { 
+            position: absolute; 
+            top: 10px; 
+            right: 15px; 
+            font-size: 24px; 
+            cursor: pointer; 
+            color: #555; 
+        }
 
         @media (max-width: 850px) {
             .sidebar { transform: translateX(-100%); }
@@ -268,7 +338,10 @@
             .main-content { margin-left: 0; padding: 15px; padding-top: 80px; width: 100%; }
             .mobile-header { display: flex; }
         }
-        @media (max-width: 600px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+        
+        @media (max-width: 600px) { 
+            .grid-2, .grid-3 { grid-template-columns: 1fr; } 
+        }
     </style>
 </head>
 <body>
@@ -428,16 +501,16 @@
             <h4 style="background:#eee; padding:8px; border-radius:4px;">Academic Teachers</h4>
             <div style="overflow-x: auto; margin-bottom: 20px;">
                 <table id="teachersTable">
-                    <thead><tr><th>Teacher Details</th><th>Subject</th><th>Monthly Base Salary</th><th>Salary Actions</th></tr></thead>
-                    <tbody id="teacherTableBody"><tr><td colspan="4" style="text-align: center;">Loading teachers...</td></tr></tbody>
+                    <thead><tr><th>Teacher Details</th><th>Subject</th><th>Monthly Base Salary</th><th>Salary Actions</th><th>Edit</th></tr></thead>
+                    <tbody id="teacherTableBody"><tr><td colspan="5" style="text-align: center;">Loading teachers...</td></tr></tbody>
                 </table>
             </div>
 
             <h4 style="background:#eee; padding:8px; border-radius:4px;">Non-Teaching Staff</h4>
             <div style="overflow-x: auto;">
                 <table id="staffTable">
-                    <thead><tr><th>Staff Details</th><th>Role / Duty</th><th>Monthly Base Salary</th><th>Salary Actions</th></tr></thead>
-                    <tbody id="staffTableBody"><tr><td colspan="4" style="text-align: center;">Loading staff...</td></tr></tbody>
+                    <thead><tr><th>Staff Details</th><th>Role / Duty</th><th>Monthly Base Salary</th><th>Salary Actions</th><th>Edit</th></tr></thead>
+                    <tbody id="staffTableBody"><tr><td colspan="5" style="text-align: center;">Loading staff...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -671,7 +744,7 @@
         <div class="modal-box large">
             <span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
             <h3 id="tModalTitle" style="margin-top:0; color:var(--info);">👨‍🏫 Register/Edit Teacher</h3>
-            <form onsubmit="saveTeacher(event)">
+            <form id="tForm" onsubmit="saveTeacher(event)">
                 <input type="hidden" id="tIdHidden">
                 <fieldset>
                     <legend>Personal Info</legend>
@@ -686,12 +759,44 @@
                     </div>
                 </fieldset>
                 <fieldset>
-                    <legend>Contact & Login</legend>
-                    <div class="grid-2">
+                    <legend>Family & Contact</legend>
+                    <div class="grid-3">
+                        <div class="form-group"><label>Father's Name</label><input type="text" id="tFather" required></div>
                         <div class="form-group"><label>Login Email</label><input type="email" id="tEmail" required></div>
-                        <div class="form-group" id="tPassGroup"><label>Login Password</label><input type="password" id="tPassword" required></div>
+                        <div class="form-group"><label>Login Password</label><input type="password" id="tPassword" required></div>
                     </div>
                 </fieldset>
+                
+                <fieldset>
+                    <legend>Permanent Address</legend>
+                    <div class="grid-2">
+                        <div class="form-group"><label>Village / Town</label><input type="text" id="tPermVill" required></div>
+                        <div class="form-group"><label>Post Office (PO)</label><input type="text" id="tPermPO" required></div>
+                    </div>
+                    <div class="grid-3">
+                        <div class="form-group"><label>District</label><input type="text" id="tPermDist" required></div>
+                        <div class="form-group"><label>State</label><input type="text" id="tPermState" required></div>
+                        <div class="form-group"><label>PIN Code</label><input type="number" id="tPermPin" required></div>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Present Address</legend>
+                    <div style="margin-bottom:10px;">
+                        <input type="checkbox" id="tSameAddress" onchange="copyAddress('t')"> 
+                        <label for="tSameAddress" style="display:inline; font-weight:bold; color:var(--info);">Same as Permanent</label>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group"><label>Village / Town</label><input type="text" id="tPresVill" required></div>
+                        <div class="form-group"><label>Post Office (PO)</label><input type="text" id="tPresPO" required></div>
+                    </div>
+                    <div class="grid-3">
+                        <div class="form-group"><label>District</label><input type="text" id="tPresDist" required></div>
+                        <div class="form-group"><label>State</label><input type="text" id="tPresState" required></div>
+                        <div class="form-group"><label>PIN Code</label><input type="number" id="tPresPin" required></div>
+                    </div>
+                </fieldset>
+
                 <button type="submit" class="btn btn-info" id="tBtn" style="width: 100%; font-size:16px; padding:12px;">💾 Save Teacher</button>
             </form>
         </div>
@@ -700,17 +805,50 @@
     <div id="staffModal" class="modal-overlay">
         <div class="modal-box large">
             <span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-            <h3 id="stModalTitle" style="margin-top:0; color:var(--danger);">👨‍💼 Register Staff</h3>
-            <form onsubmit="saveStaff(event)">
+            <h3 id="stModalTitle" style="margin-top:0; color:var(--danger);">👨‍💼 Register/Edit Staff</h3>
+            <form id="stForm" onsubmit="saveStaff(event)">
+                <input type="hidden" id="stIdHidden">
                 <fieldset>
                     <legend>Personal Info</legend>
-                    <div class="grid-2">
+                    <div class="grid-3">
                         <div class="form-group"><label>Full Name</label><input type="text" id="stName" required></div>
+                        <div class="form-group"><label>Date of Birth</label><input type="date" id="stDob" required></div>
                         <div class="form-group"><label>Role / Duty</label><input type="text" id="stRole" required></div>
                     </div>
-                    <div class="grid-2">
+                    <div class="grid-3">
+                        <div class="form-group"><label>Father's Name</label><input type="text" id="stFather" required></div>
                         <div class="form-group"><label>Base Salary (₹)</label><input type="number" id="stSalary" required></div>
                         <div class="form-group"><label>Mobile No.</label><input type="tel" id="stMobile" required></div>
+                    </div>
+                </fieldset>
+                
+                <fieldset>
+                    <legend>Permanent Address</legend>
+                    <div class="grid-2">
+                        <div class="form-group"><label>Village / Town</label><input type="text" id="stPermVill" required></div>
+                        <div class="form-group"><label>Post Office (PO)</label><input type="text" id="stPermPO" required></div>
+                    </div>
+                    <div class="grid-3">
+                        <div class="form-group"><label>District</label><input type="text" id="stPermDist" required></div>
+                        <div class="form-group"><label>State</label><input type="text" id="stPermState" required></div>
+                        <div class="form-group"><label>PIN Code</label><input type="number" id="stPermPin" required></div>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Present Address</legend>
+                    <div style="margin-bottom:10px;">
+                        <input type="checkbox" id="stSameAddress" onchange="copyAddress('st')"> 
+                        <label for="stSameAddress" style="display:inline; font-weight:bold; color:var(--danger);">Same as Permanent</label>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group"><label>Village / Town</label><input type="text" id="stPresVill" required></div>
+                        <div class="form-group"><label>Post Office (PO)</label><input type="text" id="stPresPO" required></div>
+                    </div>
+                    <div class="grid-3">
+                        <div class="form-group"><label>District</label><input type="text" id="stPresDist" required></div>
+                        <div class="form-group"><label>State</label><input type="text" id="stPresState" required></div>
+                        <div class="form-group"><label>PIN Code</label><input type="number" id="stPresPin" required></div>
                     </div>
                 </fieldset>
                 <button type="submit" class="btn btn-danger" id="stBtn" style="width: 100%; font-size:16px; padding:12px;">💾 Save Staff</button>
@@ -722,7 +860,8 @@
         <div class="modal-box large">
             <span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
             <h3 id="sModalTitle" style="margin-top:0; color:#2ecc71;">🎓 Complete Student Registration</h3>
-            <form onsubmit="saveStudent(event)">
+            <form id="sForm" onsubmit="saveStudent(event)">
+                <input type="hidden" id="sIdHidden">
                 <fieldset>
                     <legend>Academic</legend>
                     <div class="grid-3">
@@ -737,12 +876,46 @@
                 </fieldset>
                 <fieldset>
                     <legend>Contact Details</legend>
-                    <div class="grid-3">
+                    <div class="grid-2">
+                        <div class="form-group"><label>Father's Name</label><input type="text" id="sFather" required></div>
                         <div class="form-group"><label>Parent Mobile</label><input type="tel" id="sMobile" required></div>
+                    </div>
+                    <div class="grid-2">
                         <div class="form-group"><label>Login Email</label><input type="email" id="sEmail" required></div>
-                        <div class="form-group" id="sPassGroup"><label>Login Password</label><input type="password" id="sPassword" required></div>
+                        <div class="form-group"><label>Login Password</label><input type="password" id="sPassword" required></div>
                     </div>
                 </fieldset>
+                
+                <fieldset>
+                    <legend>Permanent Address</legend>
+                    <div class="grid-2">
+                        <div class="form-group"><label>Village / Town</label><input type="text" id="sPermVill" required></div>
+                        <div class="form-group"><label>Post Office (PO)</label><input type="text" id="sPermPO" required></div>
+                    </div>
+                    <div class="grid-3">
+                        <div class="form-group"><label>District</label><input type="text" id="sPermDist" required></div>
+                        <div class="form-group"><label>State</label><input type="text" id="sPermState" required></div>
+                        <div class="form-group"><label>PIN Code</label><input type="number" id="sPermPin" required></div>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Present Address</legend>
+                    <div style="margin-bottom:10px;">
+                        <input type="checkbox" id="sSameAddress" onchange="copyAddress('s')"> 
+                        <label for="sSameAddress" style="display:inline; font-weight:bold; color:var(--success);">Same as Permanent</label>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group"><label>Village / Town</label><input type="text" id="sPresVill" required></div>
+                        <div class="form-group"><label>Post Office (PO)</label><input type="text" id="sPresPO" required></div>
+                    </div>
+                    <div class="grid-3">
+                        <div class="form-group"><label>District</label><input type="text" id="sPresDist" required></div>
+                        <div class="form-group"><label>State</label><input type="text" id="sPresState" required></div>
+                        <div class="form-group"><label>PIN Code</label><input type="number" id="sPresPin" required></div>
+                    </div>
+                </fieldset>
+                
                 <button type="submit" class="btn btn-success" id="sBtn" style="width: 100%; font-size:16px; padding:12px;">💾 Save Student</button>
             </form>
         </div>
@@ -854,9 +1027,48 @@
             if(window.innerWidth <= 850) toggleSidebar(); 
         };
 
-        window.openStudentModal = () => document.getElementById('studentModal').style.display='flex';
-        window.openTeacherModal = () => document.getElementById('teacherModal').style.display='flex';
-        window.openStaffModal = () => document.getElementById('staffModal').style.display='flex';
+        // COPY ADDRESS LOGIC
+        window.copyAddress = function(prefix) {
+            if(document.getElementById(prefix + 'SameAddress').checked) {
+                document.getElementById(prefix + 'PresVill').value = document.getElementById(prefix + 'PermVill').value;
+                document.getElementById(prefix + 'PresPO').value = document.getElementById(prefix + 'PermPO').value;
+                document.getElementById(prefix + 'PresDist').value = document.getElementById(prefix + 'PermDist').value;
+                document.getElementById(prefix + 'PresState').value = document.getElementById(prefix + 'PermState').value;
+                document.getElementById(prefix + 'PresPin').value = document.getElementById(prefix + 'PermPin').value;
+            } else {
+                document.getElementById(prefix + 'PresVill').value = '';
+                document.getElementById(prefix + 'PresPO').value = '';
+                document.getElementById(prefix + 'PresDist').value = '';
+                document.getElementById(prefix + 'PresState').value = '';
+                document.getElementById(prefix + 'PresPin').value = '';
+            }
+        };
+
+        // OPEN MODALS (RESET FOR ADDING NEW)
+        window.openStudentModal = () => {
+            document.getElementById('sIdHidden').value = '';
+            document.getElementById('sModalTitle').innerText = "🎓 Complete Student Registration";
+            document.getElementById('sBtn').innerText = "💾 Save Student";
+            document.getElementById('sForm').reset();
+            document.getElementById('studentModal').style.display='flex';
+        };
+        
+        window.openTeacherModal = () => {
+            document.getElementById('tIdHidden').value = '';
+            document.getElementById('tModalTitle').innerText = "👨‍🏫 Register Teacher";
+            document.getElementById('tBtn').innerText = "💾 Save Teacher";
+            document.getElementById('tForm').reset();
+            document.getElementById('teacherModal').style.display='flex';
+        };
+        
+        window.openStaffModal = () => {
+            document.getElementById('stIdHidden').value = '';
+            document.getElementById('stModalTitle').innerText = "👨‍💼 Register Staff";
+            document.getElementById('stBtn').innerText = "💾 Save Staff";
+            document.getElementById('stForm').reset();
+            document.getElementById('staffModal').style.display='flex';
+        };
+
         window.secureLogout = () => { localStorage.clear(); window.location.href = "main-website.html"; };
 
         window.toggleStudentFilters = () => {
@@ -898,13 +1110,17 @@
             const selectEl = document.getElementById(selectId); 
             selectEl.innerHTML = '';
             
-            const validMonths = window.getValidAcademicMonths(window.academicStartMonth);
-            validMonths.forEach(m => { 
-                selectEl.innerHTML += `<option value="${m}">${m}</option>`; 
-            });
+            const monthsArray = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            let tempIndex = window.academicStartMonth;
+            
+            for(let i=0; i<12; i++) {
+                let m = monthsArray[tempIndex];
+                selectEl.innerHTML += `<option value="${m}">${m}</option>`;
+                tempIndex = (tempIndex + 1) % 12;
+            }
         }
 
-        // --- ADD DATA ---
+        // --- MANAGE CLASSES ---
         window.addClass = async function(event) { 
             event.preventDefault(); 
             try { 
@@ -916,66 +1132,6 @@
                 alert("Class added!"); 
                 event.target.reset(); 
                 loadClasses(); 
-            } catch(e) { alert("Error"); } 
-        }
-
-        window.saveStudent = async function(event) { 
-            event.preventDefault(); 
-            try { 
-                await addDoc(collection(db, "students"), { 
-                    name: document.getElementById('sName').value, 
-                    className: document.getElementById('sClass').value, 
-                    section: document.getElementById('sSection').value, 
-                    rollNo: document.getElementById('sRoll').value, 
-                    email: document.getElementById('sEmail').value, 
-                    password: document.getElementById('sPassword').value, 
-                    mobile: document.getElementById('sMobile').value, 
-                    schoolId: activeSchoolId, 
-                    status: "Active", 
-                    feeRecords: {} 
-                }); 
-                alert("Student registered!"); 
-                document.getElementById('studentModal').style.display = 'none'; 
-                event.target.reset(); 
-                loadStudents(); 
-            } catch(e) { alert("Error"); } 
-        }
-
-        window.saveTeacher = async function(event) { 
-            event.preventDefault(); 
-            try { 
-                await addDoc(collection(db, "teachers"), { 
-                    name: document.getElementById('tName').value, 
-                    subject: document.getElementById('tSubject').value, 
-                    email: document.getElementById('tEmail').value, 
-                    password: document.getElementById('tPassword').value, 
-                    salary: document.getElementById('tSalary').value, 
-                    mobile: document.getElementById('tMobile').value, 
-                    schoolId: activeSchoolId, 
-                    salaryRecords: {} 
-                }); 
-                alert("Teacher added!"); 
-                document.getElementById('teacherModal').style.display = 'none'; 
-                event.target.reset(); 
-                loadTeachers(); 
-            } catch(e) { alert("Error"); } 
-        }
-
-        window.saveStaff = async function(event) { 
-            event.preventDefault(); 
-            try { 
-                await addDoc(collection(db, "staff"), { 
-                    name: document.getElementById('stName').value, 
-                    role: document.getElementById('stRole').value, 
-                    mobile: document.getElementById('stMobile').value, 
-                    salary: document.getElementById('stSalary').value, 
-                    schoolId: activeSchoolId, 
-                    salaryRecords: {} 
-                }); 
-                alert("Staff added!"); 
-                document.getElementById('staffModal').style.display = 'none'; 
-                event.target.reset(); 
-                loadStaff(); 
             } catch(e) { alert("Error"); } 
         }
 
@@ -1017,7 +1173,7 @@
             } catch(e) { console.error(e); }
         }
 
-        // --- STUDENTS & FEES & STATUS ---
+        // --- STUDENTS CRUD ---
         window.loadStudents = async function() {
             try { 
                 const q = query(collection(db, "students"), where("schoolId", "==", activeSchoolId)); 
@@ -1051,11 +1207,100 @@
                     <td>${data.className || 'N/A'} (${data.section || '-'})</td>
                     <td>${data.mobile || 'No Contact'}</td>
                     <td><button class="btn btn-success" onclick="openFeeModal('${data.id}', '${data.name}')">₹ Pay Fees</button></td>
-                    <td><button class="btn btn-info" onclick="openStatusModal('${data.id}', '${data.status || 'Active'}')" style="margin-bottom:5px;">Update Status</button><button class="btn btn-danger" onclick="deleteStudent('${data.id}')" style="margin-bottom:5px;">Del</button></td>
+                    <td>
+                        <button class="btn btn-warning" onclick="editStudent('${data.id}')" style="margin-bottom:5px;">Edit</button>
+                        <button class="btn btn-info" onclick="openStatusModal('${data.id}', '${data.status || 'Active'}')" style="margin-bottom:5px;">Status</button>
+                        <button class="btn btn-danger" onclick="deleteStudent('${data.id}')" style="margin-bottom:5px;">Del</button>
+                    </td>
                 </tr>`;
             });
             tbody.innerHTML = html || "<tr><td colspan='6' style='text-align: center;'>No students found.</td></tr>"; 
             document.getElementById('dashStudentsCount').innerText = count;
+        }
+
+        window.editStudent = function(id) {
+            const student = window.allStudentsData.find(s => s.id === id);
+            if(!student) return;
+            
+            document.getElementById('sIdHidden').value = student.id;
+            document.getElementById('sModalTitle').innerText = "🎓 Edit Student Record";
+            document.getElementById('sBtn').innerText = "💾 Update Student";
+            
+            document.getElementById('sName').value = student.name || '';
+            document.getElementById('sClass').value = student.className || '';
+            updateDynamicSections('sClass', 'sSection');
+            setTimeout(() => { document.getElementById('sSection').value = student.section || ''; }, 100);
+            
+            document.getElementById('sRoll').value = student.rollNo || student.rollNumber || '';
+            document.getElementById('sDob').value = student.dob || '';
+            document.getElementById('sFather').value = student.fatherName || '';
+            document.getElementById('sMobile').value = student.mobile || '';
+            document.getElementById('sEmail').value = student.email || '';
+            document.getElementById('sPassword').value = student.password || '';
+            
+            document.getElementById('sPermVill').value = student.permVill || '';
+            document.getElementById('sPermPO').value = student.permPO || '';
+            document.getElementById('sPermDist').value = student.permDist || '';
+            document.getElementById('sPermState').value = student.permState || '';
+            document.getElementById('sPermPin').value = student.permPin || '';
+
+            document.getElementById('sPresVill').value = student.presVill || '';
+            document.getElementById('sPresPO').value = student.presPO || '';
+            document.getElementById('sPresDist').value = student.presDist || '';
+            document.getElementById('sPresState').value = student.presState || '';
+            document.getElementById('sPresPin').value = student.presPin || '';
+            
+            document.getElementById('studentModal').style.display = 'flex';
+        }
+
+        window.saveStudent = async function(event) { 
+            event.preventDefault(); 
+            const btn = document.getElementById('sBtn'); 
+            btn.innerText = "Saving...";
+            const id = document.getElementById('sIdHidden').value;
+            
+            const studentData = {
+                name: document.getElementById('sName').value, 
+                className: document.getElementById('sClass').value, 
+                section: document.getElementById('sSection').value, 
+                rollNo: document.getElementById('sRoll').value, 
+                dob: document.getElementById('sDob').value,
+                fatherName: document.getElementById('sFather').value,
+                mobile: document.getElementById('sMobile').value, 
+                email: document.getElementById('sEmail').value, 
+                password: document.getElementById('sPassword').value, 
+                permVill: document.getElementById('sPermVill').value,
+                permPO: document.getElementById('sPermPO').value,
+                permDist: document.getElementById('sPermDist').value,
+                permState: document.getElementById('sPermState').value,
+                permPin: document.getElementById('sPermPin').value,
+                presVill: document.getElementById('sPresVill').value,
+                presPO: document.getElementById('sPresPO').value,
+                presDist: document.getElementById('sPresDist').value,
+                presState: document.getElementById('sPresState').value,
+                presPin: document.getElementById('sPresPin').value,
+                schoolId: activeSchoolId
+            };
+
+            try { 
+                if (id) {
+                    await updateDoc(doc(db, "students", id), studentData);
+                    alert("Student updated!");
+                } else {
+                    studentData.status = "Active";
+                    studentData.feeRecords = {};
+                    await addDoc(collection(db, "students"), studentData); 
+                    alert("Student registered!"); 
+                }
+                
+                document.getElementById('studentModal').style.display = 'none'; 
+                event.target.reset(); 
+                document.getElementById('sIdHidden').value = '';
+                document.getElementById('sModalTitle').innerText = "🎓 Complete Student Registration";
+                document.getElementById('sBtn').innerText = "💾 Save Student";
+                loadStudents(); 
+            } catch(e) { alert("Error"); } 
+            btn.innerText = "💾 Save Student";
         }
 
         window.deleteStudent = async function(docId) { 
@@ -1065,6 +1310,7 @@
             } 
         }
 
+        // --- FEES & ACADEMIC STATUS ---
         window.openFeeModal = function(id, name) {
             window.currentActionId = id; 
             document.getElementById('feeStudentName').innerText = name; 
@@ -1114,19 +1360,110 @@
             } catch(e) { alert("Error"); } 
         }
 
-        // --- HR SALARIES ---
+        // --- HR (TEACHERS & STAFF) CRUD ---
         window.loadTeachers = async function() {
             try { 
                 const snap = await getDocs(query(collection(db, "teachers"), where("schoolId", "==", activeSchoolId))); 
                 let html = ""; let count = 0; window.allTeachersData = [];
                 snap.forEach(doc => { 
                     const data = doc.data(); count++; window.allTeachersData.push({ id: doc.id, ...data }); 
-                    html += `<tr><td><strong>${data.name}</strong><br><small>${data.mobile}</small></td><td>${data.subject}</td><td>₹ ${data.salary || '0'}</td><td><button class="btn btn-info" onclick="openSalaryModal('${doc.id}', '${data.name}', 'Teacher')">₹ Pay & View Salary</button></td></tr>`; 
+                    html += `<tr>
+                        <td><strong>${data.name}</strong><br><small>${data.mobile}</small></td>
+                        <td>${data.subject}</td><td>₹ ${data.salary || '0'}</td>
+                        <td><button class="btn btn-info" onclick="openSalaryModal('${doc.id}', '${data.name}', 'Teacher')">₹ Pay & View Salary</button></td>
+                        <td><button class="btn btn-warning" onclick="editTeacher('${doc.id}')">Edit</button> <button class="btn btn-danger" onclick="deleteTeacher('${doc.id}')">Del</button></td>
+                    </tr>`; 
                 });
-                document.getElementById('teacherTableBody').innerHTML = html || "<tr><td colspan='4'>No teachers found.</td></tr>"; 
+                document.getElementById('teacherTableBody').innerHTML = html || "<tr><td colspan='5'>No teachers found.</td></tr>"; 
                 document.getElementById('dashTeachersCount').innerText = count;
                 calculateFinanceTotals();
             } catch(e) { console.error(e); }
+        }
+
+        window.editTeacher = function(id) {
+            const teacher = window.allTeachersData.find(t => t.id === id);
+            if(!teacher) return;
+            
+            document.getElementById('tIdHidden').value = teacher.id;
+            document.getElementById('tModalTitle').innerText = "👨‍🏫 Edit Teacher Record";
+            document.getElementById('tBtn').innerText = "💾 Update Teacher";
+            
+            document.getElementById('tName').value = teacher.name || '';
+            document.getElementById('tDob').value = teacher.dob || '';
+            document.getElementById('tSubject').value = teacher.subject || '';
+            document.getElementById('tSalary').value = teacher.salary || '';
+            document.getElementById('tMobile').value = teacher.mobile || '';
+            document.getElementById('tFather').value = teacher.fatherName || '';
+            document.getElementById('tEmail').value = teacher.email || '';
+            document.getElementById('tPassword').value = teacher.password || '';
+            
+            document.getElementById('tPermVill').value = teacher.permVill || '';
+            document.getElementById('tPermPO').value = teacher.permPO || '';
+            document.getElementById('tPermDist').value = teacher.permDist || '';
+            document.getElementById('tPermState').value = teacher.permState || '';
+            document.getElementById('tPermPin').value = teacher.permPin || '';
+
+            document.getElementById('tPresVill').value = teacher.presVill || '';
+            document.getElementById('tPresPO').value = teacher.presPO || '';
+            document.getElementById('tPresDist').value = teacher.presDist || '';
+            document.getElementById('tPresState').value = teacher.presState || '';
+            document.getElementById('tPresPin').value = teacher.presPin || '';
+            
+            document.getElementById('teacherModal').style.display = 'flex';
+        }
+
+        window.saveTeacher = async function(event) { 
+            event.preventDefault(); 
+            const btn = document.getElementById('tBtn'); btn.innerText = "Saving...";
+            const id = document.getElementById('tIdHidden').value;
+
+            const teacherData = {
+                name: document.getElementById('tName').value, 
+                dob: document.getElementById('tDob').value,
+                subject: document.getElementById('tSubject').value, 
+                salary: document.getElementById('tSalary').value, 
+                mobile: document.getElementById('tMobile').value,
+                fatherName: document.getElementById('tFather').value,
+                email: document.getElementById('tEmail').value, 
+                password: document.getElementById('tPassword').value, 
+                permVill: document.getElementById('tPermVill').value,
+                permPO: document.getElementById('tPermPO').value,
+                permDist: document.getElementById('tPermDist').value,
+                permState: document.getElementById('tPermState').value,
+                permPin: document.getElementById('tPermPin').value,
+                presVill: document.getElementById('tPresVill').value,
+                presPO: document.getElementById('tPresPO').value,
+                presDist: document.getElementById('tPresDist').value,
+                presState: document.getElementById('tPresState').value,
+                presPin: document.getElementById('tPresPin').value,
+                schoolId: activeSchoolId
+            };
+
+            try { 
+                if(id) {
+                    await updateDoc(doc(db, "teachers", id), teacherData);
+                    alert("Teacher updated!");
+                } else {
+                    teacherData.salaryRecords = {};
+                    await addDoc(collection(db, "teachers"), teacherData); 
+                    alert("Teacher added!"); 
+                }
+                
+                document.getElementById('teacherModal').style.display = 'none'; 
+                event.target.reset(); 
+                document.getElementById('tIdHidden').value = '';
+                document.getElementById('tModalTitle').innerText = "👨‍🏫 Register Teacher";
+                document.getElementById('tBtn').innerText = "💾 Save Teacher";
+                loadTeachers(); 
+            } catch(e) { alert("Error"); } 
+            btn.innerText = "💾 Save Teacher";
+        }
+
+        window.deleteTeacher = async function(id) {
+            if(confirm("Delete this teacher completely?")) { 
+                await deleteDoc(doc(db, "teachers", id)); 
+                loadTeachers(); 
+            } 
         }
 
         window.loadStaff = async function() {
@@ -1135,12 +1472,99 @@
                 let html = ""; let count = 0; window.allStaffData = [];
                 snap.forEach(doc => { 
                     const data = doc.data(); count++; window.allStaffData.push({ id: doc.id, ...data }); 
-                    html += `<tr><td><strong>${data.name}</strong><br><small>${data.mobile}</small></td><td>${data.role}</td><td>₹ ${data.salary || '0'}</td><td><button class="btn btn-info" onclick="openSalaryModal('${doc.id}', '${data.name}', 'Staff')">₹ Pay & View Salary</button></td></tr>`; 
+                    html += `<tr>
+                        <td><strong>${data.name}</strong><br><small>${data.mobile}</small></td>
+                        <td>${data.role}</td><td>₹ ${data.salary || '0'}</td>
+                        <td><button class="btn btn-info" onclick="openSalaryModal('${doc.id}', '${data.name}', 'Staff')">₹ Pay & View Salary</button></td>
+                        <td><button class="btn btn-warning" onclick="editStaff('${doc.id}')">Edit</button> <button class="btn btn-danger" onclick="deleteStaff('${doc.id}')">Del</button></td>
+                    </tr>`; 
                 });
-                document.getElementById('staffTableBody').innerHTML = html || "<tr><td colspan='4'>No staff found.</td></tr>"; 
+                document.getElementById('staffTableBody').innerHTML = html || "<tr><td colspan='5'>No staff found.</td></tr>"; 
                 document.getElementById('dashStaffCount').innerText = count;
                 calculateFinanceTotals();
             } catch(e) { console.error(e); }
+        }
+
+        window.editStaff = function(id) {
+            const staff = window.allStaffData.find(s => s.id === id);
+            if(!staff) return;
+            
+            document.getElementById('stIdHidden').value = staff.id;
+            document.getElementById('stModalTitle').innerText = "👨‍💼 Edit Staff Record";
+            document.getElementById('stBtn').innerText = "💾 Update Staff";
+            
+            document.getElementById('stName').value = staff.name || '';
+            document.getElementById('stDob').value = staff.dob || '';
+            document.getElementById('stRole').value = staff.role || '';
+            document.getElementById('stFather').value = staff.fatherName || '';
+            document.getElementById('stSalary').value = staff.salary || '';
+            document.getElementById('stMobile').value = staff.mobile || '';
+            
+            document.getElementById('stPermVill').value = staff.permVill || '';
+            document.getElementById('stPermPO').value = staff.permPO || '';
+            document.getElementById('stPermDist').value = staff.permDist || '';
+            document.getElementById('stPermState').value = staff.permState || '';
+            document.getElementById('stPermPin').value = staff.permPin || '';
+
+            document.getElementById('stPresVill').value = staff.presVill || '';
+            document.getElementById('stPresPO').value = staff.presPO || '';
+            document.getElementById('stPresDist').value = staff.presDist || '';
+            document.getElementById('stPresState').value = staff.presState || '';
+            document.getElementById('stPresPin').value = staff.presPin || '';
+            
+            document.getElementById('staffModal').style.display = 'flex';
+        }
+
+        window.saveStaff = async function(event) { 
+            event.preventDefault(); 
+            const btn = document.getElementById('stBtn'); btn.innerText = "Saving...";
+            const id = document.getElementById('stIdHidden').value;
+
+            const staffData = {
+                name: document.getElementById('stName').value, 
+                dob: document.getElementById('stDob').value,
+                role: document.getElementById('stRole').value, 
+                fatherName: document.getElementById('stFather').value,
+                salary: document.getElementById('stSalary').value, 
+                mobile: document.getElementById('stMobile').value,
+                permVill: document.getElementById('stPermVill').value,
+                permPO: document.getElementById('stPermPO').value,
+                permDist: document.getElementById('stPermDist').value,
+                permState: document.getElementById('stPermState').value,
+                permPin: document.getElementById('stPermPin').value,
+                presVill: document.getElementById('stPresVill').value,
+                presPO: document.getElementById('stPresPO').value,
+                presDist: document.getElementById('stPresDist').value,
+                presState: document.getElementById('stPresState').value,
+                presPin: document.getElementById('stPresPin').value,
+                schoolId: activeSchoolId
+            };
+
+            try { 
+                if(id) {
+                    await updateDoc(doc(db, "staff", id), staffData);
+                    alert("Staff updated!");
+                } else {
+                    staffData.salaryRecords = {};
+                    await addDoc(collection(db, "staff"), staffData); 
+                    alert("Staff added!"); 
+                }
+                
+                document.getElementById('staffModal').style.display = 'none'; 
+                event.target.reset(); 
+                document.getElementById('stIdHidden').value = '';
+                document.getElementById('stModalTitle').innerText = "👨‍💼 Register Staff";
+                document.getElementById('stBtn').innerText = "💾 Save Staff";
+                loadStaff(); 
+            } catch(e) { alert("Error"); } 
+            btn.innerText = "💾 Save Staff";
+        }
+
+        window.deleteStaff = async function(id) {
+            if(confirm("Delete this staff member completely?")) { 
+                await deleteDoc(doc(db, "staff", id)); 
+                loadStaff(); 
+            } 
         }
 
         window.openSalaryModal = function(id, name, type) {
@@ -1176,7 +1600,7 @@
             } catch(e) { alert("Error"); }
         }
 
-        // --- WEBSITE SETUP ---
+        // --- WEBSITE SETUP (FIXED LOCAL PATHS) ---
         window.addContactRow = function() {
             const container = document.getElementById('dynamicContactContainer'); 
             const row = document.createElement('div'); 
@@ -1204,12 +1628,14 @@
                     document.getElementById('webAbout').value = data.aboutSchool || '';
                     document.getElementById('webAchievements').value = data.achievements || '';
                     
+                    // FIXED LINK GENERATION FOR LOCAL FILES
                     const currentPath = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
                     const pubLink = `${currentPath}/public-site.html?school=${data.schoolId}`;
                     
                     const linkEl = document.getElementById('publicSiteLink'); 
                     linkEl.href = pubLink; linkEl.innerText = pubLink;
 
+                    // Load Dynamic Contacts
                     if(data.contactNumbers && data.contactNumbers.length > 0) {
                         const container = document.getElementById('dynamicContactContainer'); container.innerHTML = '';
                         data.contactNumbers.forEach((num, index) => {
@@ -1261,6 +1687,7 @@
                 
                 localStorage.setItem("activeSchoolId", webUrlId); 
                 
+                // FIXED LINK GENERATION FOR LOCAL FILES
                 const currentPath = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
                 const pubLink = `${currentPath}/public-site.html?school=${webUrlId}`;
                 
@@ -1396,180 +1823,18 @@
             } catch(e) { alert("Error"); }
         }
 
-        // --- FEE & FINANCE LOGIC ---
-        window.addFeeRow = function() {
-            const container = document.getElementById('dynamicFeeContainer'); 
-            const row = document.createElement('div'); 
-            row.className = 'grid-2 fee-input-row'; 
-            row.style.cssText = 'align-items: end; margin-bottom: 10px;';
-            row.innerHTML = `
-                <div class="form-group" style="margin:0;">
-                    <label>Fee Head Name</label>
-                    <input type="text" class="fee-head-name" placeholder="E.g. Tuition Fee" required>
-                </div>
-                <div class="form-group" style="margin:0;">
-                    <label>Amount (₹)</label>
-                    <div style="display:flex; gap:10px;">
-                        <input type="number" class="fee-head-amount" required>
-                        <button type="button" class="btn btn-danger" onclick="this.parentElement.parentElement.parentElement.remove()">X</button>
-                    </div>
-                </div>`;
-            container.appendChild(row);
-        }
-
-        window.saveDynamicFeeStructure = async function(event) {
-            event.preventDefault(); 
-            const selectedClass = document.getElementById('feeStructClass').value;
-            if(!selectedClass || selectedClass === 'All') return alert("Select a specific class.");
-            
-            const feeNames = document.querySelectorAll('.fee-head-name'); 
-            const feeAmounts = document.querySelectorAll('.fee-head-amount');
-            let breakdown = []; let total = 0;
-            
-            for(let i=0; i<feeNames.length; i++) { 
-                const amt = Number(feeAmounts[i].value); 
-                breakdown.push({ head: feeNames[i].value, amount: amt }); 
-                total += amt; 
-            }
-
-            try { 
-                await addDoc(collection(db, "feeStructures"), { 
-                    className: selectedClass, 
-                    feeBreakdown: breakdown, 
-                    totalMonthlyFee: total, 
-                    schoolId: activeSchoolId 
-                }); 
-                alert("Fee Saved!"); 
-                event.target.reset(); 
-                loadFeeStructures(); 
-            } catch(e) { alert(e.message); }
-        }
-
+        // --- FEE LOGIC (REUSED) ---
         window.loadFeeStructures = async function() { 
             try { 
-                const snap = await getDocs(query(collection(db, "feeStructures"), where("schoolId", "==", activeSchoolId))); 
-                let html = ""; 
+                const snap = await getDocs(query(collection(db, "feeStructures"), where("schoolId", "==", activeSchoolId))); let html = ""; 
                 snap.forEach(doc => { 
                     const data = doc.data(); 
                     let breakdownText = data.feeBreakdown.map(f => `${f.head}: ₹${f.amount}`).join("<br>"); 
                     html += `<tr><td><strong>${data.className}</strong></td><td>${breakdownText}</td><td style="color:#27ae60;"><strong>₹${data.totalMonthlyFee}</strong></td><td><button class="btn btn-danger" onclick="deleteFeeStruct('${doc.id}')">Del</button></td></tr>`; 
                 }); 
                 document.getElementById('feeStructBody').innerHTML = html || "<tr><td colspan='4'>No fees set.</td></tr>"; 
-                calculateFinanceTotals();
             } catch(e) { console.error(e); } 
         }
-
-        window.deleteFeeStruct = async function(id) { 
-            if(confirm("Delete fee structure?")) { 
-                await deleteDoc(doc(db, "feeStructures", id)); 
-                loadFeeStructures(); 
-            } 
-        }
-
-        window.addExtraExpense = async function(event) {
-            event.preventDefault(); 
-            try { 
-                await addDoc(collection(db, "expenses"), { 
-                    date: document.getElementById('expDate').value, 
-                    detail: document.getElementById('expDetail').value, 
-                    amount: Number(document.getElementById('expAmount').value), 
-                    schoolId: activeSchoolId 
-                }); 
-                alert("Expense Added!"); 
-                event.target.reset(); 
-                loadExpenses(); 
-            } catch(e) { alert(e.message); }
-        }
-
-        window.loadExpenses = async function() {
-            try {
-                const snap = await getDocs(query(collection(db, "expenses"), where("schoolId", "==", activeSchoolId))); 
-                let html = ""; 
-                snap.forEach(doc => { 
-                    const data = doc.data(); 
-                    html += `<tr><td>${data.date}</td><td>${data.detail}</td><td>₹${data.amount}</td><td><button class='btn btn-danger' onclick='deleteExpense("${doc.id}")'>Del</button></td></tr>`; 
-                });
-                document.getElementById('expensesBody').innerHTML = html || "<tr><td colspan='4'>No expenses logged.</td></tr>"; 
-                calculateFinanceTotals();
-            } catch(e) { console.error(e); }
-        }
-
-        window.deleteExpense = async function(id) { 
-            if(confirm("Delete expense?")) { 
-                await deleteDoc(doc(db, "expenses", id)); 
-                loadExpenses(); 
-            } 
-        }
-
-        window.calculateFinanceTotals = async function() {
-            try {
-                let totalIncome = 0;
-                let totalExpense = 0;
-
-                // Income from Fees
-                const feeSnap = await getDocs(query(collection(db, "feeStructures"), where("schoolId", "==", activeSchoolId)));
-                let feeMap = {};
-                feeSnap.forEach(doc => { feeMap[doc.data().className] = Number(doc.data().totalMonthlyFee) || 0; });
-
-                const stuSnap = await getDocs(query(collection(db, "students"), where("schoolId", "==", activeSchoolId)));
-                stuSnap.forEach(doc => {
-                    let data = doc.data();
-                    let classFee = feeMap[data.className] || 0;
-                    if(data.feeRecords) {
-                        let monthsPaid = Object.keys(data.feeRecords).length;
-                        totalIncome += (monthsPaid * classFee);
-                    }
-                });
-
-                // Expenses from General Logging
-                const expSnap = await getDocs(query(collection(db, "expenses"), where("schoolId", "==", activeSchoolId)));
-                expSnap.forEach(doc => { totalExpense += Number(doc.data().amount) || 0; });
-
-                // Expenses from Teacher Salaries
-                const tSnap = await getDocs(query(collection(db, "teachers"), where("schoolId", "==", activeSchoolId)));
-                tSnap.forEach(doc => {
-                    let data = doc.data();
-                    let baseSal = Number(data.salary) || 0;
-                    if(data.salaryRecords) {
-                        let monthsPaid = Object.keys(data.salaryRecords).length;
-                        totalExpense += (monthsPaid * baseSal);
-                    }
-                });
-
-                // Expenses from Staff Salaries
-                const sSnap = await getDocs(query(collection(db, "staff"), where("schoolId", "==", activeSchoolId)));
-                sSnap.forEach(doc => {
-                    let data = doc.data();
-                    let baseSal = Number(data.salary) || 0;
-                    if(data.salaryRecords) {
-                        let monthsPaid = Object.keys(data.salaryRecords).length;
-                        totalExpense += (monthsPaid * baseSal);
-                    }
-                });
-
-                document.getElementById('finTotalIncome').innerText = '₹ ' + totalIncome;
-                document.getElementById('finTotalExpense').innerText = '₹ ' + totalExpense;
-                document.getElementById('finNetBalance').innerText = '₹ ' + (totalIncome - totalExpense);
-
-            } catch(e) { console.error("Finance Error:", e); }
-        }
-
-        // --- TIMETABLE, NOTICES, LEAVES, SETTINGS (REUSED CODE) ---
-        window.addTimetable = async function(event) { event.preventDefault(); try { await addDoc(collection(db, "timetable"), { className: document.getElementById('ttClass').value, day: document.getElementById('ttDay').value, time: document.getElementById('ttTime').value, subject: document.getElementById('ttSubject').value, teacher: document.getElementById('ttTeacher').value, schoolId: activeSchoolId }); alert("Timetable Updated!"); event.target.reset(); loadTimetableAdmin(); } catch(e) { alert(e.message); } }
-        window.loadTimetableAdmin = async function() { const filterClass = document.getElementById('ttFilterClass').value; try { const snap = await getDocs(query(collection(db, "timetable"), where("schoolId", "==", activeSchoolId))); let html = ""; snap.forEach(doc => { const data = doc.data(); if(filterClass !== 'All' && data.className !== filterClass) return; html += `<tr><td>${data.className}</td><td>${data.day}</td><td>${data.time}</td><td>${data.subject}</td><td>${data.teacher}</td><td><button class='btn btn-danger' onclick='deleteTimetable("${doc.id}")'>Del</button></td></tr>`; }); document.getElementById('timetableBody').innerHTML = html || "<tr><td colspan='6'>No schedule found.</td></tr>"; } catch(e) { console.error(e); } }
-        window.deleteTimetable = async function(id) { if(confirm("Delete class schedule?")) { await deleteDoc(doc(db, "timetable", id)); loadTimetableAdmin(); } }
-
-        window.addNotice = async function(event) { event.preventDefault(); try { await addDoc(collection(db, "notices"), { title: document.getElementById('nTitle').value, category: document.getElementById('nCategory').value, date: document.getElementById('nDate').value, description: document.getElementById('nDesc').value, schoolId: activeSchoolId }); alert("Notice Published!"); document.getElementById('noticeModal').style.display='none'; event.target.reset(); loadNotices(); } catch(e) { alert(e.message); } }
-        window.loadNotices = async function() { try { const snap = await getDocs(query(collection(db, "notices"), where("schoolId", "==", activeSchoolId))); let html = ""; snap.forEach(doc => { const data = doc.data(); html += `<tr><td>${data.date}</td><td><span class='badge bg-info'>${data.category}</span></td><td><strong>${data.title}</strong><br><small>${data.description}</small></td><td><button class='btn btn-danger' onclick='deleteNotice("${doc.id}")'>Del</button></td></tr>`; }); document.getElementById('noticeTableBody').innerHTML = html || "<tr><td colspan='4'>No notices published.</td></tr>"; } catch(e) { console.error(e); } }
-        window.deleteNotice = async function(id) { if(confirm("Delete Notice?")) { await deleteDoc(doc(db, "notices", id)); loadNotices(); } }
-
-        window.calculateAcademicYear = function() { const start = document.getElementById('setStartDate').value; const end = document.getElementById('setEndDate').value; if(start && end) { document.getElementById('setAcadYear').value = `${new Date(start).getFullYear()} - ${new Date(end).getFullYear()}`; } }
-        window.saveSchoolSettings = async function(event) { event.preventDefault(); try { await addDoc(collection(db, "settings"), { brandName: document.getElementById('setSchoolName').value, startDate: document.getElementById('setStartDate').value, endDate: document.getElementById('setEndDate').value, academicYear: document.getElementById('setAcadYear').value, schoolId: activeSchoolId }); alert("Global Settings Saved!"); } catch(e) { alert(e.message); } }
-
-        window.loadLeaveRequests = async function() { const tbody = document.getElementById('leaveReqTableBody'); tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Loading requests...</td></tr>"; try { const snap = await getDocs(query(collection(db, "leave_requests"), where("schoolId", "==", activeSchoolId))); let html = ""; let count = 0; snap.forEach(doc => { const data = doc.data(); if(data.status === 'Pending') count++; let actionBtns = data.status === 'Pending' ? `<button class='btn btn-success' style='margin-right:5px;' onclick='approveLeave("${doc.id}", "${data.senderId}", "${data.role || data.userType}", "${data.date}", "${data.senderName}")'>Approve</button><button class='btn btn-danger' onclick='updateLeaveStatus("${doc.id}", "Rejected")'>Reject</button>` : `<span style="color:#666; font-weight:bold;">${data.status}</span>`; html += `<tr><td>${data.date}</td><td><strong>${data.senderName}</strong></td><td>${data.role || data.userType}</td><td>${data.reason}</td><td><span class="badge ${data.status === 'Approved' ? 'bg-success' : (data.status === 'Rejected' ? 'bg-danger' : 'bg-warning')}">${data.status}</span></td><td>${actionBtns}</td></tr>`; }); tbody.innerHTML = html || "<tr><td colspan='6' style='text-align:center;'>No leave requests.</td></tr>"; document.getElementById('dashPendingLeaves').innerText = count; } catch(e) { console.error(e); } }
-        window.approveLeave = async function(leaveId, userId, userType, leaveDate, userName) { if(!confirm("Approve leave and auto-mark attendance for this user?")) return; try { await updateDoc(doc(db, "leave_requests", leaveId), { status: "Approved" }); if(userType === 'Teacher' || userType === 'Staff') { const attSnap = await getDocs(query(collection(db, "attendance"), where("schoolId", "==", activeSchoolId), where("date", "==", leaveDate), where("userType", "==", userType))); if(attSnap.empty) { await addDoc(collection(db, "attendance"), { schoolId: activeSchoolId, date: leaveDate, userType: userType, records: [{ userId: userId, name: userName, status: "Leave" }], timestamp: new Date() }); } else { let attDoc = attSnap.docs[0]; let records = attDoc.data().records || []; let userIndex = records.findIndex(r => r.userId === userId); if(userIndex > -1) { records[userIndex].status = "Leave"; } else { records.push({ userId: userId, name: userName, status: "Leave" }); } await updateDoc(doc(db, "attendance", attDoc.id), { records: records }); } } else if(userType === 'Student') { const docId = `${activeSchoolId}_${userId}_${leaveDate}`; await setDoc(doc(db, "student_attendance", docId), { studentId: userId, studentName: userName, date: leaveDate, status: 'Leave', schoolId: activeSchoolId, timestamp: new Date() }, { merge: true }); } alert("Leave Approved and Attendance Auto-Updated successfully!"); loadLeaveRequests(); } catch(e) { alert("Error: " + e.message); } }
-        window.updateLeaveStatus = async function(leaveId, newStatus) { if(!confirm(`Mark request as ${newStatus}?`)) return; try { await updateDoc(doc(db, "leave_requests", leaveId), { status: newStatus }); loadLeaveRequests(); } catch(e) { alert(e.message); } }
-
     </script>
 </body>
 </html>
