@@ -567,11 +567,15 @@
             <div style="background: #eaf2f8; padding: 15px; border-radius: 8px; display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
                 <div class="form-group" style="flex:1; margin:0;">
                     <label>Class Filter</label>
-                    <select id="stuClassFilter" class="dynamic-class-dropdown" onchange="updateDynamicSections('stuClassFilter', 'stuSectionFilter'); renderStudents();"><option value="All">All Classes</option></select>
+                    <select id="stuClassFilter" class="dynamic-class-dropdown" onchange="updateDynamicSections('stuClassFilter', 'stuSectionFilter'); renderStudents();">
+                        <option value="All">All Classes</option>
+                    </select>
                 </div>
                 <div class="form-group" style="flex:1; margin:0;">
                     <label>Section Filter</label>
-                    <select id="stuSectionFilter" onchange="renderStudents()"><option value="All">All Sections</option></select>
+                    <select id="stuSectionFilter" onchange="renderStudents()">
+                        <option value="All">All Sections</option>
+                    </select>
                 </div>
                 <div class="form-group" style="flex:1; margin:0;">
                     <label>Search</label>
@@ -615,11 +619,15 @@
                 </div>
                 <div class="form-group stu-filter" style="flex:1; margin:0;">
                     <label>Class Filter</label>
-                    <select id="attClassFilterGlobal" class="dynamic-class-dropdown" onchange="updateDynamicSections('attClassFilterGlobal', 'attSectionFilterGlobal'); loadGlobalAttendance();"><option value="All">All Classes</option></select>
+                    <select id="attClassFilterGlobal" class="dynamic-class-dropdown" onchange="updateDynamicSections('attClassFilterGlobal', 'attSectionFilterGlobal'); loadGlobalAttendance();">
+                        <option value="All">All Classes</option>
+                    </select>
                 </div>
                 <div class="form-group stu-filter" style="flex:1; margin:0;">
                     <label>Section Filter</label>
-                    <select id="attSectionFilterGlobal" onchange="loadGlobalAttendance()"><option value="All">All Sections</option></select>
+                    <select id="attSectionFilterGlobal" onchange="loadGlobalAttendance()">
+                        <option value="All">All Sections</option>
+                    </select>
                 </div>
                 <button class="btn btn-success" id="saveGlobalAttBtn" onclick="saveGlobalAttendance()" style="height: 38px;">💾 Save Attendance</button>
             </div>
@@ -628,8 +636,14 @@
                 <h4 style="margin: 0 0 10px 0; color: #c62828;">🏖️ Declare School Holiday</h4>
                 <p style="font-size:12px; margin:0 0 10px 0; color:#555;">Declaring a holiday will instantly mark all Active Students, Teachers & Staff as "Holiday" and push a Notice.</p>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;">
-                    <div class="form-group" style="flex:1; margin:0;"><label>Holiday Date</label><input type="date" id="holDate"></div>
-                    <div class="form-group" style="flex:2; margin:0;"><label>Reason / Festival Name</label><input type="text" id="holReason" placeholder="E.g. Diwali, Independence Day"></div>
+                    <div class="form-group" style="flex:1; margin:0;">
+                        <label>Holiday Date</label>
+                        <input type="date" id="holDate">
+                    </div>
+                    <div class="form-group" style="flex:2; margin:0;">
+                        <label>Reason / Festival Name</label>
+                        <input type="text" id="holReason" placeholder="E.g. Diwali, Independence Day">
+                    </div>
                     <button class="btn btn-danger" onclick="declareHoliday()" style="height: 38px;">Declare Holiday</button>
                 </div>
             </div>
@@ -660,17 +674,44 @@
             <h3>📅 Manage Class Timetable</h3>
             <form onsubmit="addTimetable(event)" style="background: #eaf2f8; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
                 <div class="grid-3">
-                    <div class="form-group"><label>Class</label><select id="ttClass" class="dynamic-class-dropdown" required></select></div>
-                    <div class="form-group"><label>Day</label><select id="ttDay" required><option value="Monday">Monday</option><option value="Tuesday">Tuesday</option><option value="Wednesday">Wednesday</option><option value="Thursday">Thursday</option><option value="Friday">Friday</option><option value="Saturday">Saturday</option></select></div>
-                    <div class="form-group"><label>Time/Period</label><input type="text" id="ttTime" required placeholder="E.g. 09:00 AM - 09:45 AM"></div>
+                    <div class="form-group">
+                        <label>Class</label>
+                        <select id="ttClass" class="dynamic-class-dropdown" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Day</label>
+                        <select id="ttDay" required>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Time/Period</label>
+                        <input type="text" id="ttTime" required placeholder="E.g. 09:00 AM - 09:45 AM">
+                    </div>
                 </div>
                 <div class="grid-2">
-                    <div class="form-group"><label>Subject</label><input type="text" id="ttSubject" required></div>
-                    <div class="form-group"><label>Teacher Name</label><input type="text" id="ttTeacher" required></div>
+                    <div class="form-group">
+                        <label>Subject</label>
+                        <input type="text" id="ttSubject" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Teacher Name</label>
+                        <input type="text" id="ttTeacher" required>
+                    </div>
                 </div>
                 <button type="submit" class="btn" id="ttBtn" style="width: 100%;">Add to Timetable</button>
             </form>
-            <div class="form-group" style="max-width:300px;"><label>Filter by Class</label><select id="ttFilterClass" class="dynamic-class-dropdown" onchange="loadTimetableAdmin()"><option value="All">All</option></select></div>
+            <div class="form-group" style="max-width:300px;">
+                <label>Filter by Class</label>
+                <select id="ttFilterClass" class="dynamic-class-dropdown" onchange="loadTimetableAdmin()">
+                    <option value="All">All</option>
+                </select>
+            </div>
             <table>
                 <thead><tr><th>Class</th><th>Day</th><th>Time</th><th>Subject</th><th>Teacher</th><th>Action</th></tr></thead>
                 <tbody id="timetableBody"><tr><td colspan="6">Loading...</td></tr></tbody>
@@ -706,13 +747,25 @@
                 </div>
                 
                 <div class="grid-2">
-                    <div class="form-group"><label>Public School Name</label><input type="text" id="webSchoolName" required></div>
-                    <div class="form-group"><label>Principal / Admin Name</label><input type="text" id="webAdminName" required></div>
+                    <div class="form-group">
+                        <label>Public School Name</label>
+                        <input type="text" id="webSchoolName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Principal / Admin Name</label>
+                        <input type="text" id="webAdminName" required>
+                    </div>
                 </div>
 
                 <div class="grid-2">
-                    <div class="form-group"><label>Public Contact Email</label><input type="email" id="webPublicEmail" required></div>
-                    <div class="form-group"><label>Banner Image URL (Optional)</label><input type="text" id="webBanner" placeholder="Paste image link here..."></div>
+                    <div class="form-group">
+                        <label>Public Contact Email</label>
+                        <input type="email" id="webPublicEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Banner Image URL (Optional)</label>
+                        <input type="text" id="webBanner" placeholder="Paste image link here...">
+                    </div>
                 </div>
 
                 <div style="background:#fff; padding:15px; border:1px solid #ccc; border-radius:5px; margin-bottom:15px;">
@@ -750,12 +803,24 @@
         <div id="settingsSec" class="content-section box-container" style="border-top: 4px solid #34495e;">
             <h3>⚙️ Global School Settings</h3>
             <form onsubmit="saveSchoolSettings(event)" style="background: #fafafa; padding: 20px; border-radius: 8px; max-width: 600px;">
-                <div class="form-group"><label>School Name / Brand Name</label><input type="text" id="setSchoolName" required></div>
-                <div class="grid-2">
-                    <div class="form-group"><label>Academic Start Date</label><input type="date" id="setStartDate" onchange="calculateAcademicYear()" required></div>
-                    <div class="form-group"><label>Academic End Date</label><input type="date" id="setEndDate" onchange="calculateAcademicYear()" required></div>
+                <div class="form-group">
+                    <label>School Name / Brand Name</label>
+                    <input type="text" id="setSchoolName" required>
                 </div>
-                <div class="form-group"><label>Calculated Academic Year</label><input type="text" id="setAcadYear" readonly style="background:#e8f0fe; font-weight:bold;"></div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Academic Start Date</label>
+                        <input type="date" id="setStartDate" onchange="calculateAcademicYear()" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Academic End Date</label>
+                        <input type="date" id="setEndDate" onchange="calculateAcademicYear()" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Calculated Academic Year</label>
+                    <input type="text" id="setAcadYear" readonly style="background:#e8f0fe; font-weight:bold;">
+                </div>
                 <button type="submit" class="btn" id="setSaveBtn" style="width: 100%;">Save Global Settings</button>
             </form>
         </div>
@@ -767,7 +832,10 @@
             <span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
             <h3 style="margin-top:0;">Publish Notice</h3>
             <form onsubmit="addNotice(event)">
-                <div class="form-group"><label>Title</label><input type="text" id="nTitle" required></div>
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="nTitle" required>
+                </div>
                 <div class="form-group">
                     <label>Category</label>
                     <select id="nCategory">
@@ -778,8 +846,14 @@
                         <option>Other</option>
                     </select>
                 </div>
-                <div class="form-group"><label>Date</label><input type="date" id="nDate" required></div>
-                <div class="form-group"><label>Description</label><textarea id="nDesc" rows="3" required></textarea></div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="nDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="nDesc" rows="3" required></textarea>
+                </div>
                 <button type="submit" class="btn btn-success" id="nBtn" style="width:100%;">Publish Notice</button>
             </form>
         </div>
@@ -925,6 +999,7 @@
             messagingSenderId: "923777949473", 
             appId: "1:923777949473:web:f90a784d9d5609a1616860" 
         };
+        
         const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
 
@@ -1015,10 +1090,16 @@
         window.populateDynamicMonths = function(selectId) {
             const selectEl = document.getElementById(selectId); 
             selectEl.innerHTML = '';
-            const validMonths = window.getValidAcademicMonths(window.academicStartMonth);
-            validMonths.forEach(m => { 
-                selectEl.innerHTML += `<option value="${m}">${m}</option>`; 
-            });
+            
+            // Getting all 12 months for Admin so they can collect fees freely
+            const monthsArray = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            let tempIndex = window.academicStartMonth;
+            
+            for(let i=0; i<12; i++) {
+                let m = monthsArray[tempIndex];
+                selectEl.innerHTML += `<option value="${m}">${m}</option>`;
+                tempIndex = (tempIndex + 1) % 12;
+            }
         }
 
         // --- ADD DATA ---
@@ -1142,6 +1223,7 @@
                 window.allStudentsData = []; 
                 snap.forEach(doc => window.allStudentsData.push({ id: doc.id, ...doc.data() })); 
                 renderStudents(); 
+                calculateFinanceTotals();
             } catch(error) { console.error(error); }
         }
 
@@ -1241,6 +1323,7 @@
                 });
                 document.getElementById('teacherTableBody').innerHTML = html || "<tr><td colspan='4'>No teachers found.</td></tr>"; 
                 document.getElementById('dashTeachersCount').innerText = count;
+                calculateFinanceTotals();
             } catch(e) { console.error(e); }
         }
 
@@ -1254,6 +1337,7 @@
                 });
                 document.getElementById('staffTableBody').innerHTML = html || "<tr><td colspan='4'>No staff found.</td></tr>"; 
                 document.getElementById('dashStaffCount').innerText = count;
+                calculateFinanceTotals();
             } catch(e) { console.error(e); }
         }
 
@@ -1318,14 +1402,12 @@
                     document.getElementById('webAbout').value = data.aboutSchool || '';
                     document.getElementById('webAchievements').value = data.achievements || '';
                     
-                    // FIXED LINK GENERATION FOR LOCAL FILES
                     const currentPath = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
                     const pubLink = `${currentPath}/public-site.html?school=${data.schoolId}`;
                     
                     const linkEl = document.getElementById('publicSiteLink'); 
                     linkEl.href = pubLink; linkEl.innerText = pubLink;
 
-                    // Load Dynamic Contacts
                     if(data.contactNumbers && data.contactNumbers.length > 0) {
                         const container = document.getElementById('dynamicContactContainer'); container.innerHTML = '';
                         data.contactNumbers.forEach((num, index) => {
@@ -1377,7 +1459,6 @@
                 
                 localStorage.setItem("activeSchoolId", webUrlId); 
                 
-                // FIXED LINK GENERATION FOR LOCAL FILES
                 const currentPath = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
                 const pubLink = `${currentPath}/public-site.html?school=${webUrlId}`;
                 
@@ -1513,7 +1594,7 @@
             } catch(e) { alert("Error"); }
         }
 
-        // --- FEE LOGIC (REUSED) ---
+        // --- FEE & FINANCE LOGIC ---
         window.loadFeeStructures = async function() { 
             try { 
                 const snap = await getDocs(query(collection(db, "feeStructures"), where("schoolId", "==", activeSchoolId))); let html = ""; 
@@ -1523,7 +1604,121 @@
                     html += `<tr><td><strong>${data.className}</strong></td><td>${breakdownText}</td><td style="color:#27ae60;"><strong>₹${data.totalMonthlyFee}</strong></td><td><button class="btn btn-danger" onclick="deleteFeeStruct('${doc.id}')">Del</button></td></tr>`; 
                 }); 
                 document.getElementById('feeStructBody').innerHTML = html || "<tr><td colspan='4'>No fees set.</td></tr>"; 
+                calculateFinanceTotals();
             } catch(e) { console.error(e); } 
+        }
+
+        window.saveDynamicFeeStructure = async function(event) {
+            event.preventDefault(); 
+            const selectedClass = document.getElementById('feeStructClass').value;
+            if(!selectedClass || selectedClass === 'All') return alert("Select a specific class.");
+            
+            const feeNames = document.querySelectorAll('.fee-head-name'); 
+            const feeAmounts = document.querySelectorAll('.fee-head-amount');
+            let breakdown = []; let total = 0;
+            
+            for(let i=0; i<feeNames.length; i++) { 
+                const amt = Number(feeAmounts[i].value); 
+                breakdown.push({ head: feeNames[i].value, amount: amt }); 
+                total += amt; 
+            }
+
+            try { 
+                await addDoc(collection(db, "feeStructures"), { className: selectedClass, feeBreakdown: breakdown, totalMonthlyFee: total, schoolId: activeSchoolId }); 
+                alert("Fee Saved!"); 
+                event.target.reset(); 
+                loadFeeStructures(); 
+            } catch(e) { alert(e.message); }
+        }
+        
+        window.deleteFeeStruct = async function(id) { 
+            if(confirm("Delete fee structure?")) { 
+                await deleteDoc(doc(db, "feeStructures", id)); 
+                loadFeeStructures(); 
+            } 
+        }
+        
+        window.addExtraExpense = async function(event) {
+            event.preventDefault(); 
+            try { 
+                await addDoc(collection(db, "expenses"), { date: document.getElementById('expDate').value, detail: document.getElementById('expDetail').value, amount: Number(document.getElementById('expAmount').value), schoolId: activeSchoolId }); 
+                alert("Expense Added!"); 
+                event.target.reset(); 
+                loadExpenses(); 
+            } catch(e) { alert(e.message); }
+        }
+
+        window.loadExpenses = async function() {
+            try {
+                const snap = await getDocs(query(collection(db, "expenses"), where("schoolId", "==", activeSchoolId))); 
+                let html = ""; 
+                snap.forEach(doc => { 
+                    const data = doc.data(); 
+                    html += `<tr><td>${data.date}</td><td>${data.detail}</td><td>₹${data.amount}</td><td><button class='btn btn-danger' onclick='deleteExpense("${doc.id}")'>Del</button></td></tr>`; 
+                });
+                document.getElementById('expensesBody').innerHTML = html || "<tr><td colspan='4'>No expenses logged.</td></tr>"; 
+                calculateFinanceTotals();
+            } catch(e) { console.error(e); }
+        }
+        
+        window.deleteExpense = async function(id) { 
+            if(confirm("Delete expense?")) { 
+                await deleteDoc(doc(db, "expenses", id)); 
+                loadExpenses(); 
+            } 
+        }
+
+        window.calculateFinanceTotals = async function() {
+            try {
+                let totalIncome = 0;
+                let totalExpense = 0;
+
+                // Income from Fees
+                const feeSnap = await getDocs(query(collection(db, "feeStructures"), where("schoolId", "==", activeSchoolId)));
+                let feeMap = {};
+                feeSnap.forEach(doc => { feeMap[doc.data().className] = Number(doc.data().totalMonthlyFee) || 0; });
+
+                const stuSnap = await getDocs(query(collection(db, "students"), where("schoolId", "==", activeSchoolId)));
+                stuSnap.forEach(doc => {
+                    let data = doc.data();
+                    let classFee = feeMap[data.className] || 0;
+                    if(data.feeRecords) {
+                        let monthsPaid = Object.keys(data.feeRecords).length;
+                        totalIncome += (monthsPaid * classFee);
+                    }
+                });
+
+                // Expenses from General Logging
+                const expSnap = await getDocs(query(collection(db, "expenses"), where("schoolId", "==", activeSchoolId)));
+                expSnap.forEach(doc => { totalExpense += Number(doc.data().amount) || 0; });
+
+                // Expenses from Teacher Salaries
+                const tSnap = await getDocs(query(collection(db, "teachers"), where("schoolId", "==", activeSchoolId)));
+                tSnap.forEach(doc => {
+                    let data = doc.data();
+                    let baseSal = Number(data.salary) || 0;
+                    if(data.salaryRecords) {
+                        let monthsPaid = Object.keys(data.salaryRecords).length;
+                        totalExpense += (monthsPaid * baseSal);
+                    }
+                });
+
+                // Expenses from Staff Salaries
+                const sSnap = await getDocs(query(collection(db, "staff"), where("schoolId", "==", activeSchoolId)));
+                sSnap.forEach(doc => {
+                    let data = doc.data();
+                    let baseSal = Number(data.salary) || 0;
+                    if(data.salaryRecords) {
+                        let monthsPaid = Object.keys(data.salaryRecords).length;
+                        totalExpense += (monthsPaid * baseSal);
+                    }
+                });
+
+                document.getElementById('finTotalIncome').innerText = '₹ ' + totalIncome;
+                document.getElementById('finTotalExpense').innerText = '₹ ' + totalExpense;
+                document.getElementById('finNetBalance').innerText = '₹ ' + (totalIncome - totalExpense);
+
+            } catch(e) { console.error("Finance Calculation Error:", e); }
         }
     </script>
 </body>
