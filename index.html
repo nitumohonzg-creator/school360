@@ -205,11 +205,12 @@
             cursor: pointer; 
             font-weight: bold; 
             text-align: center;
+            display: inline-block;
         }
         .btn-danger { background-color: var(--danger); }
         .btn-success { background-color: var(--success); }
+        .btn-info { background-color: var(--info); }
         .btn-warning { background-color: var(--warning); color: #333;}
-        .btn-info { background-color: var(--info); color: white;}
         .badge { 
             padding: 4px 8px; 
             border-radius: 4px; 
@@ -220,8 +221,8 @@
         }
         .bg-danger { background-color: var(--danger); }
         .bg-success { background-color: var(--success); }
-        .bg-warning { background-color: var(--warning); color:#333; }
         .bg-info { background-color: var(--info); }
+        .bg-warning { background-color: var(--warning); color:#333; }
         
         /* Forms */
         .form-group { margin-bottom: 15px; width: 100%;}
@@ -324,7 +325,7 @@
         <a id="nav-studentsSec" onclick="switchTab('studentsSec')">🎓 Students Management</a>
         <a id="nav-hrSec" onclick="switchTab('hrSec')">👨‍💼 HR (Teachers & Staff)</a>
         <a id="nav-financeSec" onclick="switchTab('financeSec')">💰 Finance & Accounts</a>
-        <a id="nav-studentAttSec" onclick="switchTab('studentAttSec')">📝 Mark Staff Attendance</a>
+        <a id="nav-studentAttSec" onclick="switchTab('studentAttSec')">📝 Mark Attendance</a>
         <a id="nav-leaveReqSec" onclick="switchTab('leaveReqSec')">📩 Leave Approvals</a>
         <a id="nav-examApprovalSec" onclick="switchTab('examApprovalSec')">🏆 Publish Results</a>
         <a id="nav-timetableSec" onclick="switchTab('timetableSec')">📅 Class Timetable</a>
@@ -521,9 +522,7 @@
         </div>
 
         <div id="studentAttSec" class="content-section box-container" style="border-top: 4px solid #e67e22;">
-            <h3>📝 Official Staff & Teacher Attendance</h3>
-            <p style="font-size:13px; color:#666;">Note: Student attendance is managed exclusively by Teachers from their portal.</p>
-            
+            <h3>📝 Official School Attendance</h3>
             <div style="background: #fdf2e9; padding: 15px; border-radius: 8px; display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; align-items:flex-end;">
                 <div class="form-group" style="flex:1; margin:0;">
                     <label>Date</label>
@@ -531,17 +530,26 @@
                 </div>
                 <div class="form-group" style="flex:1; margin:0;">
                     <label>User Type</label>
-                    <select id="attUserType" onchange="loadGlobalAttendance()">
+                    <select id="attUserType" onchange="toggleStudentFilters(); loadGlobalAttendance()">
+                        <option value="Student">Students</option>
                         <option value="Teacher">Teachers</option>
                         <option value="Staff">Non-Teaching Staff</option>
                     </select>
                 </div>
-                <button class="btn btn-success" id="saveGlobalAttBtn" onclick="saveGlobalAttendance()" style="height: 38px;">💾 Save Attendance</button>
+                <div class="form-group stu-filter" style="flex:1; margin:0;">
+                    <label>Class Filter</label>
+                    <select id="attClassFilterGlobal" class="dynamic-class-dropdown" onchange="updateDynamicSections('attClassFilterGlobal', 'attSectionFilterGlobal'); loadGlobalAttendance();"><option value="All">All Classes</option></select>
+                </div>
+                <div class="form-group stu-filter" style="flex:1; margin:0;">
+                    <label>Section Filter</label>
+                    <select id="attSectionFilterGlobal" onchange="loadGlobalAttendance()"><option value="All">All Sections</option></select>
+                </div>
+                <button class="btn btn-success" id="saveGlobalAttBtn" onclick="saveGlobalAttendance()" style="height: 38px;">💾 Save</button>
             </div>
 
             <div style="margin-bottom: 20px; padding: 15px; background: #ffebee; border-radius: 8px; border: 1px solid #ef9a9a;">
                 <h4 style="margin: 0 0 10px 0; color: #c62828;">🏖️ Declare School Holiday</h4>
-                <p style="font-size:12px; margin:0 0 10px 0; color:#555;">Declaring a holiday will instantly mark all Teachers & Staff as "Holiday" and push a Notice to the public board.</p>
+                <p style="font-size:12px; margin:0 0 10px 0; color:#555;">Declaring a holiday will instantly mark all Active Students, Teachers & Staff as "Holiday" and push a Notice to the public board.</p>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;">
                     <div class="form-group" style="flex:1; margin:0;"><label>Holiday Date</label><input type="date" id="holDate"></div>
                     <div class="form-group" style="flex:2; margin:0;"><label>Reason / Festival Name</label><input type="text" id="holReason" placeholder="E.g. Diwali, Independence Day"></div>
@@ -550,8 +558,8 @@
             </div>
             
             <table id="globalAttTable">
-                <thead><tr><th>Name</th><th>Role/Subject</th><th>Status</th></tr></thead>
-                <tbody id="globalAttBody"><tr><td colspan="3" style="text-align: center;">Select filters above...</td></tr></tbody>
+                <thead><tr><th>ID/Roll</th><th>Name</th><th>Role/Class/Sec</th><th>Status</th></tr></thead>
+                <tbody id="globalAttBody"><tr><td colspan="4" style="text-align: center;">Select filters...</td></tr></tbody>
             </table>
         </div>
 
@@ -843,7 +851,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, where, updateDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, query, where, updateDoc, doc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDg4HlG4M9lgqYSjV-fdqKacN94QNgfvOY",
@@ -879,6 +887,7 @@
                 document.getElementById("sidebarSchoolName").innerHTML = `${sName}`;
                 document.getElementById("mobileSchoolName").innerHTML = `${sName}`;
             }
+            loadWebsiteProfile(); // Load public site data
             loadClasses();
             loadStudents();
             loadTeachers();
@@ -911,6 +920,12 @@
         window.secureLogout = () => {
             localStorage.clear();
             window.location.href = "main-website.html";
+        };
+
+        window.toggleStudentFilters = () => {
+            const userType = document.getElementById('attUserType').value;
+            const stuFilters = document.querySelectorAll('.stu-filter');
+            stuFilters.forEach(f => f.style.display = (userType === 'Student') ? 'block' : 'none');
         };
 
         // ==========================================
@@ -1021,7 +1036,7 @@
                 let statusBadge = data.status === 'TC' ? 'bg-danger' : (data.status === 'Pass' ? 'bg-success' : (data.status === 'Fail' ? 'bg-warning' : 'bg-info'));
                 
                 html += `<tr>
-                    <td>${data.rollNo || 'N/A'}</td>
+                    <td>${data.rollNo || data.rollNumber || 'N/A'}</td>
                     <td><strong>${data.name || 'Unknown'}</strong><br><span class="badge ${statusBadge}">${data.status || 'Active'}</span></td>
                     <td>${data.className || 'N/A'} (${data.section || '-'})</td>
                     <td>${data.mobile || 'No Contact'}</td>
@@ -1146,6 +1161,28 @@
         // ==========================================
         // 4. WEBSITE SETUP
         // ==========================================
+        window.loadWebsiteProfile = async function() {
+            try {
+                const q = query(collection(db, "schools"), where("schoolId", "==", activeSchoolId));
+                const snap = await getDocs(q);
+                if (!snap.empty) {
+                    const data = snap.docs[0].data();
+                    document.getElementById('webSchoolId').value = data.schoolId || '';
+                    document.getElementById('webSchoolName').value = data.schoolName || '';
+                    document.getElementById('webAdminName').value = data.adminName || '';
+                    document.getElementById('webEmail').value = data.email || '';
+                    document.getElementById('webBanner').value = data.bannerImage || '';
+                    document.getElementById('webMessage').value = data.principalMessage || '';
+                    document.getElementById('webAbout').value = data.aboutSchool || '';
+                    document.getElementById('webAchievements').value = data.achievements || '';
+                    
+                    const pubLink = `${window.location.origin}/public-site.html?school=${data.schoolId}`;
+                    const linkEl = document.getElementById('publicSiteLink');
+                    linkEl.href = pubLink; linkEl.innerText = pubLink;
+                }
+            } catch(e) { console.error("Error loading profile:", e); }
+        }
+
         window.saveWebsiteProfile = async function(event) {
             event.preventDefault(); const btn = document.getElementById('webSaveBtn'); btn.innerText = "Publishing to Web...";
             try {
@@ -1245,22 +1282,51 @@
         // ==========================================
         window.loadGlobalAttendance = async function() {
             const date = document.getElementById('attDateGlobal').value; const userType = document.getElementById('attUserType').value;
+            const classFilter = document.getElementById('attClassFilterGlobal').value; const secFilter = document.getElementById('attSectionFilterGlobal').value;
             const tbody = document.getElementById('globalAttBody');
-            if(!date) { tbody.innerHTML = "<tr><td colspan='3'>Please select a date.</td></tr>"; return; }
-            tbody.innerHTML = "<tr><td colspan='3'>Loading...</td></tr>";
+            
+            if(!date) { tbody.innerHTML = "<tr><td colspan='4'>Please select a date.</td></tr>"; return; }
+            tbody.innerHTML = "<tr><td colspan='4'>Loading...</td></tr>";
 
             try {
-                let colName = userType === 'Teacher' ? 'teachers' : 'staff';
-                const snap = await getDocs(query(collection(db, colName), where("schoolId", "==", activeSchoolId)));
-                let users = []; snap.forEach(doc => users.push({id: doc.id, ...doc.data()}));
+                let users = [];
+                let existingAtt = {};
 
-                const attSnap = await getDocs(query(collection(db, "attendance"), where("schoolId", "==", activeSchoolId), where("date", "==", date), where("userType", "==", userType)));
-                let existingAtt = {}; attSnap.forEach(doc => { doc.data().records.forEach(r => existingAtt[r.userId] = r.status); });
+                if (userType === 'Student') {
+                    if (classFilter === 'All' || classFilter === '') {
+                        tbody.innerHTML = "<tr><td colspan='4'>Please select a specific Class for Students.</td></tr>";
+                        return;
+                    }
+                    const snap = await getDocs(query(collection(db, "students"), where("schoolId", "==", activeSchoolId), where("className", "==", classFilter)));
+                    snap.forEach(doc => {
+                        let data = doc.data();
+                        if (data.status !== 'Inactive' && data.status !== 'TC') {
+                            if (secFilter === 'All' || data.section === secFilter) {
+                                users.push({id: doc.id, ...data});
+                            }
+                        }
+                    });
+
+                    const attSnap = await getDocs(query(collection(db, "student_attendance"), where("schoolId", "==", activeSchoolId), where("date", "==", date), where("className", "==", classFilter)));
+                    attSnap.forEach(doc => { existingAtt[doc.data().studentId] = doc.data().status; });
+                } else {
+                    let colName = userType === 'Teacher' ? 'teachers' : 'staff';
+                    const snap = await getDocs(query(collection(db, colName), where("schoolId", "==", activeSchoolId)));
+                    snap.forEach(doc => users.push({id: doc.id, ...doc.data()}));
+
+                    const attSnap = await getDocs(query(collection(db, "attendance"), where("schoolId", "==", activeSchoolId), where("date", "==", date), where("userType", "==", userType)));
+                    attSnap.forEach(doc => { doc.data().records.forEach(r => existingAtt[r.userId] = r.status); });
+                }
 
                 let html = "";
                 users.forEach(u => {
-                    let roleStr = u.subject || u.role || 'Staff'; let status = existingAtt[u.id] || 'Present'; 
-                    html += `<tr class="att-row" data-id="${u.id}" data-name="${u.name}"><td>${u.name}</td><td>${roleStr}</td>
+                    let roleStr = userType === 'Student' ? `${u.className}-${u.section || ''}` : (u.subject || u.role || 'Staff');
+                    let status = existingAtt[u.id] || 'Present';
+                    let dataClassAttr = userType === 'Student' ? `data-class="${u.className}" data-sec="${u.section}"` : '';
+                    html += `<tr class="att-row" data-id="${u.id}" data-name="${u.name}" ${dataClassAttr}>
+                        <td>${u.rollNo || u.rollNumber || '-'}</td>
+                        <td>${u.name}</td>
+                        <td>${roleStr}</td>
                         <td><select class="att-status" style="padding:5px; border-radius:4px;">
                             <option value="Present" ${status==='Present'?'selected':''}>Present</option>
                             <option value="Absent" ${status==='Absent'?'selected':''}>Absent</option>
@@ -1268,8 +1334,8 @@
                             <option value="Holiday" ${status==='Holiday'?'selected':''}>Holiday</option>
                         </select></td></tr>`;
                 });
-                tbody.innerHTML = html || "<tr><td colspan='3'>No users found.</td></tr>";
-            } catch(e) { console.error(e); tbody.innerHTML = "<tr><td colspan='3'>Error loading data.</td></tr>"; }
+                tbody.innerHTML = html || "<tr><td colspan='4'>No users found.</td></tr>";
+            } catch(e) { console.error(e); tbody.innerHTML = "<tr><td colspan='4'>Error loading data.</td></tr>"; }
         }
 
         window.saveGlobalAttendance = async function() {
@@ -1277,13 +1343,32 @@
             if(!date) return alert("Please select a date.");
             const rows = document.querySelectorAll('.att-row'); if(rows.length === 0) return alert("No users to mark.");
 
-            document.getElementById('saveGlobalAttBtn').innerText = "Saving..."; let records = [];
-            rows.forEach(row => { records.push({ userId: row.getAttribute('data-id'), name: row.getAttribute('data-name'), status: row.querySelector('.att-status').value }); });
+            document.getElementById('saveGlobalAttBtn').innerText = "Saving...";
 
             try {
-                const attSnap = await getDocs(query(collection(db, "attendance"), where("schoolId", "==", activeSchoolId), where("date", "==", date), where("userType", "==", userType)));
-                attSnap.forEach(async (d) => await deleteDoc(doc(db, "attendance", d.id)));
-                await addDoc(collection(db, "attendance"), { schoolId: activeSchoolId, date: date, userType: userType, records: records, timestamp: new Date() });
+                if (userType === 'Student') {
+                    let promises = [];
+                    rows.forEach(row => {
+                        const sId = row.getAttribute('data-id');
+                        const sName = row.getAttribute('data-name');
+                        const sClass = row.getAttribute('data-class');
+                        const sSec = row.getAttribute('data-sec');
+                        const status = row.querySelector('.att-status').value;
+                        const docId = `${activeSchoolId}_${sId}_${date}`;
+                        
+                        promises.push(setDoc(doc(db, "student_attendance", docId), {
+                            studentId: sId, studentName: sName, className: sClass, section: sSec,
+                            date: date, status: status, schoolId: activeSchoolId, timestamp: new Date()
+                        }));
+                    });
+                    await Promise.all(promises);
+                } else {
+                    let records = [];
+                    rows.forEach(row => { records.push({ userId: row.getAttribute('data-id'), name: row.getAttribute('data-name'), status: row.querySelector('.att-status').value }); });
+                    const attSnap = await getDocs(query(collection(db, "attendance"), where("schoolId", "==", activeSchoolId), where("date", "==", date), where("userType", "==", userType)));
+                    attSnap.forEach(async (d) => await deleteDoc(doc(db, "attendance", d.id)));
+                    await addDoc(collection(db, "attendance"), { schoolId: activeSchoolId, date: date, userType: userType, records: records, timestamp: new Date() });
+                }
                 alert("Attendance saved!");
             } catch(e) { alert("Error: " + e.message); }
             document.getElementById('saveGlobalAttBtn').innerText = "💾 Save Attendance";
@@ -1293,7 +1378,7 @@
             const hDate = document.getElementById('holDate').value;
             const hReason = document.getElementById('holReason').value;
             if(!hDate || !hReason) return alert("Please enter both Holiday Date and Reason.");
-            if(!confirm(`Declare ${hReason} as a Holiday on ${hDate}? This will mark all staff and teachers as Holiday.`)) return;
+            if(!confirm(`Declare ${hReason} as a Holiday on ${hDate}? This will mark all staff, teachers, and active students as Holiday.`)) return;
 
             try {
                 // 1. Mark Teachers Holiday
@@ -1306,7 +1391,22 @@
                 let sRec = []; sSnap.forEach(doc => sRec.push({ userId: doc.id, name: doc.data().name, status: "Holiday" }));
                 await addDoc(collection(db, "attendance"), { schoolId: activeSchoolId, date: hDate, userType: 'Staff', records: sRec, timestamp: new Date() });
 
-                // 3. Add Public Notice
+                // 3. Mark Students Holiday
+                const stuSnap = await getDocs(query(collection(db, "students"), where("schoolId", "==", activeSchoolId)));
+                let promises = [];
+                stuSnap.forEach(doc => {
+                    let s = doc.data();
+                    if(s.status !== 'Inactive' && s.status !== 'TC') {
+                        const docId = `${activeSchoolId}_${doc.id}_${hDate}`;
+                        promises.push(setDoc(doc(db, "student_attendance", docId), {
+                            studentId: doc.id, studentName: s.name, className: s.className, section: s.section,
+                            date: hDate, status: "Holiday", schoolId: activeSchoolId, timestamp: new Date()
+                        }));
+                    }
+                });
+                await Promise.all(promises);
+
+                // 4. Add Public Notice
                 await addDoc(collection(db, "notices"), { title: "School Holiday: " + hReason, category: "Holiday", date: hDate, description: `The school will remain closed on ${hDate} on account of ${hReason}.`, schoolId: activeSchoolId });
 
                 alert(`Holiday Declared! Attendance updated and Notice published.`);
@@ -1345,12 +1445,9 @@
                         await updateDoc(doc(db, "attendance", attDoc.id), { records: records });
                     }
                 } else if(userType === 'Student') {
-                    // Inject a Leave record into class_attendance for the student so it shows on their dashboard
-                    const docId = `${activeSchoolId}_${userId}_AdminLeave_${leaveDate}`;
-                    await updateDoc(doc(db, "class_attendance", docId), { studentId: userId, studentName: userName, teacherName: 'Admin Approval', subject: 'Full Day Leave', date: leaveDate, status: 'Leave', schoolId: activeSchoolId, timestamp: new Date() }).catch(async (e) => {
-                        // If document doesn't exist, create it
-                        await addDoc(collection(db, "class_attendance"), { studentId: userId, studentName: userName, teacherName: 'Admin Approval', subject: 'Full Day Leave', date: leaveDate, status: 'Leave', schoolId: activeSchoolId, timestamp: new Date() });
-                    });
+                    // Update global student attendance
+                    const docId = `${activeSchoolId}_${userId}_${leaveDate}`;
+                    await setDoc(doc(db, "student_attendance", docId), { studentId: userId, studentName: userName, date: leaveDate, status: 'Leave', schoolId: activeSchoolId, timestamp: new Date() }, { merge: true });
                 }
                 alert("Leave Approved and Attendance Auto-Updated successfully!"); loadLeaveRequests(); 
             } catch(e) { alert("Error: " + e.message); }
