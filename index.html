@@ -14,6 +14,7 @@
             --info: #9b59b6; 
             --bg: #f4f7f6; 
         }
+        
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             margin: 0; 
@@ -22,6 +23,7 @@
             display: flex; 
         }
         
+        /* Mobile Header Fixed Alignment */
         .mobile-header { 
             display: none; 
             background: var(--primary); 
@@ -37,12 +39,17 @@
             align-items: center; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
         }
+        
         .mobile-header h2 { 
             margin: 0; 
             font-size: 20px; 
             color: var(--secondary); 
         }
-        .mobile-header h2 span { color: white; }
+        
+        .mobile-header h2 span { 
+            color: white; 
+        }
+        
         .menu-btn { 
             background: none; 
             border: none; 
@@ -56,7 +63,10 @@
             align-items: center; 
             justify-content: center; 
         }
-        .menu-btn:hover { background: rgba(255,255,255,0.1); }
+        
+        .menu-btn:hover { 
+            background: rgba(255,255,255,0.1); 
+        }
         
         .sidebar-overlay { 
             display: none; 
@@ -68,8 +78,12 @@
             background: rgba(0,0,0,0.5); 
             z-index: 998; 
         }
-        .sidebar-overlay.active { display: block; }
+        
+        .sidebar-overlay.active { 
+            display: block; 
+        }
 
+        /* Sidebar */
         .sidebar { 
             width: 250px; 
             background-color: var(--primary); 
@@ -83,6 +97,7 @@
             z-index: 999; 
             transition: transform 0.3s ease; 
         }
+        
         .sidebar h2 { 
             text-align: center; 
             color: var(--secondary); 
@@ -90,7 +105,11 @@
             font-size: 24px; 
             padding: 0 10px; 
         }
-        .sidebar h2 span { color: white; }
+        
+        .sidebar h2 span { 
+            color: white; 
+        }
+        
         .sidebar a { 
             display: block; 
             color: white; 
@@ -101,10 +120,12 @@
             transition: 0.2s; 
             cursor: pointer; 
         }
+        
         .sidebar a:hover, .sidebar a.active-link { 
             background-color: var(--secondary); 
             border-left: 4px solid var(--warning); 
         }
+        
         .logout-btn { 
             background-color: var(--danger) !important; 
             text-align: center; 
@@ -113,6 +134,7 @@
             border: none !important; 
         }
 
+        /* Main Content */
         .main-content { 
             margin-left: 250px; 
             padding: 25px; 
@@ -120,6 +142,7 @@
             box-sizing: border-box; 
             transition: margin-left 0.3s ease; 
         }
+        
         .header { 
             display: flex; 
             justify-content: space-between; 
@@ -130,21 +153,35 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
             margin-bottom: 25px; 
         }
-        .header h1 { margin: 0; color: #333; font-size: 24px; }
         
-        .content-section { display: none; animation: fadeIn 0.4s ease; }
-        .content-section.active { display: block; }
+        .header h1 { 
+            margin: 0; 
+            color: #333; 
+            font-size: 24px; 
+        }
+        
+        .content-section { 
+            display: none; 
+            animation: fadeIn 0.4s ease; 
+        }
+        
+        .content-section.active { 
+            display: block; 
+        }
+        
         @keyframes fadeIn { 
             from { opacity: 0; transform: translateY(10px); } 
             to { opacity: 1; transform: translateY(0); } 
         }
 
+        /* Action Cards */
         .action-cards { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
             gap: 15px; 
             margin-bottom: 25px; 
         }
+        
         .card { 
             background: white; 
             padding: 20px; 
@@ -153,8 +190,14 @@
             text-align: center; 
             border-top: 4px solid var(--secondary); 
         }
-        .card h2 { margin: 0; font-size: 32px; color: var(--primary); }
         
+        .card h2 { 
+            margin: 0; 
+            font-size: 32px; 
+            color: var(--primary); 
+        }
+        
+        /* Box Containers */
         .box-container { 
             background: white; 
             padding: 20px; 
@@ -163,6 +206,7 @@
             margin-bottom: 20px; 
             overflow-x: auto; 
         }
+        
         .box-container h3 { 
             margin-top: 0; 
             color: var(--primary); 
@@ -173,6 +217,7 @@
             align-items: center; 
         }
         
+        /* Tables */
         table { 
             width: 100%; 
             border-collapse: collapse; 
@@ -180,6 +225,7 @@
             font-size: 14px; 
             min-width: 600px; 
         }
+        
         th { 
             background-color: var(--bg); 
             padding: 12px; 
@@ -187,6 +233,7 @@
             color: #333; 
             text-align: left; 
         }
+        
         td { 
             padding: 12px; 
             border-bottom: 1px solid #eee; 
@@ -194,6 +241,7 @@
             vertical-align: middle; 
         }
         
+        /* Buttons & Badges */
         .btn { 
             background-color: var(--secondary); 
             color: white; 
@@ -206,10 +254,12 @@
             text-align: center; 
             display: inline-block; 
         }
+        
         .btn-danger { background-color: var(--danger); }
         .btn-success { background-color: var(--success); }
         .btn-info { background-color: var(--info); color: white;}
         .btn-warning { background-color: var(--warning); color: #333;}
+        
         .badge { 
             padding: 4px 8px; 
             border-radius: 4px; 
@@ -218,12 +268,18 @@
             color: white; 
             display: inline-block; 
         }
+        
         .bg-danger { background-color: var(--danger); }
         .bg-success { background-color: var(--success); }
         .bg-warning { background-color: var(--warning); color:#333; }
         .bg-info { background-color: var(--info); }
         
-        .form-group { margin-bottom: 15px; width: 100%;}
+        /* Forms */
+        .form-group { 
+            margin-bottom: 15px; 
+            width: 100%;
+        }
+        
         .form-group label { 
             display: block; 
             margin-bottom: 5px; 
@@ -231,6 +287,7 @@
             font-size: 13px; 
             color: #333; 
         }
+        
         .form-group input, .form-group select, .form-group textarea { 
             width: 100%; 
             padding: 10px; 
@@ -239,6 +296,7 @@
             box-sizing: border-box; 
             font-family: inherit; 
         }
+        
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
         
@@ -249,6 +307,7 @@
             margin-bottom: 15px; 
             background: #fafafa; 
         }
+        
         legend { 
             font-weight: bold; 
             color: var(--secondary); 
@@ -259,12 +318,14 @@
             font-size: 14px;
         }
 
+        /* Finance Specific */
         .finance-cards { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
             gap: 15px; 
             margin-bottom: 20px; 
         }
+        
         .fin-card { 
             padding: 20px; 
             border-radius: 8px; 
@@ -273,6 +334,7 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
         }
 
+        /* Modals */
         .modal-overlay { 
             display: none; 
             position: fixed; 
@@ -287,6 +349,7 @@
             padding: 20px; 
             box-sizing: border-box; 
         }
+        
         .modal-box { 
             background: white; 
             padding: 25px; 
@@ -297,7 +360,11 @@
             max-height: 90vh; 
             overflow-y: auto; 
         }
-        .modal-box.large { max-width: 800px; }
+        
+        .modal-box.large { 
+            max-width: 800px; 
+        }
+        
         .close-btn { 
             position: absolute; 
             top: 10px; 
@@ -307,12 +374,14 @@
             color: #555; 
         }
 
+        /* Responsive */
         @media (max-width: 850px) {
             .sidebar { transform: translateX(-100%); }
             .sidebar.active { transform: translateX(0); }
             .main-content { margin-left: 0; padding: 15px; padding-top: 80px; width: 100%; }
             .mobile-header { display: flex; }
         }
+        
         @media (max-width: 600px) { 
             .grid-2, .grid-3 { grid-template-columns: 1fr; } 
         }
@@ -691,7 +760,9 @@
             </form>
         </div>
 
-    </div> <div id="noticeModal" class="modal-overlay">
+    </div>
+
+    <div id="noticeModal" class="modal-overlay">
         <div class="modal-box">
             <span class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
             <h3 style="margin-top:0;">Publish Notice</h3>
@@ -1219,7 +1290,7 @@
             } catch(e) { alert("Error"); }
         }
 
-        // --- WEBSITE SETUP (FIXED MULTIPLE CONTACTS & SEPARATE PUBLIC EMAIL) ---
+        // --- WEBSITE SETUP (FIXED LOCAL PATHS) ---
         window.addContactRow = function() {
             const container = document.getElementById('dynamicContactContainer'); 
             const row = document.createElement('div'); 
@@ -1247,7 +1318,10 @@
                     document.getElementById('webAbout').value = data.aboutSchool || '';
                     document.getElementById('webAchievements').value = data.achievements || '';
                     
-                    const pubLink = `${window.location.origin}/public-site.html?school=${data.schoolId}`;
+                    // FIXED LINK GENERATION FOR LOCAL FILES
+                    const currentPath = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+                    const pubLink = `${currentPath}/public-site.html?school=${data.schoolId}`;
+                    
                     const linkEl = document.getElementById('publicSiteLink'); 
                     linkEl.href = pubLink; linkEl.innerText = pubLink;
 
@@ -1277,30 +1351,40 @@
             contactInputs.forEach(inp => { if(inp.value.trim() !== '') contacts.push(inp.value.trim()); });
 
             try {
+                const webUrlId = document.getElementById('webSchoolId').value.toLowerCase().replace(/\s+/g, '-');
+                
+                const profileData = { 
+                    schoolId: webUrlId, 
+                    schoolName: document.getElementById('webSchoolName').value, 
+                    adminName: document.getElementById('webAdminName').value, 
+                    publicEmail: document.getElementById('webPublicEmail').value, 
+                    contactNumbers: contacts, 
+                    bannerImage: document.getElementById('webBanner').value, 
+                    principalMessage: document.getElementById('webMessage').value, 
+                    aboutSchool: document.getElementById('webAbout').value, 
+                    achievements: document.getElementById('webAchievements').value 
+                };
+
                 const q = query(collection(db, "schools"), where("schoolId", "==", activeSchoolId)); 
                 const snap = await getDocs(q);
+                
                 if (!snap.empty) {
                     const docId = snap.docs[0].id; 
-                    const webUrlId = document.getElementById('webSchoolId').value.toLowerCase().replace(/\s+/g, '-');
-                    
-                    await updateDoc(doc(db, "schools", docId), { 
-                        schoolId: webUrlId, 
-                        schoolName: document.getElementById('webSchoolName').value, 
-                        adminName: document.getElementById('webAdminName').value, 
-                        publicEmail: document.getElementById('webPublicEmail').value, 
-                        contactNumbers: contacts, 
-                        bannerImage: document.getElementById('webBanner').value, 
-                        principalMessage: document.getElementById('webMessage').value, 
-                        aboutSchool: document.getElementById('webAbout').value, 
-                        achievements: document.getElementById('webAchievements').value 
-                    });
-                    
-                    localStorage.setItem("activeSchoolId", webUrlId); 
-                    const pubLink = `${window.location.origin}/public-site.html?school=${webUrlId}`;
-                    const linkEl = document.getElementById('publicSiteLink'); 
-                    linkEl.href = pubLink; linkEl.innerText = pubLink;
-                    alert("Profile Published!");
+                    await updateDoc(doc(db, "schools", docId), profileData);
+                } else {
+                    await addDoc(collection(db, "schools"), profileData);
                 }
+                
+                localStorage.setItem("activeSchoolId", webUrlId); 
+                
+                // FIXED LINK GENERATION FOR LOCAL FILES
+                const currentPath = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+                const pubLink = `${currentPath}/public-site.html?school=${webUrlId}`;
+                
+                const linkEl = document.getElementById('publicSiteLink'); 
+                linkEl.href = pubLink; linkEl.innerText = pubLink;
+                
+                alert("Profile Published Successfully!");
             } catch(e) { alert("Error: " + e.message); } 
             btn.innerText = "🌍 Publish to Public Website";
         }
@@ -1438,9 +1522,4 @@
                     let breakdownText = data.feeBreakdown.map(f => `${f.head}: ₹${f.amount}`).join("<br>"); 
                     html += `<tr><td><strong>${data.className}</strong></td><td>${breakdownText}</td><td style="color:#27ae60;"><strong>₹${data.totalMonthlyFee}</strong></td><td><button class="btn btn-danger" onclick="deleteFeeStruct('${doc.id}')">Del</button></td></tr>`; 
                 }); 
-                document.getElementById('feeStructBody').innerHTML = html || "<tr><td colspan='4'>No fees set.</td></tr>"; 
-            } catch(e) { console.error(e); } 
-        }
-    </script>
-</body>
-</html>
+                document.getElementById('feeStruct
