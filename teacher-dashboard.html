@@ -110,15 +110,15 @@
 
     <div class="sidebar" id="sidebar">
         <h2 id="sidebarSchoolName">School<span>360</span></h2>
-        <a id="nav-dashboardSec" class="active-link" onclick="showSection('dashboardSec')">🏠 Dashboard</a>
-        <a id="nav-classAttSec" onclick="showSection('classAttSec')">🏫 Class Attendance</a>
-        <a id="nav-timetableSec" onclick="showSection('timetableSec')">📅 Timetable</a>
-        <a id="nav-uploadSec" onclick="showSection('uploadSec')">📂 Post Assignment</a>
-        <a id="nav-receiveSec" onclick="showSection('receiveSec')">📥 Grade Assignments</a>
-        <a id="nav-examMarksSec" onclick="showSection('examMarksSec')">📝 Upload Exam Marks</a>
-        <a id="nav-noticeSec" onclick="showSection('noticeSec')">📢 Notice Board</a>
-        <a id="nav-leaveReqSec" onclick="showSection('leaveReqSec')">📩 Request Leave</a>
-        <a id="nav-profileSec" onclick="showSection('profileSec')">👤 My Profile</a>
+        <a id="nav-dashboardSec" class="active-link" onclick="switchTab('dashboardSec')">🏠 Dashboard</a>
+        <a id="nav-classAttSec" onclick="switchTab('classAttSec')">🏫 Class Attendance</a>
+        <a id="nav-timetableSec" onclick="switchTab('timetableSec')">📅 Timetable</a>
+        <a id="nav-uploadSec" onclick="switchTab('uploadSec')">📂 Post Assignment</a>
+        <a id="nav-receiveSec" onclick="switchTab('receiveSec')">📥 Grade Assignments</a>
+        <a id="nav-examMarksSec" onclick="switchTab('examMarksSec')">📝 Upload Exam Marks</a>
+        <a id="nav-noticeSec" onclick="switchTab('noticeSec')">📢 Notice Board</a>
+        <a id="nav-leaveReqSec" onclick="switchTab('leaveReqSec')">📩 Request Leave</a>
+        <a id="nav-profileSec" onclick="switchTab('profileSec')">👤 My Profile</a>
         <a onclick="secureLogout()" class="logout-btn">Logout System</a>
     </div>
 
@@ -130,7 +130,6 @@
             </div>
         </div>
 
-        <!-- DASHBOARD -->
         <div id="dashboardSec" class="section active">
             <div class="grid-2">
                 <div class="box-container" style="border-top: 4px solid var(--danger);">
@@ -150,7 +149,6 @@
             </div>
         </div>
 
-        <!-- TIMETABLE -->
         <div id="timetableSec" class="section box-container" style="border-top: 4px solid var(--warning);">
             <h3>📅 View Class Timetable</h3>
             <p style="font-size:13px; color:#666; margin-top:0;">Official routine uploaded by the Administration.</p>
@@ -168,7 +166,6 @@
             </div>
         </div>
 
-        <!-- EXAM MARKS UPLOAD (UPDATED WITH SECTION FILTER) -->
         <div id="examMarksSec" class="section box-container" style="border-top: 4px solid #8e44ad;">
             <h3>📝 Upload Exam Marks (For Admin Approval)</h3>
             <p style="font-size:13px; color:#666; margin-top:0;">Submit theory and practical marks here. Once approved by the Admin, it will reflect on the student's report card.</p>
@@ -177,7 +174,7 @@
                 <div class="flex-row" style="margin-bottom: 15px;">
                     <div class="form-group" style="margin:0;">
                         <label>Select Class</label>
-                        <select id="emClass" class="dynamic-class-dropdown" onchange="loadStudentsForMarks()" required>
+                        <select id="emClass" class="dynamic-class-dropdown" onchange="loadStudentsForMarks(); updateSectionDropdown('emClass', 'emSection');" required>
                             <option value="">-- Select Class --</option>
                         </select>
                     </div>
@@ -185,13 +182,12 @@
                         <label>Select Section</label>
                         <select id="emSection" onchange="loadStudentsForMarks()">
                             <option value="All">All Sections</option>
-                            <!-- Sections will be auto populated based on class -->
                         </select>
                     </div>
                     <div class="form-group" style="margin:0;">
                         <label>Select Student</label>
                         <select id="emStudent" required>
-                            <option value="">-- Select Class & Sec First --</option>
+                            <option value="">-- Select Class First --</option>
                         </select>
                     </div>
                     <div class="form-group" style="margin:0;">
@@ -220,10 +216,9 @@
             </form>
         </div>
 
-        <!-- CLASS ATTENDANCE -->
         <div id="classAttSec" class="section box-container" style="border-top: 4px solid var(--info);">
             <h3>🏫 Mark Subject / Class Attendance</h3>
-            <p style="font-size:13px; color:#666; margin-top:0; margin-bottom: 20px;">Marking attendance here will directly reflect in the student's dashboard under "Class Attendance".</p>
+            <p style="font-size:13px; color:#666; margin-top:0; margin-bottom: 20px;">Marking attendance here will directly reflect in the student's dashboard.</p>
             
             <div class="flex-row" style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid #eee; margin-bottom:20px;">
                 <div class="form-group" style="margin:0;">
@@ -265,7 +260,6 @@
             </div>
         </div>
 
-        <!-- POST ASSIGNMENT -->
         <div id="uploadSec" class="section box-container" style="border-top: 4px solid var(--success);">
             <h3>📂 Post New Assignment / Homework</h3>
             <form id="assignmentForm" onsubmit="uploadAssignment(event)">
@@ -281,7 +275,6 @@
             </form>
         </div>
 
-        <!-- GRADE ASSIGNMENTS -->
         <div id="receiveSec" class="section box-container" style="border-top: 4px solid var(--primary-dark);">
             <h3>📥 Grade Student Assignments</h3>
             <div class="flex-row" style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid #eee; margin-bottom: 20px;">
@@ -319,13 +312,11 @@
             </div>
         </div>
 
-        <!-- NOTICE BOARD -->
         <div id="noticeSec" class="section box-container" style="border-top: 4px solid var(--info);">
             <h3>📢 Complete School Notice Board</h3>
             <div id="noticeBoardDiv"><p style="text-align:center; color:#888; font-size:14px;">Loading notices...</p></div>
         </div>
 
-        <!-- LEAVE REQUESTS -->
         <div id="leaveReqSec" class="section box-container" style="border-top: 4px solid var(--danger);">
             <h3>📩 Request Leave to Admin</h3>
             <form id="leaveForm" onsubmit="submitLeaveRequest(event)">
@@ -349,7 +340,6 @@
             </div>
         </div>
 
-        <!-- MY PROFILE -->
         <div id="profileSec" class="section box-container" style="border-top: 4px solid var(--sidebar-bg);">
             <h3>👤 My Profile & Settings</h3>
             <div class="grid-2">
@@ -365,10 +355,9 @@
 
     </div>
 
-    <!-- JAVASCRIPT LOGIC (Fully Uncompressed & Connected) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, getDoc, query, where, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, query, where, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyDg4HlG4M9lgqYSjV-fdqKacN94QNgfvOY", 
@@ -378,9 +367,17 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Teacher Session Data
+        // ==========================================
+        // 1. SAAS SECURITY & INIT
+        // ==========================================
+        const activeSchoolId = localStorage.getItem("activeSchoolId");
         const tName = localStorage.getItem("teacherName") || "Teacher";
         const tId = localStorage.getItem("teacherId") || "unknown_teacher";
+
+        if (!activeSchoolId || !tId) {
+            alert("Security Alert: Session expired or invalid school. Please login again from your school's website.");
+            window.location.href = "main-website.html"; 
+        }
 
         window.classesList = [];
 
@@ -390,8 +387,11 @@
             document.getElementById('profName').value = tName;
             document.getElementById('profId').value = tId;
 
+            const sName = localStorage.getItem("schoolName") || "School360";
+            document.getElementById('sidebarSchoolName').innerHTML = `<span>${sName}</span>`;
+            document.getElementById('mobileSchoolName').innerHTML = `<span>${sName}</span>`;
+
             try {
-                await loadSchoolSettings();
                 await fetchDynamicClasses();
                 loadNotices();
                 loadMyLeaves();
@@ -425,22 +425,11 @@
             window.location.href = "main-website.html"; 
         }
 
-        // --- GLOBAL SETTINGS & DYNAMIC CLASSES ---
-        window.loadSchoolSettings = async function() {
-            try {
-                const docSnap = await getDoc(doc(db, "settings", "general"));
-                if(docSnap.exists()) {
-                    const data = docSnap.data();
-                    let schoolName = data.schoolName || "School360";
-                    document.getElementById('sidebarSchoolName').innerHTML = `<span>${schoolName}</span>`;
-                    document.getElementById('mobileSchoolName').innerHTML = `<span>${schoolName}</span>`;
-                }
-            } catch(e) { console.error("Settings load error", e); }
-        }
-
+        // --- DYNAMIC CLASSES (ISOLATED) ---
         window.fetchDynamicClasses = async function() {
             try {
-                const snap = await getDocs(collection(db, "classes"));
+                const q = query(collection(db, "classes"), where("schoolId", "==", activeSchoolId));
+                const snap = await getDocs(q);
                 window.classesList = []; 
                 snap.forEach(doc => window.classesList.push({ id: doc.id, ...doc.data() }));
                 
@@ -460,7 +449,8 @@
             secDropdown.innerHTML = '<option value="All">All / Combined</option>';
             
             if(classObj && classObj.sections) {
-                classObj.sections.forEach(s => {
+                let sectionArray = typeof classObj.sections === 'string' ? classObj.sections.split(',') : classObj.sections;
+                sectionArray.forEach(s => {
                     if(s && s !== 'N/A' && s.trim() !== '') {
                         secDropdown.innerHTML += `<option value="${s.trim()}">${s.trim()}</option>`;
                     }
@@ -480,25 +470,25 @@
             } catch(err) { alert("Error: " + err.message); }
         }
 
-        // --- TIMETABLE ---
+        // --- TIMETABLE (ISOLATED) ---
         window.loadTimetableTeacher = async function() {
             const tbody = document.getElementById('timetableBody');
             const filterClass = document.getElementById('ttFilterClass').value;
             tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Loading...</td></tr>';
             try {
-                let q = collection(db, "timetable");
-                if(filterClass !== 'All') { q = query(collection(db, "timetable"), where("className", "==", filterClass)); }
+                let q = query(collection(db, "timetable"), where("schoolId", "==", activeSchoolId));
                 const snap = await getDocs(q);
                 let html = '';
                 snap.forEach(doc => { 
                     const t = doc.data(); 
+                    if(filterClass !== 'All' && t.className !== filterClass) return;
                     html += `<tr><td><strong>${t.className}</strong></td><td>${t.day}</td><td>${t.time}</td><td>${t.subject}</td><td>${t.teacher}</td></tr>`; 
                 });
                 tbody.innerHTML = html === '' ? '<tr><td colspan="5" style="text-align: center;">No timetable data found.</td></tr>' : html;
             } catch(e) { console.error(e); }
         }
 
-        // --- EXAM MARKS UPLOAD ---
+        // --- EXAM MARKS UPLOAD (ISOLATED) ---
         window.loadStudentsForMarks = async function() {
             const cls = document.getElementById('emClass').value;
             const sec = document.getElementById('emSection').value;
@@ -507,13 +497,8 @@
 
             if(!cls) { studentSelect.innerHTML = '<option value="">-- Select Class First --</option>'; return; }
 
-            // Auto-update section dropdown if class changed
-            if(event.target.id === 'emClass') {
-                updateSectionDropdown('emClass', 'emSection');
-            }
-
             try {
-                const qStudents = query(collection(db, "students"), where("className", "==", cls));
+                const qStudents = query(collection(db, "students"), where("schoolId", "==", activeSchoolId), where("className", "==", cls));
                 const snap = await getDocs(qStudents);
                 
                 let studentsFound = false;
@@ -521,15 +506,14 @@
                 
                 snap.forEach(doc => {
                     const s = doc.data();
-                    if(s.status === 'Inactive') return; // Hide TC students
+                    if(s.status === 'Inactive') return; 
                     
-                    const selectedSec = document.getElementById('emSection').value;
-                    if(selectedSec === 'All' || s.section === selectedSec) {
-                        studentSelect.innerHTML += `<option value="${doc.id}">${s.rollNumber} - ${s.name}</option>`;
+                    if(sec === 'All' || s.section === sec) {
+                        studentSelect.innerHTML += `<option value="${doc.id}">${s.rollNumber || 'N/A'} - ${s.name}</option>`;
                         studentsFound = true;
                     }
                 });
-                if(!studentsFound) studentSelect.innerHTML = '<option value="">No active students in this Class/Section</option>';
+                if(!studentsFound) studentSelect.innerHTML = '<option value="">No active students found.</option>';
             } catch(e) { console.error(e); }
         }
 
@@ -538,7 +522,8 @@
             const btn = document.getElementById('emBtn'); btn.innerText = "Submitting...";
             const cls = document.getElementById('emClass').value;
             const sId = document.getElementById('emStudent').value;
-            const sName = document.getElementById('emStudent').options[document.getElementById('emStudent').selectedIndex].text.split(' - ')[1];
+            const sNameRaw = document.getElementById('emStudent').options[document.getElementById('emStudent').selectedIndex].text;
+            const sName = sNameRaw.includes('-') ? sNameRaw.split('-')[1].trim() : sNameRaw;
             const examName = document.getElementById('emExamName').value;
             
             try {
@@ -553,6 +538,7 @@
                     pracObt: document.getElementById('emPracObt').value,
                     teacherId: tId, 
                     teacherName: tName, 
+                    schoolId: activeSchoolId,
                     status: "Pending", 
                     timestamp: new Date()
                 });
@@ -563,7 +549,7 @@
             } catch(err) { alert("Error: " + err.message); } finally { btn.innerText = "Submit Marks for Approval"; }
         }
 
-        // --- CLASS ATTENDANCE ---
+        // --- CLASS ATTENDANCE (ISOLATED) ---
         window.loadedClassStudents = [];
 
         window.loadClassAttendanceStudents = async function() {
@@ -581,10 +567,10 @@
             saveBtn.style.display = 'none';
 
             try {
-                let qStudents = query(collection(db, "students"), where("className", "==", cls));
+                let qStudents = query(collection(db, "students"), where("schoolId", "==", activeSchoolId), where("className", "==", cls));
                 const studentSnap = await getDocs(qStudents);
                 
-                const qAtt = query(collection(db, "class_attendance"), where("teacherId", "==", tId), where("date", "==", date), where("subject", "==", subject));
+                const qAtt = query(collection(db, "class_attendance"), where("schoolId", "==", activeSchoolId), where("teacherId", "==", tId), where("date", "==", date), where("subject", "==", subject));
                 const attSnap = await getDocs(qAtt);
                 let existingAtt = {}; 
                 attSnap.forEach(doc => { existingAtt[doc.data().studentId] = doc.data().status; });
@@ -597,8 +583,7 @@
                 });
 
                 if(window.loadedClassStudents.length === 0) { 
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No students found in this Class/Section.</td></tr>'; 
-                    return; 
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No students found.</td></tr>'; return; 
                 }
                 
                 tbody.innerHTML = '';
@@ -606,7 +591,7 @@
                     let currentStatus = existingAtt[s.id] || 'Present';
                     let secDisplay = s.section && s.section !== 'N/A' ? s.section : '-';
                     let attSelect = `<select class="status-select class-att-dropdown" data-id="${s.id}" data-name="${s.name}" data-class="${s.className}" data-sec="${s.section}"><option value="Present" ${currentStatus==='Present'?'selected':''}>Present</option><option value="Absent" ${currentStatus==='Absent'?'selected':''}>Absent</option><option value="Leave" ${currentStatus==='Leave'?'selected':''}>Leave</option></select>`;
-                    tbody.innerHTML += `<tr><td><strong>${s.rollNumber}</strong></td><td>${s.name}</td><td>${secDisplay}</td><td>${attSelect}</td></tr>`;
+                    tbody.innerHTML += `<tr><td><strong>${s.rollNumber || '-'}</strong></td><td>${s.name}</td><td>${secDisplay}</td><td>${attSelect}</td></tr>`;
                 });
                 saveBtn.style.display = 'inline-block';
             } catch(e) { console.error(e); tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:red;">Error loading students.</td></tr>'; }
@@ -623,8 +608,8 @@
             let promises = [];
             dropdowns.forEach(sel => {
                 const sId = sel.getAttribute('data-id'); const sName = sel.getAttribute('data-name'); const sClass = sel.getAttribute('data-class'); const sSec = sel.getAttribute('data-sec');
-                const status = sel.value; const docId = `${sId}_${tId}_${date}_${subject.replace(/\s+/g, '_')}`;
-                promises.push(setDoc(doc(db, "class_attendance", docId), { studentId: sId, studentName: sName, className: sClass, section: sSec, teacherId: tId, teacherName: tName, subject: subject, date: date, status: status, timestamp: new Date() }));
+                const status = sel.value; const docId = `${activeSchoolId}_${sId}_${tId}_${date}_${subject.replace(/\s+/g, '_')}`;
+                promises.push(setDoc(doc(db, "class_attendance", docId), { studentId: sId, studentName: sName, className: sClass, section: sSec, teacherId: tId, teacherName: tName, subject: subject, date: date, status: status, schoolId: activeSchoolId, timestamp: new Date() }));
             });
             try { 
                 await Promise.all(promises); 
@@ -632,12 +617,13 @@
             } catch(e) { alert("Error saving: " + e.message); } finally { btn.innerText = "💾 Save Class Attendance"; }
         }
 
-        // --- NOTICES ---
+        // --- NOTICES (ISOLATED) ---
         window.loadNotices = async function() {
             const noticeDiv = document.getElementById('noticeBoardDiv');
             const recentDiv = document.getElementById('recentNoticesDiv');
             try {
-                const snapshot = await getDocs(collection(db, "notices"));
+                const q = query(collection(db, "notices"), where("schoolId", "==", activeSchoolId));
+                const snapshot = await getDocs(q);
                 noticeDiv.innerHTML = ''; recentDiv.innerHTML = '';
                 let noticesArray = [];
                 snapshot.forEach(doc => noticesArray.push({id: doc.id, ...doc.data()}));
@@ -657,12 +643,12 @@
             } catch(e) { console.error("Notices Error:", e); }
         }
 
-        // --- LEAVE REQUESTS ---
+        // --- LEAVE REQUESTS (ISOLATED) ---
         window.submitLeaveRequest = async function(e) {
             e.preventDefault();
             const btn = document.getElementById('leaveBtn'); btn.innerText = "Sending Request...";
             try {
-                await addDoc(collection(db, "leave_requests"), { senderId: tId, senderName: tName, role: 'Teacher', date: document.getElementById('leaveDate').value, reason: document.getElementById('leaveReason').value, status: 'Pending', timestamp: new Date() });
+                await addDoc(collection(db, "leave_requests"), { senderId: tId, senderName: tName, userType: 'Teacher', date: document.getElementById('leaveDate').value, reason: document.getElementById('leaveReason').value, status: 'Pending', schoolId: activeSchoolId, timestamp: new Date() });
                 alert("Leave request sent successfully to the Admin!");
                 document.getElementById('leaveForm').reset();
                 loadMyLeaves();
@@ -673,7 +659,7 @@
             const tbody = document.getElementById('myLeaveHistory');
             tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Loading...</td></tr>';
             try {
-                const q = query(collection(db, "leave_requests"), where("senderId", "==", tId));
+                const q = query(collection(db, "leave_requests"), where("schoolId", "==", activeSchoolId), where("senderId", "==", tId));
                 const snap = await getDocs(q);
                 let html = ''; let leaves = [];
                 snap.forEach(doc => leaves.push(doc.data()));
@@ -687,12 +673,12 @@
             } catch(e) { console.error(e); }
         }
 
-        // --- ASSIGNMENTS ---
+        // --- ASSIGNMENTS (ISOLATED) ---
         window.uploadAssignment = async function(e) {
             e.preventDefault();
             const btn = document.getElementById('aBtn'); btn.innerText = "Posting...";
             try {
-                await addDoc(collection(db, "assignments"), { title: document.getElementById('aTitle').value, description: document.getElementById('aDescription').value, className: document.getElementById('aClass').value, dueDate: document.getElementById('aDueDate').value, teacherId: tId, teacherName: tName, fileUrl: "#", timestamp: new Date() });
+                await addDoc(collection(db, "assignments"), { title: document.getElementById('aTitle').value, description: document.getElementById('aDescription').value, className: document.getElementById('aClass').value, dueDate: document.getElementById('aDueDate').value, teacherId: tId, teacherName: tName, schoolId: activeSchoolId, fileUrl: "#", timestamp: new Date() });
                 alert("Assignment posted successfully! Students can now see it."); document.getElementById('assignmentForm').reset();
             } catch(err) { alert(err.message); } finally { btn.innerText = "Post Assignment"; }
         }
@@ -703,7 +689,7 @@
             if(!selectedClass) { assignDropdown.innerHTML = '<option value="">-- Select Class First --</option>'; return; }
             assignDropdown.innerHTML = '<option value="">Loading assignments...</option>';
             try {
-                const qAssign = query(collection(db, "assignments"), where("className", "==", selectedClass), where("teacherId", "==", tId));
+                const qAssign = query(collection(db, "assignments"), where("schoolId", "==", activeSchoolId), where("className", "==", selectedClass), where("teacherId", "==", tId));
                 const assignSnap = await getDocs(qAssign);
                 assignDropdown.innerHTML = '<option value="">-- Now Select an Assignment --</option>';
                 if(assignSnap.empty) { assignDropdown.innerHTML = '<option value="">No assignments found (posted by you)</option>'; return; }
@@ -719,9 +705,10 @@
             if(!assignmentId) return;
             tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Loading students...</td></tr>';
             try {
-                const qStudents = query(collection(db, "students"), where("className", "==", selectedClass));
+                const qStudents = query(collection(db, "students"), where("schoolId", "==", activeSchoolId), where("className", "==", selectedClass));
                 const studentSnap = await getDocs(qStudents);
-                const qStatus = query(collection(db, "assignment_submissions"), where("assignmentId", "==", assignmentId));
+                
+                const qStatus = query(collection(db, "assignment_submissions"), where("schoolId", "==", activeSchoolId), where("assignmentId", "==", assignmentId));
                 const statusSnap = await getDocs(qStatus);
                 let savedData = {}; statusSnap.forEach(doc => { savedData[doc.data().studentId] = { status: doc.data().status, marks: doc.data().marks }; });
 
@@ -730,12 +717,12 @@
                 tbody.innerHTML = '';
                 studentSnap.forEach(doc => {
                     const s = doc.data(); const studentId = doc.id;
-                    if(s.status === 'Inactive') return; // Hide TC students
+                    if(s.status === 'Inactive') return; 
                     const studentData = savedData[studentId] || { status: 'Pending', marks: '' };
                     const statusColor = studentData.status === 'Received' ? 'status-received' : 'status-pending';
                     tbody.innerHTML += `
                         <tr class="student-row" data-id="${studentId}" data-name="${s.name}">
-                            <td><strong>${s.rollNumber}</strong></td><td>${s.name}</td>
+                            <td><strong>${s.rollNumber || '-'}</strong></td><td>${s.name}</td>
                             <td><select class="status-select ${statusColor}" onchange="this.className='status-select ' + (this.value==='Received'?'status-received':'status-pending')"><option value="Pending" ${studentData.status === 'Pending' ? 'selected' : ''}>⏳ Pending</option><option value="Received" ${studentData.status === 'Received' ? 'selected' : ''}>✅ Received</option></select></td>
                             <td><input type="number" class="mark-input" placeholder="E.g. 10" value="${studentData.marks}"></td>
                         </tr>
@@ -755,9 +742,9 @@
             for(let row of rows) {
                 const studentId = row.getAttribute('data-id'); const studentName = row.getAttribute('data-name');
                 const statusValue = row.querySelector('.status-select').value; const marksObtained = row.querySelector('.mark-input').value;
-                const docId = `${studentId}_${assignmentId}`;
+                const docId = `${activeSchoolId}_${studentId}_${assignmentId}`;
                 if(statusValue === 'Received' || marksObtained !== "") {
-                    await setDoc(doc(db, "assignment_submissions", docId), { studentId: studentId, studentName: studentName, className: selectedClass, assignmentId: assignmentId, assignmentTitle: assignmentName, status: statusValue, marks: marksObtained, updatedAt: new Date() });
+                    await setDoc(doc(db, "assignment_submissions", docId), { studentId: studentId, studentName: studentName, className: selectedClass, assignmentId: assignmentId, assignmentTitle: assignmentName, status: statusValue, marks: marksObtained, schoolId: activeSchoolId, updatedAt: new Date() });
                     savedCount++;
                 }
             }
