@@ -5,65 +5,134 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loading School...</title>
     <style>
-        :root { --primary: #2c3e50; --secondary: #3498db; --bg: #f4f7f6; }
-        * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: var(--bg); color: #333; }
+        :root { 
+            --primary: #1e3a8a; /* Dark Blue like University websites */
+            --secondary: #eab308; /* Yellow/Gold for highlights */
+            --bg: #f8fafc; 
+            --text-dark: #333;
+        }
         
-        nav { background: #fff; padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        .logo { font-weight: bold; font-size: 24px; color: var(--primary); display: flex; align-items: center; gap: 10px;}
-        .logo img { height: 40px; border-radius: 5px; display: none; }
-        .nav-items { display: flex; gap: 20px; align-items: center; }
-        .nav-items a { text-decoration: none; color: #555; font-weight: 500; transition: 0.2s; }
-        .nav-items a:hover { color: var(--secondary); }
-        .login-btn { background: var(--secondary); color: white; padding: 10px 25px; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; font-size: 16px; transition: 0.3s; }
-        .login-btn:hover { background: #2980b9; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3); }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text-dark); }
         
-        .hero { background: linear-gradient(rgba(44, 62, 80, 0.7), rgba(52, 152, 219, 0.7)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=1500&auto=format&fit=crop'); background-size: cover; background-position: center; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; padding: 20px; }
-        .hero h2 { font-size: 48px; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-        .hero p { font-size: 20px; max-width: 800px; margin: 0 auto; line-height: 1.6; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
-        
-        .wrapper { max-width: 1200px; margin: 40px auto; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; padding: 0 20px; }
-        .box { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-top: 4px solid var(--secondary); }
-        .box h3 { border-bottom: 2px solid #eee; padding-bottom: 15px; color: var(--primary); margin-top: 0; font-size: 22px; display: flex; align-items: center; gap: 10px;}
-        
-        .notice-list, .ach-list { list-style: none; padding: 0; margin: 0; }
-        .notice-list li, .ach-list li { padding: 15px 0; border-bottom: 1px solid #eee; }
-        .notice-list li:last-child, .ach-list li:last-child { border-bottom: none; }
-        .date-badge { display: inline-block; background: #e8f4fd; color: var(--secondary); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-bottom: 8px; }
-        
-        footer { background: var(--primary); color: white; text-align: center; padding: 30px 20px; margin-top: 50px; }
-        footer p { margin: 5px 0; opacity: 0.8; font-size: 14px;}
+        /* 1. TOP BAR */
+        .top-bar {
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 50px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+        .top-bar-links a { color: white; text-decoration: none; margin-left: 15px; }
+        .top-bar-links a:hover { color: var(--secondary); }
+        .login-btn-top {
+            background: var(--secondary); color: var(--primary); border: none; 
+            padding: 4px 15px; font-weight: bold; cursor: pointer; border-radius: 3px;
+        }
 
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(3px); }
-        .modal-box { background: white; padding: 30px; border-radius: 10px; width: 100%; max-width: 400px; position: relative; box-sizing: border-box; }
+        /* 2. MAIN HEADER (LOGO & NAME) */
+        .main-header {
+            background: #fff;
+            padding: 20px 50px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .logo-img { height: 80px; width: 80px; object-fit: cover; display: none; border-radius: 50%; border: 2px solid var(--primary); }
+        .school-title-area h1 { color: var(--primary); font-size: 32px; text-transform: uppercase; margin-bottom: 5px;}
+        .school-title-area p { color: #666; font-size: 14px; letter-spacing: 1px;}
+
+        /* 3. NAVIGATION BAR */
+        .navbar {
+            background: var(--primary);
+            position: sticky; top: 0; z-index: 100;
+            display: flex; justify-content: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .navbar a {
+            color: white; text-decoration: none; padding: 15px 25px;
+            font-weight: 500; font-size: 15px; text-transform: uppercase;
+            transition: 0.3s;
+        }
+        .navbar a:hover { background: var(--secondary); color: var(--primary); }
+
+        /* 4. SCROLLING TICKER (LATEST NEWS) */
+        .ticker-wrap {
+            background: #fff; border-bottom: 1px solid #ddd; border-top: 1px solid #ddd;
+            display: flex; align-items: center;
+        }
+        .ticker-title {
+            background: var(--secondary); color: var(--primary);
+            padding: 10px 20px; font-weight: bold; white-space: nowrap;
+        }
+        .ticker-text { width: 100%; padding: 0 15px; color: #d35400; font-weight: bold;}
+
+        /* 5. IMAGE SLIDER (HERO) */
+        .hero {
+            background-color: #ddd;
+            height: 400px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex; align-items: flex-end; justify-content: center;
+        }
+        .hero-overlay {
+            background: rgba(0,0,0,0.6); width: 100%; padding: 20px; text-align: center; color: white;
+        }
+
+        /* 6. MAIN CONTENT (TWO COLUMN LAYOUT) */
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+        
+        .box { background: #fff; padding: 25px; border-radius: 5px; box-shadow: 0 0 15px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
+        .box-title { color: var(--primary); border-bottom: 2px solid var(--secondary); padding-bottom: 10px; margin-bottom: 20px; font-size: 22px; }
+
+        /* Principal Desk Style */
+        .principal-desk { display: flex; gap: 20px; }
+        .principal-desk img { width: 150px; height: 180px; object-fit: cover; border: 3px solid #eee; padding: 5px; }
+        .principal-text { line-height: 1.8; color: #555; text-align: justify; }
+
+        /* Scrolling Notice Board */
+        .notice-container { height: 350px; overflow: hidden; position: relative; background: #fdfdfd; border: 1px solid #eee; padding: 10px;}
+        .notice-list { list-style: none; animation: scrollUp 15s linear infinite; }
+        .notice-list:hover { animation-play-state: paused; }
+        .notice-list li { padding: 12px 10px; border-bottom: 1px dashed #ccc; font-size: 14px; }
+        .notice-list li a { color: var(--primary); text-decoration: none; font-weight: 600; display: block; margin-bottom: 5px;}
+        .notice-list li a:hover { color: var(--secondary); text-decoration: underline; }
+        .date-badge { font-size: 11px; background: var(--secondary); color: #000; padding: 2px 8px; border-radius: 12px; }
+
+        @keyframes scrollUp {
+            0% { transform: translateY(100%); }
+            100% { transform: translateY(-100%); }
+        }
+
+        /* Footer */
+        footer { background: var(--primary); color: white; padding: 40px 50px 20px 50px; margin-top: 50px; }
+        .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 30px; margin-bottom: 20px;}
+        .footer-grid h4 { color: var(--secondary); margin-bottom: 15px; font-size: 18px;}
+        .footer-grid p, .footer-grid a { color: #ccc; text-decoration: none; font-size: 14px; line-height: 1.8; }
+        .footer-grid a:hover { color: white; }
+
+        /* Login Modal */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-box { background: white; padding: 30px; border-radius: 8px; width: 100%; max-width: 400px; position: relative; border-top: 5px solid var(--secondary); }
         .close-btn { position: absolute; top: 15px; right: 15px; font-size: 24px; cursor: pointer; color: #888; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #555;}
-        .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; font-family: inherit; }
-        .submit-btn { width: 100%; background: var(--secondary); color: white; border: none; padding: 14px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; transition: 0.2s; }
-        .submit-btn:hover { background: #2980b9; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: inherit; }
+        .submit-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; transition: 0.2s; }
+        .submit-btn:hover { background: var(--secondary); color: var(--primary); }
 
         #errorScreen { display: none; text-align: center; padding: 100px 20px; }
         #errorScreen h1 { color: #e74c3c; font-size: 60px; margin-bottom: 10px;}
         #mainContent { display: none; }
 
         @media (max-width: 900px) {
-            .wrapper { grid-template-columns: 1fr; gap: 20px;}
-            .hero { height: 350px; }
-            .hero h2 { font-size: 36px; }
-            .hero p { font-size: 18px; }
-        }
-
-        @media (max-width: 600px) {
-            nav { padding: 15px 20px; flex-direction: column; gap: 15px; }
-            .nav-items { width: 100%; justify-content: space-between; }
-            .nav-items a { display: none; }
-            .login-btn { width: 100%; text-align: center; }
-            .logo { font-size: 20px; }
-            .hero { height: 300px; padding: 15px; }
-            .hero h2 { font-size: 28px; }
-            .hero p { font-size: 16px; }
-            .box { padding: 20px; }
+            .container, .footer-grid { grid-template-columns: 1fr; }
+            .top-bar { flex-direction: column; text-align: center; gap: 10px; }
+            .main-header { flex-direction: column; text-align: center; }
+            .navbar { overflow-x: auto; justify-content: flex-start; }
+            .principal-desk { flex-direction: column; align-items: center; }
         }
     </style>
 </head>
@@ -71,78 +140,144 @@
 
     <div id="errorScreen">
         <h1>404</h1>
-        <h2>School Not Found</h2>
-        <p>Aapne jo URL enter kiya hai, wo kisi registered school ka nahi hai.</p>
-        <a href="main-website.html" style="color: #3498db; text-decoration: none; font-weight: bold;">Return to School360</a>
+        <h2>School/College Not Found</h2>
+        <p>The URL you entered does not match any registered institution.</p>
+        <a href="main-website.html" style="color: #3498db; font-weight: bold;">Return to School360</a>
     </div>
 
     <div id="mainContent">
-        <nav>
-            <div class="logo">
-                <img id="dynLogo" src="" alt="Logo">
-                <span id="dynSchoolNameNav">Loading...</span>
+        <!-- 1. Top Bar -->
+        <div class="top-bar">
+            <div>
+                📞 Contact: <span id="dynContactNumbers">Loading...</span> &nbsp; | &nbsp; 
+                ✉️ Email: <span id="dynEmail">Loading...</span>
             </div>
-            <div class="nav-items">
-                <a href="#about">About</a>
-                <a href="#notices">Notices</a>
-                <button class="login-btn" onclick="document.getElementById('loginModal').style.display='flex'">Portal Login</button>
+            <div class="top-bar-links">
+                <a href="#about">Alumni</a>
+                <a href="#contact">Contact Us</a>
+                <button class="login-btn-top" onclick="document.getElementById('loginModal').style.display='flex'">Login Portal</button>
             </div>
-        </nav>
+        </div>
 
-        <header class="hero" id="heroBanner">
-            <h2 id="dynHeroTitle">Welcome to Our School</h2>
-            <p id="dynHeroDesc">Empowering students with knowledge, character, and vision for a brighter tomorrow.</p>
-        </header>
+        <!-- 2. Main Header -->
+        <div class="main-header">
+            <img id="dynLogo" class="logo-img" src="" alt="Institution Logo">
+            <div class="school-title-area">
+                <h1 id="dynSchoolNameNav">Loading Institution Name...</h1>
+                <p>An Institution of Excellence, Affiliated to State Board</p>
+            </div>
+        </div>
 
-        <main class="wrapper">
+        <!-- 3. Navigation Bar -->
+        <div class="navbar">
+            <a href="#">Home</a>
+            <a href="#about">About Us</a>
+            <a href="#academics">Academics</a>
+            <a href="#achievements">Achievements</a>
+            <a href="#notices">Notice Board</a>
+        </div>
+
+        <!-- 4. Scrolling Ticker -->
+        <div class="ticker-wrap">
+            <div class="ticker-title">LATEST NEWS</div>
+            <marquee class="ticker-text" behavior="scroll" direction="left" id="tickerNotices">
+                Welcome to our newly launched portal! Admissions are now open for the current academic session.
+            </marquee>
+        </div>
+
+        <!-- 5. Hero Slider Area -->
+        <div class="hero" id="heroBanner">
+            <div class="hero-overlay">
+                <h2 style="font-size: 32px; margin-bottom: 10px;" id="dynHeroTitle">Welcome to Our Campus</h2>
+            </div>
+        </div>
+
+        <!-- 6. Main Content Area -->
+        <main class="container">
+            <!-- Left Side: Content -->
             <section style="display: flex; flex-direction: column; gap: 30px;">
                 <div class="box" id="about">
-                    <h3>🏫 About Our Institution</h3>
-                    <p id="dynAbout" style="line-height: 1.8; color: #555;">
-                        Welcome to our official portal. We are dedicated to providing excellent education and fostering a positive learning environment. Through modern teaching methods and a strong value system, we prepare our students for future success.
-                    </p>
-                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px dashed #ddd;">
-                        <p><strong>Principal/Admin:</strong> <span id="dynAdminName">Loading...</span></p>
-                        <p><strong>Contact Support:</strong> <span id="dynEmail">Loading...</span></p>
-                        <p><strong>Helpline / Mobile:</strong> <span id="dynContactNumbers" style="font-weight:bold; color:var(--secondary);">Loading...</span></p>
+                    <h3 class="box-title">Message from the Principal's Desk</h3>
+                    <div class="principal-desk">
+                        <!-- Placeholder for Principal Image -->
+                        <img src="https://via.placeholder.com/150x180?text=Principal+Photo" alt="Principal">
+                        <div class="principal-text">
+                            <p style="margin-bottom: 15px;"><strong id="dynAdminName">Principal Name</strong></p>
+                            <p id="dynHeroDesc">Empowering students with knowledge, character, and vision for a brighter tomorrow.</p>
+                            <br>
+                            <p id="dynAbout">
+                                Welcome to our official portal. We are dedicated to providing excellent education and fostering a positive learning environment. Through modern teaching methods and a strong value system, we prepare our students for future success.
+                            </p>
+                        </div>
                     </div>
                 </div>
 
-                <div class="box">
-                    <h3>🏆 Key Achievements</h3>
-                    <ul class="ach-list" id="dynAchievements">
-                        <li>🥇 State Level Sports Champions</li>
-                        <li>📚 100% Board Exam Results past 5 years</li>
-                        <li>💡 Innovation Lab Setup in 2024</li>
+                <div class="box" id="achievements">
+                    <h3 class="box-title">Our Achievements</h3>
+                    <ul class="ach-list" id="dynAchievements" style="line-height: 2; color: #444; margin-left: 20px;">
+                        <li>State Level Sports Champions</li>
+                        <li>100% Board Exam Results past 5 years</li>
                     </ul>
                 </div>
             </section>
 
+            <!-- Right Side: Sidebar -->
             <aside>
-                <div class="box" id="notices">
-                    <h3>📢 Public Notice Board</h3>
-                    <ul class="notice-list" id="publicNoticeBoard">
-                        <li>
-                            <span class="date-badge">System Note</span><br>
-                            <strong>Welcome to the new portal</strong><br>
-                            <small style="color:#666;">All upcoming public notices for parents and students will appear here.</small>
-                        </li>
-                    </ul>
+                <div class="box" id="notices" style="padding: 15px;">
+                    <h3 class="box-title" style="margin: 10px; font-size: 18px;">📌 Important Notices</h3>
+                    <div class="notice-container">
+                        <ul class="notice-list" id="publicNoticeBoard">
+                            <li>
+                                <a href="#">Welcome to the new portal</a>
+                                <span class="date-badge">System Note</span>
+                                <p style="color:#666; margin-top:5px;">All upcoming public notices for parents and students will appear here.</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <button style="width:100%; background:var(--primary); color:white; border:none; padding:10px; margin-top:10px; cursor:pointer;">View All Notices</button>
+                </div>
+
+                <div class="box" style="margin-top: 30px;">
+                    <h3 class="box-title" style="font-size: 18px;">🔗 Quick Links</h3>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <a href="#" style="padding:10px; background:#f1f5f9; text-decoration:none; color:var(--primary); border-left:3px solid var(--secondary);">Online Admission Portal</a>
+                        <a href="#" style="padding:10px; background:#f1f5f9; text-decoration:none; color:var(--primary); border-left:3px solid var(--secondary);">Download Prospectus</a>
+                        <a href="#" style="padding:10px; background:#f1f5f9; text-decoration:none; color:var(--primary); border-left:3px solid var(--secondary);">Academic Calendar</a>
+                    </div>
                 </div>
             </aside>
         </main>
 
-        <footer>
-            <p><strong id="footerSchoolName">School</strong></p>
-            <p>Powered by <strong>School360</strong> Cloud ERP</p>
+        <!-- Footer -->
+        <footer id="contact">
+            <div class="footer-grid">
+                <div>
+                    <h4>Contact Us</h4>
+                    <p><strong><span id="footerSchoolName">School</span></strong></p>
+                    <p>Phone: <span id="footerContact">Loading...</span></p>
+                    <p>Email: <span id="footerEmail">Loading...</span></p>
+                </div>
+                <div>
+                    <h4>Important Links</h4>
+                    <p><a href="#about">About Us</a></p>
+                    <p><a href="#notices">Notice Board</a></p>
+                    <p><a href="#" onclick="document.getElementById('loginModal').style.display='flex'">Student / Staff Login</a></p>
+                </div>
+                <div>
+                    <h4>Location</h4>
+                    <p>Find us on Google Maps (Integration pending based on your address settings).</p>
+                </div>
+            </div>
+            <p>Copyright &copy; 2026. All Rights Reserved. Powered by <strong>School360 Cloud ERP</strong></p>
         </footer>
     </div>
 
+    <!-- Login Modal -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-box">
             <span class="close-btn" onclick="document.getElementById('loginModal').style.display='none'">&times;</span>
-            <h3 style="text-align:center; margin-top:0; color:var(--primary); font-size:24px;">Secure Login</h3>
-            <p style="text-align:center; color:#666; font-size:13px; margin-bottom:20px;">Login to <b id="modalSchoolName" style="color:var(--secondary)">School</b> Portal</p>
+            <h3 style="text-align:center; margin-top:0; color:var(--primary); font-size:24px;">Secure Portal Login</h3>
+            <p style="text-align:center; color:#666; font-size:13px; margin-bottom:20px;">Access <b id="modalSchoolName" style="color:var(--secondary)">School</b> Dashboard</p>
             
             <form id="schoolLoginForm" onsubmit="loginUser(event)">
                 <div class="form-group">
@@ -154,11 +289,12 @@
                 </div>
                 <div class="form-group"><label>Registered Email ID</label><input type="email" id="loginEmail" required></div>
                 <div class="form-group"><label>Password</label><input type="password" id="loginPassword" required></div>
-                <button type="submit" class="submit-btn" id="logBtn">Access Dashboard</button>
+                <button type="submit" class="submit-btn" id="logBtn">Login Securely</button>
             </form>
         </div>
     </div>
 
+    <!-- FIREBASE & JAVASCRIPT LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -205,15 +341,23 @@
                 const noticeQ = query(collection(db, "notices"), where("schoolId", "==", currentSchoolId));
                 const noticeSnap = await getDocs(noticeQ);
                 let noticeHtml = "";
+                let tickerHtml = "";
                 let noticesArray = [];
+                
                 noticeSnap.forEach(doc => noticesArray.push({id: doc.id, ...doc.data()}));
                 noticesArray.sort((a, b) => new Date(b.date) - new Date(a.date));
                 
                 noticesArray.forEach(n => {
-                    noticeHtml += `<li><span class="date-badge">${n.category}</span><br><strong>${n.title}</strong><br><small style="color:#666;">${n.date} - ${n.description}</small></li>`;
+                    // For Vertical Notice Board
+                    noticeHtml += `<li><a href="#">${n.title}</a><span class="date-badge">${n.category}</span><p style="color:#666; font-size:12px; margin-top:5px;">${n.date} - ${n.description}</p></li>`;
+                    // For Ticker Marquee
+                    tickerHtml += ` ✦ ${n.date}: ${n.title} - ${n.description} &nbsp; &nbsp; | &nbsp; &nbsp; `;
                 });
                 
-                if(noticeHtml !== "") document.getElementById('publicNoticeBoard').innerHTML = noticeHtml;
+                if(noticeHtml !== "") {
+                    document.getElementById('publicNoticeBoard').innerHTML = noticeHtml;
+                    document.getElementById('tickerNotices').innerHTML = tickerHtml;
+                }
 
             } catch (error) {
                 console.error("Error loading:", error);
@@ -226,27 +370,25 @@
             currentSchoolName = data.schoolName;
             
             document.getElementById('mainContent').style.display = 'block';
-            document.title = `${currentSchoolName} - Official Website`;
+            document.title = `${currentSchoolName} - Official Portal`;
             
+            // Map Texts
             document.getElementById('dynSchoolNameNav').innerText = currentSchoolName;
             document.getElementById('dynHeroTitle').innerText = currentSchoolName;
             document.getElementById('modalSchoolName').innerText = currentSchoolName;
             document.getElementById('footerSchoolName').innerText = currentSchoolName;
             document.getElementById('dynAdminName').innerText = data.adminName || 'Admin Office';
             
-            // Render Public Email
             document.getElementById('dynEmail').innerText = data.publicEmail || data.email || 'Contact Support';
+            document.getElementById('footerEmail').innerText = data.publicEmail || data.email || 'Contact Support';
             
-            // Render Multiple Contact Numbers
-            if(data.contactNumbers && data.contactNumbers.length > 0) {
-                document.getElementById('dynContactNumbers').innerText = data.contactNumbers.join(", ");
-            } else {
-                document.getElementById('dynContactNumbers').innerText = 'Not Available';
-            }
+            let contactString = (data.contactNumbers && data.contactNumbers.length > 0) ? data.contactNumbers.join(", ") : 'Not Available';
+            document.getElementById('dynContactNumbers').innerText = contactString;
+            document.getElementById('footerContact').innerText = contactString;
             
             if(data.principalMessage) document.getElementById('dynHeroDesc').innerText = data.principalMessage;
             if(data.aboutSchool) document.getElementById('dynAbout').innerText = data.aboutSchool;
-            if(data.bannerImage) document.getElementById('heroBanner').style.backgroundImage = `linear-gradient(rgba(44, 62, 80, 0.7), rgba(52, 152, 219, 0.7)), url('${data.bannerImage}')`;
+            if(data.bannerImage) document.getElementById('heroBanner').style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('${data.bannerImage}')`;
             
             if(data.achievements) {
                 const achArr = data.achievements.split(',');
@@ -273,7 +415,7 @@
                     
                     if(role === 'students' && (userData.status === 'Inactive' || userData.status === 'TC')) {
                         alert("Account Inactive or Transferred. Contact Administration.");
-                        logBtn.innerText = "Access Dashboard";
+                        logBtn.innerText = "Login Securely";
                         return;
                     }
                     
@@ -296,11 +438,11 @@
                     }
                 } else {
                     alert("Invalid Details! Check Email, Password, or Role.");
-                    logBtn.innerText = "Access Dashboard";
+                    logBtn.innerText = "Login Securely";
                 }
             } catch (error) {
                 alert("Error: " + error.message);
-                logBtn.innerText = "Access Dashboard";
+                logBtn.innerText = "Login Securely";
             }
         }
     </script>
